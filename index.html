@@ -33,6 +33,10 @@ textarea{min-height:100px}button.b{background:var(--acc);color:#0f1813;font-weig
 .discord{display:flex;gap:12px;align-items:center;background:#5865F2;color:#fff;text-decoration:none;border-radius:14px;padding:12px 14px;margin:10px 0}.discord svg{width:34px;height:34px;flex:none;fill:#fff}.discord span{font-size:14px;line-height:1.3}
 #ml{max-height:45vh;overflow:auto;display:flex;flex-direction:column;gap:6px;margin:8px 0}.msg{background:#16221c;border-radius:12px;padding:8px 10px;max-width:85%;align-self:flex-start;white-space:pre-wrap;word-break:break-word}.msg.me{align-self:flex-end;background:#2d4538}.msg small{display:block;color:var(--mut);font-size:12px}.msg u{cursor:pointer;color:var(--red);font-size:12px}
 .row2{display:flex;gap:6px}.row2 input{margin:5px 0}
+.row2 button{flex:none}input[type=checkbox]{width:auto;margin:0 8px 0 0}label.ck{display:flex;align-items:center;margin:8px 0;font-size:14px}
+#chatwin{display:none}body.chatmode #chatwin{display:flex;flex-direction:column;flex:1;min-height:0}body.chatmode main,body.chatmode nav{display:none}
+.chead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));background:#0f1813;border-bottom:1px solid #2c4034}
+#cbody{flex:1;display:flex;flex-direction:column;min-height:0}#cbody #ml{max-height:none;flex:1;padding:8px}.composer{padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}.att img{max-width:100%;border-radius:8px}
 </style></head>
 <body><div id="app">
 <main>
@@ -45,6 +49,7 @@ textarea{min-height:100px}button.b{background:var(--acc);color:#0f1813;font-weig
  <section class="view" id="profile"></section>
 </main>
 <nav><button class="on" data-v="mapv"><b>🗺️</b>Map</button><button data-v="groups"><b>👥</b>Groups</button><button data-v="forum"><b>💬</b>Forums</button><button data-v="profile"><b>👤</b>Profile</button></nav>
+<div id="chatwin"></div>
 </div>
 <div id="sheet"><div id="sheetBody"></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -54,7 +59,7 @@ import * as cfg from './config.js';
 const firebaseConfig = cfg.firebaseConfig;
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, updateProfile, deleteUser } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, query, where, orderBy, limit, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch, query, where, orderBy, limit, limitToLast, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
 const $ = s => document.querySelector(s);
@@ -63,6 +68,8 @@ const fmt = t => t?.toDate ? t.toDate().toLocaleString() : '';
 const CATS = {cryptid:['🐾','Cryptid','#8d6e63'],ufo:['🛸','UFO / Lights','#26a69a'],paranormal:['👁️','Paranormal','#ab47bc'],haunted:['🌙','Haunted place','#5c6bc0'],strange:['❓','Strange event','#ffa726'],other:['📍','Other','#90a4ae']};
 const ls = (k, v) => v === undefined ? new Set(JSON.parse(localStorage.getItem(k) || '[]')) : localStorage.setItem(k, JSON.stringify([...v]));
 let blocked = ls('blocked'), hidden = ls('hidden'), user = null, data = [], filter = null, picking = false, timer;
+const ADMIN_EMAIL = 'danrabbit333@gmail.com';
+const isAdmin = () => !!user && user.emailVerified && (user.email || '').toLowerCase() === ADMIN_EMAIL;
 const okItem = (a, id) => !blocked.has(a) && !hidden.has(id);
 
 // ---------- sheet ----------
@@ -156,7 +163,7 @@ async function report(kind, id) {
 }
 const block = a => { blocked.add(a); ls('blocked', blocked); };
 async function showSighting(s) {
-  const c = CATS[s.category] || CATS.other, mine = user && user.uid === s.authorID;
+  const c = CATS[s.category] || CATS.other, mine = user && (user.uid === s.authorID || isAdmin());
   sheet(`<h3>${esc(s.title)}</h3><p class="meta">${c[0]} ${c[1]} · ${esc(s.authorName)} · ${fmt(s.createdAt)}</p><div id="ph"></div>
    <p style="white-space:pre-wrap">${esc(s.details)}</p>
    ${mine ? '<button class="b d" id="del">Delete my report</button>' : '<button class="b d" id="rep">Report this post</button><button class="b d" id="blk">Block this user</button>'}
@@ -166,7 +173,7 @@ async function showSighting(s) {
   if (mine) $('#del').onclick = async () => { await deleteDoc(doc(db, 'sightings', s.id)); if (s.hasPhoto) deleteDoc(doc(db, 'photos', s.id)).catch(() => {}); closeSheet(); loadSightings(); };
   else { $('#rep').onclick = () => { report('sighting', s.id); loadSightings(); }; $('#blk').onclick = () => { block(s.authorID); closeSheet(); loadSightings(); }; }
   if (s.hasPhoto) { const p = await getDoc(doc(db, 'photos', s.id)); const u = p.exists() && p.data().data;
-    if (u && u.startsWith('data:image/jpeg;base64,')) $('#ph').innerHTML = `<img class="photo" src="${u}">`; }
+    if (u && /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(u)) { const im = new Image(); im.className = 'photo'; im.src = u; $('#ph').replaceChildren(im); } }
 }
 
 // ---------- auth ----------
@@ -197,13 +204,14 @@ function verifySheet(sent) {
   $('#rf').onclick = async () => { await user.reload(); await user.getIdToken(true); user = auth.currentUser;
     if (user.emailVerified) { closeSheet(); profile(); } else $('#m').textContent = 'Not verified yet.'; };
 }
-onAuthStateChanged(auth, u => { user = u; profile(); });
+onAuthStateChanged(auth, u => { user = u; profile(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
 function profile() {
   const el = $('#profile');
   if (!user) { el.innerHTML = `<h2>Profile</h2><button class="b" id="si">Sign in or create account</button><p class="meta">Browsing is open to everyone. A verified email is required to post.</p>${contact()}${links()}`; $('#si').onclick = () => authSheet(); return; }
   el.innerHTML = `<h2>${esc(user.displayName || 'User')}</h2><p class="meta">${esc(user.email)}</p><p>${user.emailVerified ? '✅ Email verified' : '⚠️ Email not verified'}</p>
-   ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<button class="b s" id="so">Sign out</button><button class="b d" id="da">Delete account</button>${contact()}${links()}`;
+   ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<button class="b s" id="so">Sign out</button><button class="b d" id="da">Delete account</button>${isAdmin() ? '<h3 style="margin-top:24px">Admin · reports</h3><div id="adm"><p class="meta">Loading…</p></div>' : ''}${contact()}${links()}`;
   if (!user.emailVerified) $('#vf').onclick = () => verifySheet();
+  if (isAdmin()) loadReports();
   $('#so').onclick = () => signOut(auth);
   $('#da').onclick = () => { sheet(`<h3>Delete account?</h3><p>This removes your account and your map reports.</p><button class="b d" id="y">Delete</button><button class="b s" id="n">Cancel</button>`);
     $('#n').onclick = closeSheet;
@@ -235,7 +243,7 @@ async function forumList() {
   } catch { $('#tl').innerHTML = '<p class="err">Could not load forums.</p>'; }
 }
 async function openThread(t) {
-  const el = $('#forum'), mine = user && user.uid === t.authorID;
+  const el = $('#forum'), mine = user && (user.uid === t.authorID || isAdmin());
   el.innerHTML = `<button class="b s" id="bk">← Back</button><h2>${esc(t.title)}</h2><p style="white-space:pre-wrap">${esc(t.body)}</p><p class="meta">${esc(t.authorName)} · ${fmt(t.createdAt)}</p>
    ${mine ? '<button class="b d" id="dt">Delete thread</button>' : '<button class="b d" id="rt">Report thread</button>'}
    <h3>Replies</h3><div id="pl"><p class="meta">Loading…</p></div><textarea id="rp" maxlength="2000" placeholder="Reply…" style="min-height:70px"></textarea><button class="b" id="sd">Send</button>`;
@@ -245,7 +253,7 @@ async function openThread(t) {
     const snap = await getDocs(query(collection(db, `threads/${t.id}/posts`), orderBy('createdAt'), limit(500)));
     const posts = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(p => okItem(p.authorID, p.id));
     $('#pl').innerHTML = posts.length ? posts.map(p => `<div class="item"><div style="white-space:pre-wrap">${esc(p.text)}</div><div class="meta">${esc(p.authorName)} · ${fmt(p.createdAt)}</div>
-      ${user && user.uid === p.authorID ? `<button class="b d" data-a="del" data-id="${esc(p.id)}">Delete</button>` : `<button class="b d" data-a="rep" data-id="${esc(p.id)}">Report</button><button class="b d" data-a="blk" data-u="${esc(p.authorID)}">Block user</button>`}</div>`).join('') : '<p class="meta">No replies yet.</p>';
+      ${user && (user.uid === p.authorID || isAdmin()) ? `<button class="b d" data-a="del" data-id="${esc(p.id)}">Delete</button>` : `<button class="b d" data-a="rep" data-id="${esc(p.id)}">Report</button><button class="b d" data-a="blk" data-u="${esc(p.authorID)}">Block user</button>`}</div>`).join('') : '<p class="meta">No replies yet.</p>';
     $('#pl').onclick = async e => { const b = e.target.closest('button'); if (!b) return;
       if (b.dataset.a === 'del') { await deleteDoc(doc(db, `threads/${t.id}/posts`, b.dataset.id)); load(); }
       if (b.dataset.a === 'rep') { await report('post', b.dataset.id); load(); }
@@ -288,25 +296,61 @@ function feedbackSheet() {
 }
 
 // ---------- groups ----------
-let groups = [], unsubChat = null;
+let groups = [], unsubChat = null, pendingJoin = null, authReady = false, chatGid = null;
+const attCache = new Map();
 function stopChat() { if (unsubChat) { unsubChat(); unsubChat = null; } }
+const showView = v => document.querySelector(`nav button[data-v=${v}]`).click();
+const base = () => location.origin + location.pathname;
+const groupCard = g => `<div class="item" data-id="${esc(g.id)}"><b>${g.private ? '🔒 ' : ''}${esc(g.name)}</b><div class="meta">📍 ${esc(g.place || '')}${g.when ? ' · 🗓 ' + esc(g.when) : ''}</div><div class="meta">by ${esc(g.authorName)}</div></div>`;
+const byNew = (a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
+const toDataURL = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+
 async function groupList() {
   stopChat();
   const el = $('#groups');
-  el.innerHTML = `<h2>Groups</h2><p class="meta">Find people to visit a place together.</p>${discordBtn()}<button class="b" id="ng">＋ New group</button><div id="gl"><p class="meta">Loading…</p></div>`;
+  el.innerHTML = `<h2>Groups</h2><p class="meta">Find people to visit a place together.</p>${discordBtn()}
+   <button class="b" id="ng">＋ New group</button><button class="b s" id="jc">🔑 Join with invite link / code</button>
+   <div id="mg"></div><h3>Public groups</h3><div id="gl"><p class="meta">Loading…</p></div>
+   ${isAdmin() ? '<h3>Admin: all groups (incl. private)</h3><div id="ag"><p class="meta">Loading…</p></div>' : ''}`;
   $('#ng').onclick = () => { if (canPost()) newGroupSheet(); };
+  $('#jc').onclick = () => {
+    sheet(`<h3>Join a private group</h3><input id="jv" placeholder="Paste invite link or code"><button class="b" id="go">Join</button><button class="b s" id="cx">Cancel</button>`);
+    $('#cx').onclick = closeSheet; $('#go').onclick = () => { const v = $('#jv').value; closeSheet(); joinByCode(v); };
+  };
+  const bind = (sel, list) => { const n = $(sel); if (n) n.onclick = e => { const i = e.target.closest('.item'); if (i) openGroup(list.find(g => g.id === i.dataset.id)); }; };
+  let mineIds = new Set();
+  if (user) {
+    try {
+      const ms = await getDocs(collection(db, `users/${user.uid}/memberships`));
+      const mine = (await Promise.all(ms.docs.map(async d => {
+        try { const gs = await getDoc(doc(db, 'groups', d.id)); if (gs.exists()) return {id: gs.id, ...gs.data()}; } catch {}
+        deleteDoc(d.ref).catch(() => {}); return null; }))).filter(Boolean).sort(byNew);
+      const box = $('#mg'); if (!box) return;
+      box.innerHTML = mine.length ? '<h3>My groups</h3>' + mine.map(groupCard).join('') : ''; bind('#mg', mine);
+      mineIds = new Set(mine.map(g => g.id));
+    } catch {}
+  }
   try {
-    const snap = await getDocs(query(collection(db, 'groups'), orderBy('createdAt', 'desc'), limit(100)));
-    groups = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(g => okItem(g.authorID, g.id));
-    $('#gl').innerHTML = groups.length ? groups.map(g => `<div class="item" data-id="${esc(g.id)}"><b>${esc(g.name)}</b><div class="meta">📍 ${esc(g.place || '')}${g.when ? ' · 🗓 ' + esc(g.when) : ''}</div><div class="meta">by ${esc(g.authorName)}</div></div>`).join('') : '<p class="meta">No groups yet. Create the first one!</p>';
-    $('#gl').onclick = e => { const i = e.target.closest('.item'); if (i) openGroup(groups.find(g => g.id === i.dataset.id)); };
-  } catch { $('#gl').innerHTML = '<p class="err">Could not load groups.</p>'; }
+    const snap = await getDocs(query(collection(db, 'groups'), where('private', '==', false), limit(100)));
+    groups = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(g => okItem(g.authorID, g.id) && !mineIds.has(g.id)).sort(byNew);
+    const gl = $('#gl'); if (!gl) return;
+    gl.innerHTML = groups.length ? groups.map(groupCard).join('') : '<p class="meta">No public groups yet. Create the first one!</p>'; bind('#gl', groups);
+  } catch { const gl = $('#gl'); if (gl) gl.innerHTML = '<p class="err">Could not load groups.</p>'; }
+  if (isAdmin()) {
+    try {
+      const snap = await getDocs(query(collection(db, 'groups'), orderBy('createdAt', 'desc'), limit(200)));
+      const all = snap.docs.map(d => ({id: d.id, ...d.data()})); const ag = $('#ag'); if (!ag) return;
+      ag.innerHTML = all.length ? all.map(groupCard).join('') : '<p class="meta">None.</p>'; bind('#ag', all);
+    } catch { const ag = $('#ag'); if (ag) ag.innerHTML = '<p class="err">Could not load (publish the latest rules).</p>'; }
+  }
 }
+
 function newGroupSheet(pre = {}) {
   sheet(`<h3>New group</h3><input id="gn" maxlength="60" placeholder="Group name (e.g. Saturday hike)">
    <input id="gpl" maxlength="100" placeholder="Place" value="${esc(pre.place || '')}"><input id="gw" maxlength="60" placeholder="When (e.g. Sat, Nov 21, 10:00)">
    <textarea id="gd" maxlength="500" placeholder="Plans, meeting point, difficulty, what to bring…"></textarea>
-   <p class="meta">Meet in public places and tell someone where you’re going.</p><p class="err" id="e"></p>
+   <label class="ck"><input type="checkbox" id="gpv">🔒 Private group (hidden from the list, join by invite link only)</label>
+   <p class="meta">Meet in public places and tell someone where you’re going. Group chats may be reviewed by moderators to enforce the rules.</p><p class="err" id="e"></p>
    <button class="b" id="go">Create</button><button class="b s" id="cx">Cancel</button>`);
   $('#cx').onclick = closeSheet;
   $('#go').onclick = async () => {
@@ -314,62 +358,231 @@ function newGroupSheet(pre = {}) {
     $('#go').disabled = true;
     try {
       const ref = doc(collection(db, 'groups')), me = (user.displayName || 'User').slice(0, 30);
-      await setDoc(ref, {name, place: $('#gpl').value.trim(), when: $('#gw').value.trim(), description: $('#gd').value.trim(),
-        lat: typeof pre.lat === 'number' ? pre.lat : null, lon: typeof pre.lon === 'number' ? pre.lon : null,
-        authorID: user.uid, authorName: me, createdAt: serverTimestamp()});
-      await setDoc(doc(db, `groups/${ref.id}/members`, user.uid), {name: me, joinedAt: serverTimestamp()});
-      closeSheet(); document.querySelector('nav button[data-v=groups]').click();
+      const g = {name, place: $('#gpl').value.trim(), when: $('#gw').value.trim(), description: $('#gd').value.trim(), private: $('#gpv').checked,
+        lat: typeof pre.lat === 'number' ? pre.lat : null, lon: typeof pre.lon === 'number' ? pre.lon : null, authorID: user.uid, authorName: me};
+      await setDoc(ref, {...g, createdAt: serverTimestamp()});
+      const b = writeBatch(db);
+      b.set(doc(db, `groups/${ref.id}/members`, user.uid), {name: me, joinedAt: serverTimestamp()});
+      b.set(doc(db, `users/${user.uid}/memberships`, ref.id), {joinedAt: serverTimestamp()});
+      await b.commit();
+      closeSheet(); showView('groups'); openGroup({id: ref.id, ...g});
     } catch { $('#e').textContent = 'Could not create. Try again.'; $('#go').disabled = false; }
   };
 }
+
+async function joinGroup(gid) {
+  const b = writeBatch(db);
+  b.set(doc(db, `groups/${gid}/members`, user.uid), {name: (user.displayName || 'User').slice(0, 30), joinedAt: serverTimestamp()});
+  b.set(doc(db, `users/${user.uid}/memberships`, gid), {joinedAt: serverTimestamp()});
+  await b.commit();
+}
+async function joinByCode(raw) {
+  const id = String(raw || '').split('#join=').pop().trim().replace(/[^A-Za-z0-9]/g, '');
+  if (!id) { toast('Invalid invite.'); return; }
+  if (!user) { pendingJoin = id; authSheet('Sign in or create an account to join the group.'); return; }
+  if (!user.emailVerified) { pendingJoin = id; verifySheet(); return; }
+  try {
+    await joinGroup(id);
+    const gs = await getDoc(doc(db, 'groups', id));
+    history.replaceState(null, '', location.pathname);
+    showView('groups'); openGroup({id, ...gs.data()});
+  } catch { toast('Invalid or expired invite.'); }
+}
+
 async function openGroup(g) {
   stopChat();
-  const el = $('#groups'), mine = user && user.uid === g.authorID;
+  const el = $('#groups'), owner = user && user.uid === g.authorID, adm = isAdmin();
   let member = false, members = [];
   try {
     const ms = await getDocs(collection(db, `groups/${g.id}/members`));
-    members = ms.docs.map(d => ({id: d.id, ...d.data()})).filter(m => !blocked.has(m.id));
+    members = ms.docs.map(d => ({id: d.id, ...d.data()}));
     member = !!user && ms.docs.some(d => d.id === user.uid);
   } catch {}
-  el.innerHTML = `<button class="b s" id="bk">← Back</button><h2>${esc(g.name)}</h2>
+  const shown = members.filter(m => !blocked.has(m.id));
+  el.innerHTML = `<button class="b s" id="bk">← Back</button><h2>${g.private ? '🔒 ' : ''}${esc(g.name)}</h2>
    <p class="meta">📍 ${esc(g.place || '')}${g.when ? ' · 🗓 ' + esc(g.when) : ''}</p><p style="white-space:pre-wrap">${esc(g.description)}</p>
-   <p class="meta">By ${esc(g.authorName)} · ${members.length} member${members.length === 1 ? '' : 's'}${members.length ? ': ' + members.map(m => esc(m.name)).join(', ') : ''}</p>
+   <p class="meta">Created by ${esc(g.authorName)}</p>
+   <h3>Members (${shown.length})</h3><div id="mem">${shown.map(m => `<div class="item" style="display:flex;justify-content:space-between;align-items:center"><span>${esc(m.name)}${m.id === g.authorID ? ' 👑' : ''}</span>${(owner || adm) && m.id !== g.authorID ? `<u data-kick="${esc(m.id)}" style="color:var(--red);cursor:pointer">remove</u>` : ''}</div>`).join('') || '<p class="meta">—</p>'}</div>
+   ${member || adm ? '<button class="b" id="oc">💬 Open chat in a new window</button>' : ''}
+   ${g.private && (member || adm) ? '<button class="b s" id="iv">🔗 Invite link</button>' : ''}
    ${typeof g.lat === 'number' ? '<button class="b s" id="sm">Show on map</button>' : ''}
-   ${member ? (mine ? '' : '<button class="b s" id="lv">Leave group</button>') : '<button class="b" id="jn">Join group</button>'}
-   ${mine ? '<button class="b d" id="dg">Delete group</button>' : '<button class="b d" id="rg">Report group</button>'}<div id="chat"></div>`;
+   ${!member && !adm ? '<button class="b" id="jn">Join group</button>' : ''}
+   ${member && !owner ? '<button class="b s" id="lv">Leave group</button>' : ''}
+   ${owner || adm ? '<button class="b d" id="dg">Delete group</button>' : '<button class="b d" id="rg">Report group</button>'}
+   ${g.private ? '<p class="meta">Private group. Chats may be reviewed by moderators to enforce the rules.</p>' : ''}`;
   $('#bk').onclick = groupList;
-  if ($('#sm')) $('#sm').onclick = () => { document.querySelector('nav button[data-v=mapv]').click(); setTimeout(() => map.setView([g.lat, g.lon], 13), 60); };
-  if ($('#jn')) $('#jn').onclick = async () => { if (!canPost()) return;
-    try { await setDoc(doc(db, `groups/${g.id}/members`, user.uid), {name: (user.displayName || 'User').slice(0, 30), joinedAt: serverTimestamp()}); openGroup(g); }
-    catch { toast('Could not join.'); } };
-  if ($('#lv')) $('#lv').onclick = async () => { await deleteDoc(doc(db, `groups/${g.id}/members`, user.uid)); openGroup(g); };
+  $('#mem').onclick = async e => { const k = e.target.closest('[data-kick]'); if (!k) return;
+    try { await deleteDoc(doc(db, `groups/${g.id}/members`, k.dataset.kick)); openGroup(g); } catch { toast('Could not remove.'); } };
+  if ($('#oc')) $('#oc').onclick = () => { const u = `${base()}#chat=${g.id}`; if (!window.open(u, '_blank')) location.href = u; };
+  if ($('#iv')) $('#iv').onclick = () => { const link = `${base()}#join=${g.id}`;
+    sheet(`<h3>Invite link</h3><p class="meta">Anyone with this link can join. Share it only with people you trust.</p><input id="il" readonly value="${esc(link)}"><button class="b" id="cp">Copy</button><button class="b s" id="cx">Close</button>`);
+    $('#cx').onclick = closeSheet; $('#cp').onclick = async () => { $('#il').select(); try { await navigator.clipboard.writeText(link); $('#cp').textContent = 'Copied!'; } catch {} }; };
+  if ($('#sm')) $('#sm').onclick = () => { showView('mapv'); setTimeout(() => map.setView([g.lat, g.lon], 13), 60); };
+  if ($('#jn')) $('#jn').onclick = async () => { if (!canPost()) return; try { await joinGroup(g.id); openGroup(g); } catch { toast('Could not join.'); } };
+  if ($('#lv')) $('#lv').onclick = async () => { const b = writeBatch(db); b.delete(doc(db, `groups/${g.id}/members`, user.uid)); b.delete(doc(db, `users/${user.uid}/memberships`, g.id)); await b.commit(); groupList(); };
   if ($('#dg')) $('#dg').onclick = async () => { await deleteDoc(doc(db, 'groups', g.id)); groupList(); };
   if ($('#rg')) $('#rg').onclick = async () => { await report('group', g.id); groupList(); };
-  if (!member) { $('#chat').innerHTML = '<p class="meta">Join the group to read and write in its chat.</p>'; return; }
-  $('#chat').innerHTML = `<h3>Group chat</h3><div id="ml"><p class="meta">Loading…</p></div><div class="row2"><input id="mi" maxlength="1000" placeholder="Message…"><button class="b" id="ms" style="width:auto">Send</button></div>`;
-  unsubChat = onSnapshot(query(collection(db, `groups/${g.id}/messages`), orderBy('createdAt', 'desc'), limit(100)), snap => {
-    const msgs = snap.docs.map(d => ({id: d.id, ...d.data()})).reverse().filter(m => okItem(m.authorID, m.id));
-    const ml = $('#ml'); if (!ml) return;
-    ml.innerHTML = msgs.length ? msgs.map(m => { const me = user && user.uid === m.authorID;
-      return `<div class="msg ${me ? 'me' : ''}"><small>${esc(m.authorName)} · ${fmt(m.createdAt)}</small>${esc(m.text)}
-       <small>${me ? `<u data-a="del" data-id="${esc(m.id)}">delete</u>` : `<u data-a="rep" data-id="${esc(m.id)}">report</u>`}</small></div>`; }).join('') : '<p class="meta">No messages yet. Say hi!</p>';
-    ml.scrollTop = ml.scrollHeight;
-  }, () => { const ml = $('#ml'); if (ml) ml.innerHTML = '<p class="err">Chat unavailable.</p>'; });
+}
+
+async function showMembers(g) {
+  try {
+    const ms = await getDocs(collection(db, `groups/${g.id}/members`)), list = ms.docs.map(d => ({id: d.id, ...d.data()}));
+    sheet(`<h3>Members (${list.length})</h3>${list.map(m => `<div class="item">${esc(m.name)}${m.id === g.authorID ? ' 👑' : ''}</div>`).join('')}<button class="b s" id="cx">Close</button>`);
+    $('#cx').onclick = closeSheet;
+  } catch { toast('Could not load members.'); }
+}
+
+// chat opens in its own window: https://…/#chat=GROUPID
+async function chatWindow(gid) {
+  chatGid = gid; stopChat();
+  document.body.classList.add('chatmode');
+  const root = $('#chatwin');
+  if (!user) { root.innerHTML = '<div style="padding:20px"><p>Sign in to open this chat.</p><button class="b" id="si">Sign in</button></div>'; $('#si').onclick = () => authSheet(); return; }
+  root.innerHTML = '<p class="meta" style="padding:20px">Loading…</p>';
+  let g, member = false;
+  try {
+    const gs = await getDoc(doc(db, 'groups', gid)); if (!gs.exists()) throw 0;
+    g = {id: gs.id, ...gs.data()};
+    member = (await getDoc(doc(db, `groups/${gid}/members`, user.uid))).exists();
+  } catch { root.innerHTML = '<p style="padding:20px">Chat not found, or you are not a member of this group.</p>'; return; }
+  if (!member && !isAdmin()) { root.innerHTML = '<p style="padding:20px">You are not a member of this group.</p>'; return; }
+  root.innerHTML = `<div class="chead"><b>${g.private ? '🔒 ' : ''}${esc(g.name)}</b><span style="display:flex;gap:6px"><button class="b s" id="cm" style="width:auto;margin:0">👥 Members</button><button class="b s" id="cc" style="width:auto;margin:0">✕</button></span></div><div id="cbody"></div>`;
+  $('#cm').onclick = () => showMembers(g);
+  $('#cc').onclick = () => { window.close(); setTimeout(() => { stopChat(); history.replaceState(null, '', location.pathname); location.reload(); }, 200); };
+  mountChat($('#cbody'), g, !member);
+}
+
+async function loadAtt(gid, mid) {
+  const k = gid + '/' + mid; if (attCache.has(k)) return attCache.get(k);
+  const s = await getDoc(doc(db, `groups/${gid}/files`, mid)); const d = s.exists() ? s.data().data : null;
+  if (typeof d === 'string') attCache.set(k, d); return typeof d === 'string' ? d : null;
+}
+async function fillAtt(gid, n) {
+  try {
+    const d = await loadAtt(gid, n.dataset.mid); if (!d) throw 0;
+    if (n.dataset.kind === 'image' && /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(d)) { const im = new Image(); im.src = d; n.replaceChildren(im); }
+    else if (n.dataset.kind === 'audio' && /^data:audio\/[a-z0-9.+-]+(;codecs=[a-z0-9.,-]+)?;base64,[A-Za-z0-9+\/=]+$/i.test(d)) { const a = document.createElement('audio'); a.controls = true; a.src = d; a.style.width = '100%'; n.replaceChildren(a); }
+    else throw 0;
+  } catch { n.textContent = '⚠️ attachment unavailable'; }
+}
+
+function mountChat(box, g, readonly) {
+  box.innerHTML = '<div id="ml"></div>' + (readonly ? '<p class="meta" style="padding:8px">Admin view (read-only).</p>' :
+    `<div class="composer"><div id="rec" class="meta" style="display:none;margin-bottom:6px"></div>
+     <div class="row2"><button class="b s" id="at" style="width:auto" aria-label="Attach">📎</button><button class="b s" id="mic" style="width:auto" aria-label="Voice">🎤</button><input id="mi" maxlength="1000" placeholder="Message…"><button class="b" id="ms" style="width:auto">Send</button></div>
+     <input type="file" id="fi" hidden><p class="meta" style="margin:4px 0 0">Files up to 650 KB · voice up to 60 s · moderators may review chats</p></div>`);
+  const ml = $('#ml'); let rec = null, tick = null, first = true;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); fillAtt(g.id, e.target); } }), {root: ml});
+  const add = m => {
+    const me = user && user.uid === m.authorID, a = m.att, d = document.createElement('div');
+    d.className = 'msg' + (me ? ' me' : ''); d.id = 'm_' + m.id; if (a) d.dataset.att = '1';
+    let body = m.text ? esc(m.text) : '';
+    if (a) body += a.kind === 'file'
+      ? `<button class="b s dl" data-mid="${esc(m.id)}" data-name="${esc(a.name)}" style="margin:4px 0">📄 ${esc(a.name)} · ${Math.max(1, Math.round((a.size || 0) / 1024))} KB</button>`
+      : `<div class="att" data-mid="${esc(m.id)}" data-kind="${esc(a.kind)}">⏳ ${a.kind === 'audio' ? 'Voice message…' : 'Photo…'}</div>`;
+    d.innerHTML = `<small><b>${esc(m.authorName)}</b> · <span class="t">${fmt(m.createdAt)}</span></small>${body}<small>${me || isAdmin() ? `<u data-a="del" data-id="${esc(m.id)}">delete</u> ` : ''}${me ? '' : `<u data-a="rep" data-id="${esc(m.id)}">report</u>`}</small>`;
+    ml.appendChild(d); const at = d.querySelector('.att'); if (at) io.observe(at);
+  };
+  const unsub = onSnapshot(query(collection(db, `groups/${g.id}/messages`), orderBy('createdAt'), limitToLast(100)), snap => {
+    const near = first || ml.scrollHeight - ml.scrollTop - ml.clientHeight < 140;
+    snap.docChanges().forEach(ch => {
+      const m = {id: ch.doc.id, ...ch.doc.data()};
+      if (ch.type === 'added') { if (okItem(m.authorID, m.id) && !document.getElementById('m_' + m.id)) add(m); }
+      else if (ch.type === 'removed') document.getElementById('m_' + m.id)?.remove();
+      else { const t = document.querySelector(`#m_${m.id} .t`); if (t) t.textContent = fmt(m.createdAt); }
+    });
+    if (first && !snap.docs.length) ml.innerHTML = '<p class="meta">No messages yet. Say hi!</p>';
+    else if (snap.docs.length) ml.querySelector(':scope > p.meta')?.remove();
+    first = false; if (near) ml.scrollTop = ml.scrollHeight;
+  }, () => { ml.innerHTML = '<p class="err">Chat unavailable.</p>'; });
+  unsubChat = () => { unsub(); io.disconnect(); clearInterval(tick); if (rec) rec.cancel(); };
+
+  ml.onclick = async e => {
+    const dl = e.target.closest('button.dl'), u = e.target.closest('u');
+    if (dl) { const d = await loadAtt(g.id, dl.dataset.mid); if (!d) { toast('File unavailable.'); return; }
+      const blob = await (await fetch(d)).blob(), a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = (dl.dataset.name || 'file').replace(/[\\/:*?"<>|]/g, '_'); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); return; }
+    if (!u) return;
+    const id = u.dataset.id, mel = document.getElementById('m_' + id);
+    if (u.dataset.a === 'del') { const b = writeBatch(db); b.delete(doc(db, `groups/${g.id}/messages`, id)); if (mel && mel.dataset.att) b.delete(doc(db, `groups/${g.id}/files`, id));
+      try { await b.commit(); } catch { toast('Could not delete.'); } }
+    if (u.dataset.a === 'rep') { await report('message', id); mel?.remove(); }
+  };
+  if (readonly) return;
+
+  const who = () => ({authorID: user.uid, authorName: user.displayName || 'User'});
+  const sendAtt = async (kind, name, mime, url, size) => {
+    if (url.length > 900000) { toast('File is too large (max ~650 KB).'); return; }
+    const mref = doc(collection(db, `groups/${g.id}/messages`)), b = writeBatch(db);
+    b.set(mref, {text: '', att: {kind, name: String(name).slice(0, 80), mime: String(mime).slice(0, 60), size}, ...who(), createdAt: serverTimestamp()});
+    b.set(doc(db, `groups/${g.id}/files`, mref.id), {data: url, ...who(), createdAt: serverTimestamp()});
+    try { await b.commit(); } catch { toast('Could not send.'); }
+  };
   const send = async () => {
     const t = $('#mi').value.trim(); if (!t) return;
-    try { await addDoc(collection(db, `groups/${g.id}/messages`), {text: t.slice(0, 1000), authorID: user.uid, authorName: user.displayName || 'User', createdAt: serverTimestamp()}); $('#mi').value = ''; }
+    try { await addDoc(collection(db, `groups/${g.id}/messages`), {text: t.slice(0, 1000), ...who(), createdAt: serverTimestamp()}); $('#mi').value = ''; }
     catch { toast('Could not send message.'); }
   };
   $('#ms').onclick = send; $('#mi').onkeydown = e => { if (e.key === 'Enter') send(); };
-  $('#ml').onclick = async e => { const u = e.target.closest('u'); if (!u) return;
-    if (u.dataset.a === 'del') await deleteDoc(doc(db, `groups/${g.id}/messages`, u.dataset.id));
-    if (u.dataset.a === 'rep') await report('message', u.dataset.id); };
+  $('#at').onclick = () => $('#fi').click();
+  $('#fi').onchange = async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    try {
+      if (f.type.startsWith('image/')) { const url = await resize(f); await sendAtt('image', f.name, 'image/jpeg', url, Math.round(url.length * .75)); }
+      else if (f.size > 650 * 1024) toast('File is too large. Max 650 KB on the free plan.');
+      else await sendAtt('file', f.name, f.type || 'application/octet-stream', await toDataURL(f), f.size);
+    } catch { toast('Could not read the file.'); }
+  };
+  const startRec = async () => {
+    if (!window.MediaRecorder || !navigator.mediaDevices) { toast('Voice recording is not supported in this browser.'); return; }
+    let stream; try { stream = await navigator.mediaDevices.getUserMedia({audio: true}); } catch { toast('Microphone access was denied.'); return; }
+    const mt = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/webm', 'audio/ogg;codecs=opus'].find(t => MediaRecorder.isTypeSupported(t)) || '';
+    const mr = new MediaRecorder(stream, {...(mt ? {mimeType: mt} : {}), audioBitsPerSecond: 24000});
+    const chunks = []; let cancelled = false; const t0 = Date.now();
+    mr.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    mr.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop()); clearInterval(tick); rec = null;
+      const mic = $('#mic'), r = $('#rec'); if (mic) mic.textContent = '🎤'; if (r) r.style.display = 'none';
+      if (cancelled || !chunks.length) return;
+      const blob = new Blob(chunks, {type: mr.mimeType || mt || 'audio/webm'});
+      if (blob.size > 650 * 1024) { toast('Voice message is too long.'); return; }
+      await sendAtt('audio', 'voice', blob.type, await toDataURL(blob), blob.size);
+    };
+    mr.start();
+    rec = {stop: () => { if (mr.state !== 'inactive') mr.stop(); }, cancel: () => { cancelled = true; rec && rec.stop(); }};
+    $('#mic').textContent = '⏹'; const r = $('#rec'); r.style.display = 'block';
+    r.innerHTML = '🔴 <span id="rt">0:00</span> · <u id="rc" style="cursor:pointer">cancel</u>';
+    $('#rc').onclick = () => rec && rec.cancel();
+    tick = setInterval(() => { const sec = Math.floor((Date.now() - t0) / 1000), rt = $('#rt');
+      if (rt) rt.textContent = Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); if (sec >= 60) rec && rec.stop(); }, 500);
+  };
+  $('#mic').onclick = () => rec ? rec.stop() : startRec();
+}
+
+function route() {
+  const h = location.hash;
+  if (h.startsWith('#chat=')) chatWindow(h.slice(6).replace(/[^A-Za-z0-9]/g, ''));
+  else if (h.startsWith('#join=')) joinByCode(h);
+}
+
+// ---------- admin ----------
+async function loadReports() {
+  const box = $('#adm'); if (!box) return;
+  try {
+    const snap = await getDocs(query(collection(db, 'reports'), orderBy('createdAt', 'desc'), limit(50)));
+    box.innerHTML = snap.docs.length ? snap.docs.map(d => { const r = d.data();
+      return `<div class="item"><b>${esc(r.kind)}</b> <span class="meta">${esc(r.targetID)} · ${fmt(r.createdAt)}</span><br>${r.kind === 'group' ? `<u data-open="${esc(r.targetID)}" style="cursor:pointer;color:var(--acc)">open</u> · ` : ''}<u data-dis="${esc(d.id)}" style="cursor:pointer;color:var(--red)">dismiss</u></div>`; }).join('') : '<p class="meta">No reports 🎉</p>';
+    box.onclick = async e => { const u = e.target.closest('u'); if (!u) return;
+      if (u.dataset.dis) { await deleteDoc(doc(db, 'reports', u.dataset.dis)); loadReports(); }
+      if (u.dataset.open) { try { const gs = await getDoc(doc(db, 'groups', u.dataset.open)); if (!gs.exists()) throw 0; showView('groups'); openGroup({id: gs.id, ...gs.data()}); } catch { toast('Group no longer exists.'); } } };
+  } catch { box.innerHTML = '<p class="err">Could not load reports (publish the latest rules).</p>'; }
 }
 
 // ---------- terms ----------
 function terms(lock = true) {
   sheet(`<h3>Appalachia Anomalies</h3><p>Community reports of cryptids and strange events. Reports are user-generated and unverified.</p>
    <p>No hateful, harassing or objectionable content, and nothing private (names, faces, home addresses). Never trespass on private land. You can report or block any post; violating content is removed and abusive users are banned.</p>
+   <p>Group chats, including private ones, may be reviewed by moderators to enforce these rules.</p>
    <button class="b" id="ok">${lock ? 'I Agree' : 'Close'}</button>`, lock);
   $('#ok').onclick = () => { localStorage.setItem('terms', '1'); closeSheet(); };
 }
