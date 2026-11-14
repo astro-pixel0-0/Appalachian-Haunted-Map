@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Appalachia Anomalies</title>
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#16221c"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+<style>
+:root{--bg:#16221c;--card:#22332a;--ink:#eef5f0;--mut:#9db3a6;--acc:#7fe3a8;--red:#ff7b72}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font:16px -apple-system,system-ui,sans-serif}
+#app{display:flex;flex-direction:column;height:100%}
+main{flex:1;position:relative;min-height:0}
+.view{position:absolute;inset:0;overflow:auto;padding:12px;display:none;padding-top:calc(12px + env(safe-area-inset-top))}
+.view.on{display:block}#mapv{padding:0;overflow:hidden}#map{height:100%;background:#222}
+nav{display:flex;background:#0f1813;padding-bottom:env(safe-area-inset-bottom);border-top:1px solid #2c4034}
+nav button{flex:1;background:none;border:0;color:var(--mut);padding:10px 0;font-size:13px}nav button.on{color:var(--acc)}nav b{display:block;font-size:20px}
+.chips{position:absolute;z-index:500;top:calc(8px + env(safe-area-inset-top));left:8px;right:8px;display:flex;gap:6px;overflow-x:auto}
+.chip{white-space:nowrap;background:rgba(15,24,19,.85);color:var(--ink);border:1px solid #365042;border-radius:99px;padding:6px 12px;font-size:14px}.chip.on{background:var(--acc);color:#0f1813}
+.fab{position:absolute;z-index:500;right:14px;bottom:18px;width:56px;height:56px;border-radius:50%;border:0;background:var(--acc);color:#0f1813;font-size:30px;box-shadow:0 3px 10px #0008}
+#hint{position:absolute;z-index:500;left:50%;transform:translateX(-50%);bottom:84px;background:#0f1813e6;border-radius:99px;padding:8px 14px;font-size:14px;display:none}
+.leaflet-top.leaflet-right{margin-top:44px}
+.pin{font-size:22px;text-align:center;line-height:30px;width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 5px #0009}
+#sheet{position:fixed;inset:0;background:#0008;display:none;z-index:2000;align-items:flex-end}#sheet.open{display:flex}
+#sheetBody{background:var(--card);width:100%;max-height:88%;overflow:auto;border-radius:18px 18px 0 0;padding:18px;padding-bottom:calc(18px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto}
+input,select,textarea,button.b{width:100%;font:inherit;color:var(--ink);background:#16221c;border:1px solid #3b5446;border-radius:10px;padding:11px;margin:5px 0}
+textarea{min-height:100px}button.b{background:var(--acc);color:#0f1813;font-weight:600;border:0}button.b.s{background:#2d4538;color:var(--ink)}button.b.d{background:none;color:var(--red);border:1px solid var(--red)}
+.meta{color:var(--mut);font-size:13px;margin:2px 0}.photo{width:100%;border-radius:10px;margin:8px 0}h2,h3{margin:6px 0}
+.item{background:var(--card);border-radius:12px;padding:12px;margin:8px 0}.err{color:var(--red);font-size:14px}.ok{color:var(--acc);font-size:14px}
+.tabs{display:flex;gap:6px}.tabs button{flex:1}a{color:var(--acc)}
+</style></head>
+<body><div id="app">
+<main>
+ <section class="view on" id="mapv">
+  <div class="chips" id="chips"></div><div id="map"></div><div id="hint"></div>
+  <button class="fab" id="fab" aria-label="Report">＋</button>
+ </section>
+ <section class="view" id="forum"></section>
+ <section class="view" id="profile"></section>
+</main>
+<nav><button class="on" data-v="mapv"><b>🗺️</b>Map</button><button data-v="forum"><b>💬</b>Forums</button><button data-v="profile"><b>👤</b>Profile</button></nav>
+</div>
+<div id="sheet"><div id="sheetBody"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script type="module">
+import { firebaseConfig } from './config.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, updateProfile, deleteUser } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, query, where, orderBy, limit, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+
+const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = t => t?.toDate ? t.toDate().toLocaleString() : '';
+const CATS = {cryptid:['🐾','Cryptid','#8d6e63'],ufo:['🛸','UFO / Lights','#26a69a'],paranormal:['👁️','Paranormal','#ab47bc'],haunted:['🌙','Haunted place','#5c6bc0'],strange:['❓','Strange event','#ffa726'],other:['📍','Other','#90a4ae']};
+const ls = (k, v) => v === undefined ? new Set(JSON.parse(localStorage.getItem(k) || '[]')) : localStorage.setItem(k, JSON.stringify([...v]));
+let blocked = ls('blocked'), hidden = ls('hidden'), user = null, data = [], filter = null, picking = false, timer;
+const okItem = (a, id) => !blocked.has(a) && !hidden.has(id);
+
+// ---------- sheet ----------
+const sheet = (html, lock) => { $('#sheetBody').innerHTML = html; $('#sheet').classList.add('open'); $('#sheet').dataset.lock = lock ? '1' : ''; };
+const closeSheet = () => $('#sheet').classList.remove('open');
+$('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet' && !e.currentTarget.dataset.lock) closeSheet(); });
+const toast = m => sheet(`<p>${esc(m)}</p><button class="b" id="x">OK</button>`) || ($('#x').onclick = closeSheet);
+
+// ---------- nav ----------
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === b.dataset.v));
+  if (b.dataset.v === 'mapv') map.invalidateSize(); if (b.dataset.v === 'forum') forumList(); if (b.dataset.v === 'profile') profile();
+});
+
+// ---------- map ----------
+const map = L.map('map', {minZoom: 5, maxBounds: [[31, -88], [46, -71]], maxBoundsViscosity: .8}).setView([37.5, -80.5], 7);
+const usgs = (n, z) => L.tileLayer(`https://basemap.nationalmap.gov/arcgis/rest/services/${n}/MapServer/tile/{z}/{y}/{x}`, {maxZoom: z, attribution: 'USGS The National Map'});
+const topo = usgs('USGSTopo', 16).addTo(map);
+L.control.layers({'Topo & trails': topo, 'Satellite': usgs('USGSImageryTopo', 16), 'Streets': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '© OpenStreetMap contributors'})}).addTo(map);
+L.control.locate = null;
+const cluster = L.markerClusterGroup({maxClusterRadius: 45}).addTo(map);
+
+$('#chips').innerHTML = `<button class="chip on" data-c="">All</button>` + Object.entries(CATS).map(([k, v]) => `<button class="chip" data-c="${k}">${v[0]} ${v[1]}</button>`).join('');
+$('#chips').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; filter = c.dataset.c || null;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c)); render(); };
+
+function render() {
+  cluster.clearLayers();
+  data.filter(s => !filter || s.category === filter).forEach(s => {
+    const c = CATS[s.category] || CATS.other;
+    L.marker([s.lat, s.lon], {icon: L.divIcon({className: '', html: `<div class="pin" style="background:${c[2]}">${c[0]}</div>`, iconSize: [30, 30]})})
+      .on('click', () => showSighting(s)).addTo(cluster);
+  });
+}
+async function loadSightings() {
+  const b = map.getBounds();
+  try {
+    const snap = await getDocs(query(collection(db, 'sightings'), where('lat', '>', b.getSouth()), where('lat', '<', b.getNorth()), limit(300)));
+    data = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(x => x.lon > b.getWest() && x.lon < b.getEast() && okItem(x.authorID, x.id));
+    render();
+  } catch (e) { console.error(e); }
+}
+map.on('moveend', () => { clearTimeout(timer); timer = setTimeout(loadSightings, 500); });
+loadSightings();
+
+const hint = t => { $('#hint').textContent = t; $('#hint').style.display = t ? 'block' : 'none'; };
+function canPost() {
+  if (!user) { authSheet(); return false; }
+  if (!user.emailVerified) { verifySheet(); return false; }
+  return true;
+}
+$('#fab').onclick = () => { if (!canPost()) return; picking = !picking; hint(picking ? 'Tap the map to choose the location' : ''); };
+map.on('click', e => { if (picking) { picking = false; hint(''); addSheet(e.latlng); } });
+map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
+
+// ---------- sightings ----------
+function resize(file) {
+  return new Promise((res, rej) => { const img = new Image();
+    img.onload = () => { const s = Math.min(1, 900 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = img.width * s; c.height = img.height * s; c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src); res(c.toDataURL('image/jpeg', .6)); };
+    img.onerror = rej; img.src = URL.createObjectURL(file); });
+}
+function addSheet(ll) {
+  sheet(`<h3>New report</h3>
+   <select id="cat">${Object.entries(CATS).map(([k, v]) => `<option value="${k}">${v[0]} ${v[1]}</option>`).join('')}</select>
+   <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
+   <input id="f" type="file" accept="image/*"><div id="pv"></div>
+   <p class="meta">${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</p><p class="err" id="e"></p>
+   <button class="b" id="go">Post</button><button class="b s" id="cx">Cancel</button>`);
+  let photo = null;
+  $('#f').onchange = async e => { const f = e.target.files[0]; if (!f) return; photo = await resize(f); $('#pv').innerHTML = `<img class="photo" src="${photo}">`; };
+  $('#cx').onclick = closeSheet;
+  $('#go').onclick = async () => {
+    const title = $('#t').value.trim(); if (title.length < 3) { $('#e').textContent = 'Title is too short.'; return; }
+    $('#go').disabled = true;
+    try {
+      const ref = doc(collection(db, 'sightings'));
+      await setDoc(ref, {title, details: $('#d').value.trim().slice(0, 1000), category: $('#cat').value, lat: ll.lat, lon: ll.lng,
+        authorID: user.uid, authorName: user.displayName || 'User', hasPhoto: !!photo, createdAt: serverTimestamp()});
+      if (photo) await setDoc(doc(db, 'photos', ref.id), {data: photo, authorID: user.uid});
+      closeSheet(); loadSightings();
+    } catch (e) { $('#e').textContent = 'Could not save. Try again.'; $('#go').disabled = false; }
+  };
+}
+async function report(kind, id) {
+  try { await addDoc(collection(db, 'reports'), {kind, targetID: id, reporter: user?.uid || 'anon', createdAt: serverTimestamp()}); } catch {}
+  hidden.add(id); ls('hidden', hidden); toast('Thanks — reported and hidden. Reports are reviewed within 24 hours.');
+}
+const block = a => { blocked.add(a); ls('blocked', blocked); };
+async function showSighting(s) {
+  const c = CATS[s.category] || CATS.other, mine = user && user.uid === s.authorID;
+  sheet(`<h3>${esc(s.title)}</h3><p class="meta">${c[0]} ${c[1]} · ${esc(s.authorName)} · ${fmt(s.createdAt)}</p><div id="ph"></div>
+   <p style="white-space:pre-wrap">${esc(s.details)}</p>
+   ${mine ? '<button class="b d" id="del">Delete my report</button>' : '<button class="b d" id="rep">Report this post</button><button class="b d" id="blk">Block this user</button>'}
+   <button class="b s" id="cl">Close</button>`);
+  $('#cl').onclick = closeSheet;
+  if (mine) $('#del').onclick = async () => { await deleteDoc(doc(db, 'sightings', s.id)); if (s.hasPhoto) deleteDoc(doc(db, 'photos', s.id)).catch(() => {}); closeSheet(); loadSightings(); };
+  else { $('#rep').onclick = () => { report('sighting', s.id); loadSightings(); }; $('#blk').onclick = () => { block(s.authorID); closeSheet(); loadSightings(); }; }
+  if (s.hasPhoto) { const p = await getDoc(doc(db, 'photos', s.id)); const u = p.exists() && p.data().data;
+    if (u && u.startsWith('data:image/jpeg;base64,')) $('#ph').innerHTML = `<img class="photo" src="${u}">`; }
+}
+
+// ---------- auth ----------
+function authSheet(msg = '') {
+  let signup = true;
+  const draw = () => { sheet(`<div class="tabs"><button class="b ${signup ? '' : 's'}" id="t1">Create account</button><button class="b ${signup ? 's' : ''}" id="t2">Sign in</button></div>
+   ${signup ? '<input id="n" maxlength="30" placeholder="Display name">' : ''}
+   <input id="em" type="email" autocomplete="email" placeholder="Email"><input id="pw" type="password" autocomplete="${signup ? 'new' : 'current'}-password" placeholder="Password (min 6)">
+   <p class="err" id="e"></p><p class="ok">${esc(msg)}</p><button class="b" id="go">${signup ? 'Create account' : 'Sign in'}</button>
+   ${signup ? '' : '<button class="b s" id="fp">Forgot password?</button>'}<button class="b s" id="cx">Close</button>`);
+   $('#t1').onclick = () => { signup = true; draw(); }; $('#t2').onclick = () => { signup = false; draw(); }; $('#cx').onclick = closeSheet;
+   if (!signup) $('#fp').onclick = async () => { try { await sendPasswordResetEmail(auth, $('#em').value.trim()); $('#e').textContent = ''; msg = 'Password reset email sent.'; draw(); } catch (e) { $('#e').textContent = e.code; } };
+   $('#go').onclick = async () => {
+     const em = $('#em').value.trim(), pw = $('#pw').value;
+     try {
+       if (signup) { const r = await createUserWithEmailAndPassword(auth, em, pw); await updateProfile(r.user, {displayName: ($('#n').value.trim() || 'User').slice(0, 30)});
+         await sendEmailVerification(r.user); user = auth.currentUser; verifySheet(true); }
+       else { await signInWithEmailAndPassword(auth, em, pw); closeSheet(); }
+     } catch (e) { $('#e').textContent = ({'auth/email-already-in-use': 'Email already registered.', 'auth/weak-password': 'Password too short.', 'auth/invalid-credential': 'Wrong email or password.', 'auth/invalid-email': 'Invalid email.'})[e.code] || e.code; }
+   }; };
+  draw();
+}
+function verifySheet(sent) {
+  sheet(`<h3>Verify your email</h3><p>${sent ? 'We sent a verification link to' : 'Please verify'} <b>${esc(user.email)}</b>. Open the link, then tap the button below.</p>
+   <p class="ok" id="m"></p><button class="b" id="rf">I’ve verified</button><button class="b s" id="rs">Resend email</button><button class="b s" id="cx">Close</button>`);
+  $('#cx').onclick = closeSheet;
+  $('#rs').onclick = async () => { await sendEmailVerification(user); $('#m').textContent = 'Sent again.'; };
+  $('#rf').onclick = async () => { await user.reload(); await user.getIdToken(true); user = auth.currentUser;
+    if (user.emailVerified) { closeSheet(); profile(); } else $('#m').textContent = 'Not verified yet.'; };
+}
+onAuthStateChanged(auth, u => { user = u; profile(); });
+function profile() {
+  const el = $('#profile');
+  if (!user) { el.innerHTML = `<h2>Profile</h2><button class="b" id="si">Sign in or create account</button><p class="meta">Browsing is open to everyone. A verified email is required to post.</p>${links()}`; $('#si').onclick = () => authSheet(); return; }
+  el.innerHTML = `<h2>${esc(user.displayName || 'User')}</h2><p class="meta">${esc(user.email)}</p><p>${user.emailVerified ? '✅ Email verified' : '⚠️ Email not verified'}</p>
+   ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<button class="b s" id="so">Sign out</button><button class="b d" id="da">Delete account</button>${links()}`;
+  if (!user.emailVerified) $('#vf').onclick = () => verifySheet();
+  $('#so').onclick = () => signOut(auth);
+  $('#da').onclick = () => { sheet(`<h3>Delete account?</h3><p>This removes your account and your map reports.</p><button class="b d" id="y">Delete</button><button class="b s" id="n">Cancel</button>`);
+    $('#n').onclick = closeSheet;
+    $('#y').onclick = async () => { try {
+      const snap = await getDocs(query(collection(db, 'sightings'), where('authorID', '==', user.uid)));
+      for (const d of snap.docs) { await deleteDoc(d.ref); await deleteDoc(doc(db, 'photos', d.id)).catch(() => {}); }
+      await deleteUser(user); closeSheet();
+    } catch (e) { toast('For security, sign out and sign in again, then retry.'); } }; };
+}
+const links = () => `<p class="meta" style="margin-top:24px">Map: USGS The National Map, © OpenStreetMap contributors. Community reports are unverified. <a href="#" id="tm" onclick="return false">Rules</a></p>`;
+document.addEventListener('click', e => { if (e.target.id === 'tm') terms(false); });
+
+// ---------- forums ----------
+let threads = [];
+async function forumList() {
+  const el = $('#forum');
+  el.innerHTML = `<h2>Forums</h2><button class="b" id="nt">＋ New thread</button><div id="tl"><p class="meta">Loading…</p></div>`;
+  $('#nt').onclick = () => { if (!canPost()) return;
+    sheet(`<h3>New thread</h3><input id="t" maxlength="100" placeholder="Topic"><textarea id="b" maxlength="2000" placeholder="Message"></textarea><p class="err" id="e"></p><button class="b" id="go">Post</button><button class="b s" id="cx">Cancel</button>`);
+    $('#cx').onclick = closeSheet;
+    $('#go').onclick = async () => { const t = $('#t').value.trim(); if (t.length < 3) { $('#e').textContent = 'Topic is too short.'; return; }
+      try { await addDoc(collection(db, 'threads'), {title: t, body: $('#b').value.trim().slice(0, 2000), authorID: user.uid, authorName: user.displayName || 'User', createdAt: serverTimestamp()}); closeSheet(); forumList(); }
+      catch { $('#e').textContent = 'Could not post.'; } }; };
+  try {
+    const snap = await getDocs(query(collection(db, 'threads'), orderBy('createdAt', 'desc'), limit(100)));
+    threads = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(t => okItem(t.authorID, t.id));
+    $('#tl').innerHTML = threads.length ? threads.map(t => `<div class="item" data-id="${esc(t.id)}"><b>${esc(t.title)}</b><div class="meta">${esc(t.authorName)} · ${fmt(t.createdAt)}</div></div>`).join('') : '<p class="meta">No threads yet. Start the first one!</p>';
+    $('#tl').onclick = e => { const i = e.target.closest('.item'); if (i) openThread(threads.find(t => t.id === i.dataset.id)); };
+  } catch { $('#tl').innerHTML = '<p class="err">Could not load forums.</p>'; }
+}
+async function openThread(t) {
+  const el = $('#forum'), mine = user && user.uid === t.authorID;
+  el.innerHTML = `<button class="b s" id="bk">← Back</button><h2>${esc(t.title)}</h2><p style="white-space:pre-wrap">${esc(t.body)}</p><p class="meta">${esc(t.authorName)} · ${fmt(t.createdAt)}</p>
+   ${mine ? '<button class="b d" id="dt">Delete thread</button>' : '<button class="b d" id="rt">Report thread</button>'}
+   <h3>Replies</h3><div id="pl"><p class="meta">Loading…</p></div><textarea id="rp" maxlength="2000" placeholder="Reply…" style="min-height:70px"></textarea><button class="b" id="sd">Send</button>`;
+  $('#bk').onclick = forumList;
+  if (mine) $('#dt').onclick = async () => { await deleteDoc(doc(db, 'threads', t.id)); forumList(); }; else $('#rt').onclick = async () => { await report('thread', t.id); forumList(); };
+  const load = async () => {
+    const snap = await getDocs(query(collection(db, `threads/${t.id}/posts`), orderBy('createdAt'), limit(500)));
+    const posts = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(p => okItem(p.authorID, p.id));
+    $('#pl').innerHTML = posts.length ? posts.map(p => `<div class="item"><div style="white-space:pre-wrap">${esc(p.text)}</div><div class="meta">${esc(p.authorName)} · ${fmt(p.createdAt)}</div>
+      ${user && user.uid === p.authorID ? `<button class="b d" data-a="del" data-id="${esc(p.id)}">Delete</button>` : `<button class="b d" data-a="rep" data-id="${esc(p.id)}">Report</button><button class="b d" data-a="blk" data-u="${esc(p.authorID)}">Block user</button>`}</div>`).join('') : '<p class="meta">No replies yet.</p>';
+    $('#pl').onclick = async e => { const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.a === 'del') { await deleteDoc(doc(db, `threads/${t.id}/posts`, b.dataset.id)); load(); }
+      if (b.dataset.a === 'rep') { await report('post', b.dataset.id); load(); }
+      if (b.dataset.a === 'blk') { block(b.dataset.u); load(); } };
+  };
+  load().catch(() => $('#pl').innerHTML = '<p class="err">Could not load replies.</p>');
+  $('#sd').onclick = async () => { if (!canPost()) return; const x = $('#rp').value.trim(); if (!x) return;
+    try { await addDoc(collection(db, `threads/${t.id}/posts`), {text: x.slice(0, 2000), authorID: user.uid, authorName: user.displayName || 'User', createdAt: serverTimestamp()}); $('#rp').value = ''; load(); }
+    catch { toast('Could not post reply.'); } };
+}
+
+// ---------- terms ----------
+function terms(lock = true) {
+  sheet(`<h3>Appalachia Anomalies</h3><p>Community reports of cryptids and strange events. Reports are user-generated and unverified.</p>
+   <p>No hateful, harassing or objectionable content, and nothing private (names, faces, home addresses). Never trespass on private land. You can report or block any post; violating content is removed and abusive users are banned.</p>
+   <button class="b" id="ok">${lock ? 'I Agree' : 'Close'}</button>`, lock);
+  $('#ok').onclick = () => { localStorage.setItem('terms', '1'); closeSheet(); };
+}
+if (!localStorage.getItem('terms')) terms();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script></body></html>
