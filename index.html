@@ -779,12 +779,16 @@ document.querySelectorAll('#rail button[data-v]').forEach(b => b.onclick = () =>
 });
 
 // ---------- map ----------
-const MAP_AREA = L.latLngBounds([[30.5, -91], [44, -72.5]]);
-// Appalachian region outline (approximately the Appalachian Regional Commission area, NY to MS), [lat, lon]
-const APP_POLY = [[42.5, -79.8], [42.7, -77.0], [42.6, -75.4], [42.1, -74.6], [41.6, -75.1], [40.9, -75.6], [40.5, -76.4], [40.0, -77.4], [39.6, -77.9], [39.2, -78.4],
-  [38.4, -79.0], [37.6, -79.6], [36.9, -80.0], [36.5, -80.4], [35.9, -80.8], [35.3, -81.5], [34.8, -82.0], [34.2, -83.0], [33.6, -84.0], [33.0, -85.3], [32.4, -86.5],
-  [32.6, -87.6], [32.9, -88.4], [33.2, -89.4], [34.6, -89.4], [35.0, -88.2], [35.6, -87.6], [36.6, -87.0], [37.0, -86.3], [38.2, -85.3], [38.9, -83.7], [39.8, -82.8],
-  [40.5, -82.0], [41.2, -80.9], [42.2, -80.5]];
+const MAP_AREA = L.latLngBounds([[29.6, -92.5], [45.5, -71]]);
+// outline of the 13 states the Appalachians run through (NY, PA, OH, MD, WV, VA, KY, TN, NC, SC, GA, AL, MS), [lat, lon]; NJ, DE and DC are left out
+const APP_POLY = [[41.70, -84.81], [41.73, -83.45], [41.45, -82.6], [41.50, -81.7], [41.90, -80.52], [42.27, -79.76], [42.50, -79.3], [42.90, -78.9], [43.27, -79.06],
+  [43.40, -78.0], [43.30, -77.0], [43.60, -76.2], [44.00, -76.3], [44.30, -75.9], [45.00, -74.75], [45.01, -73.34], [43.60, -73.3], [42.75, -73.28], [42.05, -73.5],
+  [41.10, -73.7], [41.25, -72.3], [41.10, -71.8], [40.60, -73.0], [40.50, -74.25], [41.00, -73.9], [41.36, -74.69], [40.95, -75.12], [40.60, -75.2], [40.20, -74.75],
+  [39.85, -75.2], [39.80, -75.48], [39.84, -75.65], [39.72, -75.79], [38.46, -75.7], [38.45, -75.05], [38.00, -75.25], [37.40, -75.6], [36.93, -76.0], [36.55, -75.87],
+  [35.90, -75.6], [35.22, -75.53], [34.70, -76.5], [34.20, -77.8], [33.85, -78.55], [33.20, -79.2], [32.75, -79.9], [32.10, -80.85], [31.50, -81.25], [30.72, -81.45],
+  [30.70, -82.0], [30.62, -83.0], [30.70, -84.86], [31.00, -85.0], [31.00, -87.6], [30.28, -87.52], [30.24, -88.0], [30.39, -88.4], [30.30, -89.0], [30.18, -89.6],
+  [31.00, -89.73], [31.00, -91.6], [31.60, -91.5], [32.30, -90.9], [33.00, -91.15], [34.00, -90.6], [35.00, -90.1], [35.60, -89.9], [36.50, -89.5], [37.00, -89.15],
+  [37.10, -88.5], [37.80, -88.0], [37.95, -87.5], [37.90, -86.6], [38.25, -85.8], [38.75, -85.0], [39.10, -84.82]];
 const inAppalachia = (lat, lon) => { let inside = false; for (let i = 0, j = APP_POLY.length - 1; i < APP_POLY.length; j = i++) { const [yi, xi] = APP_POLY[i], [yj, xj] = APP_POLY[j];
   if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) inside = !inside; } return inside; };
 const canPlaceAt = (lat, lon) => worldOpen || inAppalachia(lat, lon);
@@ -922,7 +926,7 @@ map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
     if (c) {
       last = {s: new Map(), p: [], c};
       res.innerHTML = inArea(c) ? `<div class="qh">Coordinates</div><div class="qi" data-t="c">📌 ${c.lat.toFixed(5)}, ${c.lon.toFixed(5)}</div>`
-        : '<div class="qi meta">These coordinates are outside the Appalachian region (the dashed outline on the map).</div>';
+        : '<div class="qi meta">These coordinates are outside the Appalachian states (the dashed outline on the map).</div>';
       return;
     }
     res.innerHTML = '<div class="qi meta">Searching…</div>';
@@ -937,7 +941,7 @@ map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
     });
     let places = [];
     tasks.push((async () => {
-      try { const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=6&accept-language=en&' + (worldOpen ? '' : 'countrycodes=us&viewbox=-88,46,-71,31&bounded=1&') + 'q=' + encodeURIComponent(text)); places = await r.json(); } catch {}
+      try { const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=6&accept-language=en&' + (worldOpen ? '' : 'countrycodes=us&viewbox=-92.5,45.5,-71,29.6&bounded=1&') + 'q=' + encodeURIComponent(text)); places = await r.json(); } catch {}
     })());
     await Promise.all(tasks); if (my !== token) return;
     last = {s: found, p: places, c: null};
@@ -971,7 +975,7 @@ function resize(file) {
     img.onerror = rej; img.src = URL.createObjectURL(file); });
 }
 function addSheet(ll) {
-  if (!canPlaceAt(ll.lat, ll.lng)) { toast('Reports can only be placed inside the Appalachian region — the dashed outline on the map.'); return; }
+  if (!canPlaceAt(ll.lat, ll.lng)) { toast('Reports can only be placed in the Appalachian states (inside the dashed outline on the map).'); return; }
   sheet(`<h3>New report</h3>
    <select id="cat">${catOptions()}</select><p class="meta" id="warn" style="display:none">⚠️ Abandoned places can be dangerous and are often private property. Never trespass, and don’t post addresses of occupied homes.</p>
    <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
@@ -984,7 +988,7 @@ function addSheet(ll) {
   $('#cx').onclick = closeSheet;
   $('#go').onclick = async () => {
     const title = $('#t').value.trim(); if (title.length < 3) { $('#e').textContent = 'Title is too short.'; return; }
-    if (!canPlaceAt(ll.lat, ll.lng)) { $('#e').textContent = 'This place is outside the Appalachian region.'; return; }
+    if (!canPlaceAt(ll.lat, ll.lng)) { $('#e').textContent = 'This place is outside the Appalachian states.'; return; }
     $('#go').disabled = true;
     try {
       const ref = doc(collection(db, 'sightings'));
@@ -1665,7 +1669,7 @@ function goLiveSheet() {
     if (place === 'me') { try { const p = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: true, timeout: 15000})); ll = [p.coords.latitude, p.coords.longitude]; } catch { toast('Could not get your location — using the center of the map instead.'); } }
     let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: true}); }
     catch { toast('Camera or microphone access was denied.'); return; }
-    if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started inside the Appalachian region (the dashed outline on the map).'); return; }
+    if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the dashed outline on the map).'); return; }
     closeSheet(); liveHost(title, ll, stream, facing);
   };
 }
