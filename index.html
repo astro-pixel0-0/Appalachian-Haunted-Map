@@ -106,6 +106,15 @@ button.b{width:100%;padding:11px;margin:5px 0;background:var(--sag);color:var(--
 button.b.s{background:var(--gra);color:var(--ink);font-weight:500}button.b.d{background:var(--gra);color:var(--red);font-weight:500}
 button.b:active,#rail button:active,.chip:active{box-shadow:inset 1px 1px 0 var(--lo),inset -1px -1px 0 var(--hi)}
 textarea{min-height:100px}
+/* themed scrollbars (no white strip) */
+html,body,*{scrollbar-color:#3a4552 #10141A;scrollbar-width:thin}
+::-webkit-scrollbar{width:12px;height:12px;background:#10141A}
+::-webkit-scrollbar-thumb{background:#3a4552;border:2px solid #10141A;box-shadow:inset 1px 1px 0 #8798AA}
+::-webkit-scrollbar-thumb:hover{background:#4a5664}::-webkit-scrollbar-corner{background:#10141A}
+/* themed file picker */
+input[type=file]{padding:6px;font-size:14px;color:var(--mut)}
+input[type=file]::file-selector-button{font:inherit;font-size:13px;font-weight:600;margin-right:10px;padding:7px 12px;background:var(--gra);color:var(--ink);border:1px solid var(--lo);box-shadow:inset 1px 1px 0 var(--hi),inset -1px -1px 0 var(--lo);cursor:var(--cur-hot)}
+input[type=file]::file-selector-button:hover{background:var(--gra2)}
 .meta{color:var(--mut);font-size:13px;margin:2px 0}.photo{width:100%;margin:8px 0;display:block;image-rendering:auto}
 h2,h3{margin:6px 0}h2{font-family:var(--px);font-weight:500;letter-spacing:1px;font-size:20px}
 .item{background:var(--gra);padding:12px;margin:8px 0;cursor:default}.item[data-id]{cursor:pointer}.item[data-id]:hover{background:var(--gra2)}
@@ -977,7 +986,7 @@ function editProfile(p0) {
     $('#bnp').innerHTML = banner ? `<img alt="" src="${banner}">` : pb ? `<img alt="" src="${pb}" style="image-rendering:pixelated">` : sprite('ghost', 48);
   };
   paint();
-  $('#frs').onchange = paint; $('#bgs').onchange = paint; $('#pbgs').onchange = () => pageBg($('#sheetBody'), document.querySelector('#pbgs input:checked')?.value);
+  $('#frs').onchange = paint; $('#bgs').onchange = paint;
   $('#pa').onchange = async e => { const f = e.target.files[0]; if (f) { try { avatar = await cropJpeg(f, 192, 192, 0.85); paint(); } catch { $('#e').textContent = 'Could not read that image.'; } } };
   $('#pbn').onchange = async e => { const f = e.target.files[0]; if (f) { try { banner = await cropJpeg(f, 960, 320, 0.75); paint(); } catch { $('#e').textContent = 'Could not read that image.'; } } };
   $('#par').onclick = () => { avatar = ''; paint(); }; $('#pbr').onclick = () => { banner = ''; paint(); };
