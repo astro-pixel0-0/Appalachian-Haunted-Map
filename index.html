@@ -52,7 +52,7 @@ main{flex:1;position:relative;min-width:0;min-height:0}
 .view:not(#mapv)>*{max-width:780px;margin-left:auto;margin-right:auto}
 #mapv{padding:0;overflow:hidden;background:transparent}
 .mapwin{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--gra)}
-.seg{margin-left:auto;display:flex}.seg button{padding:3px 12px;background:var(--gra);color:var(--mut);font-size:12px;font-family:'IBM Plex Sans',sans-serif;letter-spacing:0}
+.seg{margin-left:auto;display:flex}.seg button{padding:3px 10px;white-space:nowrap;background:var(--gra);color:var(--mut);font-size:12px;font-family:'IBM Plex Sans',sans-serif;letter-spacing:0}
 .seg button.on{background:var(--mid);color:var(--ink);box-shadow:inset 1px 1px 0 var(--lo),inset -1px -1px 0 #3a4552;border-color:#3a4552}
 .chips{display:flex;gap:6px;overflow-x:auto;padding:8px 8px;border-bottom:1px solid var(--mid);scrollbar-width:thin}
 .chip{display:flex;align-items:center;gap:6px;white-space:nowrap;background:var(--gra);color:var(--fro);padding:4px 10px;font-size:12px}
@@ -63,7 +63,8 @@ main{flex:1;position:relative;min-width:0;min-height:0}
 .status{display:flex;gap:16px;align-items:center;margin:0 6px 6px;padding:3px 10px;background:#1a2027;font-size:12px;color:var(--mut)}.status b{color:var(--sag);font-weight:400}
 #hint{position:absolute;z-index:800;left:50%;transform:translateX(-50%);bottom:16px;background:var(--blo);color:#fff;padding:8px 14px;font-size:14px;display:none;border:1px solid var(--lo)}
 /* pixel tiles */
-.tl-px img{image-rendering:pixelated}
+.tl-px img,.tl-pxc img{image-rendering:pixelated}
+.tl-pxc{filter:url(#posterize) saturate(1.15) contrast(1.05)}
 .tl-px{filter:invert(1) grayscale(1) sepia(.45) hue-rotate(55deg) saturate(.7) brightness(.82) contrast(1.15)}
 /* markers */
 .mk{width:40px;height:40px;display:flex;align-items:center;justify-content:center}
@@ -152,7 +153,7 @@ input[type=checkbox]{width:auto;margin:0 8px 0 0}label.ck{display:flex;align-ite
  <section class="view on" id="mapv">
   <div class="mapwin win">
    <div class="tbar"><span id="tico"></span><span class="ttl">MAP.EXE — Appalachia</span>
-    <div class="seg" role="group" aria-label="Map style"><button id="stPx" class="on" aria-pressed="true">Pixel</button><button id="stDt" aria-pressed="false">Detailed</button></div></div>
+    <div class="seg" role="group" aria-label="Map style"><button id="stPx" class="on" aria-pressed="true" title="Pixel map in the site palette">Pixel</button><button id="stPc" aria-pressed="false" title="Pixel map with all original colors">Pixel color</button><button id="stDt" aria-pressed="false" title="Normal detailed map">Detailed</button></div></div>
    <div class="chips" id="chips"></div>
    <div class="mapbox sunken"><div id="map"></div><div id="hint"></div></div>
    <div class="status sunken"><span><b>●</b> <span id="cnt">0</span> reports in view</span><span id="zm">Zoom 7</span></div>
@@ -167,6 +168,9 @@ input[type=checkbox]{width:auto;margin:0 8px 0 0}label.ck{display:flex;align-ite
 <div id="chatwin"></div>
 </div>
 <div id="sheet"><div id="sheetBody"></div></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="posterize" color-interpolation-filters="sRGB"><feComponentTransfer>
+ <feFuncR type="discrete" tableValues="0 .143 .286 .429 .571 .714 .857 1"/><feFuncG type="discrete" tableValues="0 .143 .286 .429 .571 .714 .857 1"/><feFuncB type="discrete" tableValues="0 .143 .286 .429 .571 .714 .857 1"/>
+</feComponentTransfer></filter></svg>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script type="module">
@@ -347,17 +351,30 @@ const pxLayer = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/service
 const baseLayers = {'Topo & trails': topo, 'Satellite': usgs('USGSImageryTopo', 16), 'Streets': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '© OpenStreetMap contributors'})};
 const layersCtl = L.control.layers(baseLayers);
 let detailLayer = topo;
-map.on('baselayerchange', e => { detailLayer = e.layer; });
-const setStyle = pixel => {
-  try { localStorage.setItem('mapStyle', pixel ? 'px' : 'dt'); } catch {}
-  $('#stPx').classList.toggle('on', pixel); $('#stPx').setAttribute('aria-pressed', pixel);
-  $('#stDt').classList.toggle('on', !pixel); $('#stDt').setAttribute('aria-pressed', !pixel);
-  if (pixel) { map.removeLayer(detailLayer); layersCtl.remove(); pxLayer.addTo(map); }
-  else { map.removeLayer(pxLayer); detailLayer.addTo(map); layersCtl.addTo(map); }
+map.on('baselayerchange', e => { if (Object.values(baseLayers).includes(e.layer)) detailLayer = e.layer; });
+// pixel-color versions of every base map: 2x chunky pixels + reduced color levels, all original colors kept
+const pxc = (url, z, attribution) => L.tileLayer(url, {maxZoom: z + 1, maxNativeZoom: z, tileSize: 512, zoomOffset: -1, className: 'tl-pxc', attribution});
+const pxcLayers = {
+  'Topo & trails': pxc('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', 16, 'USGS The National Map'),
+  'Satellite': pxc('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}', 16, 'USGS The National Map'),
+  'Streets': pxc('https://tile.openstreetmap.org/{z}/{x}/{y}.png', 18, '© OpenStreetMap contributors'),
 };
-$('#stPx').onclick = () => setStyle(true); $('#stDt').onclick = () => setStyle(false);
-let startPx = true; try { startPx = localStorage.getItem('mapStyle') !== 'dt'; } catch {}
-setStyle(startPx);
+const pxcCtl = L.control.layers(pxcLayers);
+let pxcLayer = pxcLayers['Topo & trails'];
+map.on('baselayerchange', e => { if (Object.values(pxcLayers).includes(e.layer)) pxcLayer = e.layer; });
+const MODES = {px: '#stPx', pxc: '#stPc', dt: '#stDt'};
+const setMode = mode => {
+  if (!MODES[mode]) mode = 'px';
+  try { localStorage.setItem('mapStyle', mode); } catch {}
+  Object.entries(MODES).forEach(([k, id]) => { $(id).classList.toggle('on', k === mode); $(id).setAttribute('aria-pressed', k === mode); });
+  [pxLayer, detailLayer, pxcLayer].forEach(l => map.removeLayer(l)); layersCtl.remove(); pxcCtl.remove();
+  if (mode === 'px') pxLayer.addTo(map);
+  else if (mode === 'pxc') { pxcLayer.addTo(map); pxcCtl.addTo(map); }
+  else { detailLayer.addTo(map); layersCtl.addTo(map); }
+};
+$('#stPx').onclick = () => setMode('px'); $('#stPc').onclick = () => setMode('pxc'); $('#stDt').onclick = () => setMode('dt');
+let startMode = 'px'; try { startMode = localStorage.getItem('mapStyle') || 'px'; } catch {}
+setMode(startMode);
 $('#tico').innerHTML = sprite('ghost', 16);
 L.control.locate = null;
 const cluster = L.markerClusterGroup({maxClusterRadius: 45}).addTo(map);
