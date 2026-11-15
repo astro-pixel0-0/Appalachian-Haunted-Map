@@ -366,6 +366,33 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 .saloon .gme.myturn{box-shadow:inset 0 0 0 2px #e0b65a}
 .saloon .mebar .seat{box-shadow:none;background:transparent;border:0;min-width:0;padding:0}
 .mebtns .b{width:auto;margin:0;padding:7px 12px}@media (hover:none){.kbd{display:none}}
+.hcard{background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 22%,transparent 78%,rgba(0,0,0,.18)),repeating-conic-gradient(rgba(0,0,0,.08) 0 25%,transparent 0 50%) 0 0/4px 4px,var(--c)}
+.hcard .cv{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,transparent),inset 0 0 14px rgba(0,0,0,.6)}
+.hcard .cv>*{position:relative;z-index:1}
+.hcard .cv .wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.17;z-index:0;color:var(--c)}
+.hcard .cv .num{text-shadow:2px 2px 0 #0a0d11,0 0 8px color-mix(in srgb,var(--c) 70%,transparent)}
+.hcard .cv .stud{position:absolute;width:3px;height:3px;background:var(--c);opacity:.7;z-index:1}.hcard .cv .s1{left:8px;top:3px}.hcard .cv .s2{right:8px;top:3px}.hcard .cv .s3{left:8px;bottom:3px}.hcard .cv .s4{right:8px;bottom:3px}
+.hcard .ck{display:flex;flex-direction:column;align-items:center;gap:1px}.hcard .ck svg{filter:drop-shadow(1px 1px 0 #0a0d11)}
+.hcard .dd{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:20px}.hcard.big .dd{font-size:26px}
+.hcard.w .cv{background:radial-gradient(circle at 50% 50%,#232A33,#10141A 70%)}
+.hcard .wq{position:relative}.hcard .wq .weye{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#efe8dc;filter:drop-shadow(1px 1px 0 #0a0d11)}
+.hcard.w{background:linear-gradient(135deg,#b84a55 0 25%,#5f86ad 25% 50%,#cdb36a 50% 75%,#7f9a6e 75%);background-size:100% 100%}
+.hcard.w::after{content:'';position:absolute;inset:0;background:repeating-conic-gradient(rgba(0,0,0,.18) 0 25%,transparent 0 50%) 0 0/4px 4px;pointer-events:none}
+.hand .hcard.w.sel::after{inset:auto;top:-10px;right:-8px;background:#ffd75e}
+.hcard::before{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.28) 45%,transparent 55%);background-size:250% 100%;background-position:120% 0;pointer-events:none;z-index:2;opacity:0}
+.hand .hcard.ok:hover::before,.hand .hcard.sel::before{opacity:1;animation:shine 1.1s steps(6) infinite}@keyframes shine{to{background-position:-120% 0}}
+.hcard.back{background:repeating-conic-gradient(#1a2029 0 25%,#10141A 0 50%) 0 0/6px 6px}
+.hcard.back .cv{inset:9px;background:radial-gradient(ellipse at 50% 50%,rgba(132,151,122,.25),transparent 60%),repeating-linear-gradient(45deg,transparent 0 5px,rgba(135,152,170,.12) 5px 6px),repeating-linear-gradient(-45deg,transparent 0 5px,rgba(135,152,170,.12) 5px 6px);box-shadow:inset 0 0 0 1px #3a4552,inset 0 0 0 3px #10141A,inset 0 0 0 4px #5c6e78}
+.hcard.back .cv .spr{filter:drop-shadow(0 0 4px rgba(170,184,197,.7))}
+@media (prefers-reduced-motion:reduce){.hcard::before{animation:none!important}}
+.opp.fin .plate{background:linear-gradient(#3a4a3a,#22301f)}
+.place{font-style:normal;font-family:'Silkscreen',monospace;padding:0 4px;color:#24150c;background:#cd7f4a}.place.p1{background:#e8c45a}.place.p2{background:#c9ced6}
+.gover{z-index:30}.govbox{min-width:320px;max-width:94vw}.tbar.gold{background:#a87a2a;color:#fff}
+.gres{font:34px 'Silkscreen',monospace;letter-spacing:3px;margin:6px 0 2px}.gres.won{color:#e8c45a;text-shadow:3px 3px 0 #0a0d11;animation:banpulse 1s steps(2) infinite}.gres.lost{color:#e0838b;text-shadow:3px 3px 0 #0a0d11}
+.standings{list-style:none;margin:12px 0;padding:0;text-align:left}.standings li{display:flex;align-items:center;gap:10px;padding:6px 8px;margin-bottom:4px;background:#1a2029;border:1px solid #3a4552}
+.standings li.me{border-color:#e0b65a;box-shadow:0 0 0 1px #e0b65a}.standings .medal{width:38px;text-align:center;font:14px 'Silkscreen',monospace;color:#24150c;background:#cd7f4a;padding:2px 0}.standings .pl1 .medal{background:#e8c45a}.standings .pl2 .medal{background:#c9ced6}.standings .pl4 .medal{background:#5c6e78;color:#E4EAF0}
+.standings .sav{width:32px;height:34px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:#2a180e}.standings .sav .fr{transform:scale(.6)}.standings b{flex:1}.standings em{font-size:12px;color:var(--mut)}
+#hff{color:#24150c;text-decoration:underline;margin-left:8px;font:inherit}
 #games.on:has(>.gtable){display:flex;flex-direction:column;padding:0}#games:has(>.gtable)::before{margin:0}
 #games>.gtable{max-width:none;width:100%;flex:1;margin:0;min-height:640px;border:0}
 .scene{flex:1;display:grid;grid-template-columns:minmax(150px,230px) minmax(0,1fr) auto;grid-template-rows:auto minmax(240px,1fr) auto;grid-template-areas:"dl top top" "dl tbl rt" "dl me me";padding:8px 28px 14px 8px;column-gap:6px;position:relative}
@@ -1401,16 +1428,18 @@ const H = {
   shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
   clone: s => JSON.parse(JSON.stringify(s)),
   top: s => s.discard[s.discard.length - 1],
-  active: s => s.order.filter(p => !s.out.includes(p)),
+  active: s => s.order.filter(p => !s.out.includes(p) && !(s.done || []).includes(p)),
+  ord: n => n + (['th', 'st', 'nd', 'rd'][n % 100 > 10 && n % 100 < 14 ? 0 : n % 10] || 'th'),
+  finish(s) { s.places = [...(s.done || []), ...[...s.out].reverse().filter(p => !(s.done || []).includes(p))]; s.winner = s.places[0] || null; s.boo = null; return s; },
   cur: s => s.order[s.turn],
   newGame(order, names, bots = {}) {
     const deck = H.shuffle(H.deck()), hands = {};
     order.forEach(p => { hands[p] = deck.splice(0, 7); });
     let first; do { first = deck.shift(); if (first[0] === 'w' || isNaN(+first[1])) { deck.push(first); first = null; } } while (!first);
     return {v: 1, order: [...order], names: {...names}, bots: {...bots}, hands, deck, discard: [first], color: first[0], turn: 0, dir: 1,
-      drawn: null, moves: 0, winner: null, out: [], log: 'Game started', last: null};
+      drawn: null, moves: 0, winner: null, out: [], done: [], log: 'Game started', last: null};
   },
-  step(s, n = 1) { let t = s.turn; for (let k = 0; k < n; k++) { let guard = 0; do { t = (t + s.dir + s.order.length) % s.order.length; } while (s.out.includes(s.order[t]) && ++guard < 10); } return t; },
+  step(s, n = 1) { let t = s.turn; for (let k = 0; k < n; k++) { let guard = 0; do { t = (t + s.dir + s.order.length) % s.order.length; } while ((s.out.includes(s.order[t]) || (s.done || []).includes(s.order[t])) && ++guard < 10); } return t; },
   draw1(s) {
     if (!s.deck.length) { const top = s.discard.pop(); s.deck = H.shuffle(s.discard); s.discard = [top]; }
     return s.deck.length ? s.deck.shift() : null;
@@ -1438,13 +1467,17 @@ const H = {
     s.color = wild ? color : lastC[0]; s.drawn = null; s.moves++;
     const name = s.names[p] || 'Player';
     s.last = {p, card: lastC, cards: [...cards], n: k, color: s.color};
-    if (!s.hands[p].length) { s.winner = p; s.boo = null; s.log = `${name} wins!`; return s; }
+    let finMsg = '';
+    if (!s.hands[p].length) { s.done = [...(s.done || []), p]; s.boo = null; const pl = s.done.length, rest = H.active(s);
+      if (rest.length <= 1) { if (rest[0]) s.done.push(rest[0]); H.finish(s); s.log = `${name} takes ${H.ord(pl)} place${rest[0] ? ` — ${s.names[rest[0]]} is ${H.ord(pl + 1)}` : ''}. Game over!`; return s; }
+      finMsg = `${name} takes ${H.ord(pl)} place!`; }
     const xk = k > 1 ? ` ×${k}` : '';
     if (v === 'S') { const skipped = []; for (let i = 1; i <= k; i++) skipped.push(s.names[s.order[H.step(s, i)]]); s.turn = H.step(s, k + 1); s.log = `${name} skipped ${[...new Set(skipped)].join(', ')}`; }
     else if (v === 'R') { if (k % 2) s.dir *= -1; if (H.active(s).length === 2) { if (k % 2 === 0) s.turn = H.step(s); } else s.turn = H.step(s); s.log = `${name} reversed${xk}${k % 2 ? '' : ' (back to normal)'}`; }
     else if (v === 'D' || v === 'F') { const n = (v === 'D' ? 2 : 4) * k, nx = s.order[H.step(s)]; H.give(s, nx, n); s.turn = H.step(s, 2); s.log = `${s.names[nx]} draws ${n}!`; }
     else { s.turn = H.step(s); s.log = wild ? `${name} changed colour to ${HC[s.color][0]}${xk}` : `${name} played${k > 1 ? ` ${k} cards` : ''}`; }
     if (s.hands[p].length === 1) { s.boo = {p, until: Date.now() + 5000}; s.log += ` — ${name} must shout BOO!`; }
+    if (finMsg) { s.log = `${finMsg} · ${s.log}`; if ((s.done || []).includes(H.cur(s)) || s.out.includes(H.cur(s))) s.turn = H.step(s); }
     return H.norm(s);
   },
   drawTurn(s0, p) {
@@ -1462,7 +1495,7 @@ const H = {
     const wasTurn = H.cur(s) === p && !s.winner; s.out.push(p); s.deck.push(...s.hands[p]); s.hands[p] = []; s.moves++;
     s.log = `${s.names[p]} left the table`;
     const act = H.active(s);
-    if (act.length < 2) { s.winner = act[0] || null; if (s.winner) s.log += ` — ${s.names[s.winner]} wins!`; return s; }
+    if (act.length < 2) { if (act[0]) s.done = [...(s.done || []), act[0]]; H.finish(s); if (s.winner) s.log += ' — game over'; return s; }
     if (wasTurn) { s.drawn = null; s.turn = H.step(s); }
     return s;
   },
@@ -1510,16 +1543,26 @@ const HPX = {
   rev: 'M2 0h1v1h-1zM1 1h6v1h-6zM2 2h1v1h-1zM6 2h1v1h-1zM6 3h1v1h-1zM1 4h1v1h-1zM1 5h1v1h-1zM5 5h1v1h-1zM1 6h6v1h-6zM5 7h1v1h-1z',
 };
 const BOTNAMES = ['Wraith', 'Banshee', 'Poltergeist'];
+const pxPath = rows => rows.map((r, y) => { let o = '', x = 0; while (x < r.length) { if (r[x] !== '#') { x++; continue; } const s0 = x; while (r[x] === '#') x++; o += `M${s0} ${y}h${x - s0}v1h-${x - s0}z`; } return o; }).join('');
+Object.assign(HPX, {
+  r: pxPath(['...##...', '...##...', '..####..', '.######.', '.######.', '.#.####.', '..####..', '...##...']),
+  g: pxPath(['....##..', '...###..', '..####.#', '.####.##', '.###.##.', '..#.##..', '...##...', '..#.....']),
+  b: pxPath(['...###..', '..##....', '.##.....', '.##.....', '.##.....', '.##.....', '..##....', '...###..']),
+  y: pxPath(['.######.', '########', '#..##..#', '#..##..#', '########', '.##..##.', '..####..', '..#.#.#.']),
+  two: pxPath(['.####...', '.#..#...', '.#.####.', '.#.#..#.', '.###..#.', '...#..#.', '...####.', '........']),
+  eye: pxPath(['........', '..####..', '.#....#.', '#..##..#', '#..##..#', '.#....#.', '..####..', '........']),
+});
 const hsvg = (k, sz) => `<svg viewBox="0 0 8 8" width="${sz}" height="${sz}" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="${HPX[k]}"/></svg>`;
-const wildQuad = sz => `<span class="wq" style="width:${sz}px;height:${sz}px"><i style="background:${HC.r[1]}"></i><i style="background:${HC.b[1]}"></i><i style="background:${HC.y[1]}"></i><i style="background:${HC.g[1]}"></i></span>`;
+const wildQuad = (sz, eye) => `<span class="wq" style="width:${sz}px;height:${sz}px"><i style="background:${HC.r[1]}"></i><i style="background:${HC.b[1]}"></i><i style="background:${HC.y[1]}"></i><i style="background:${HC.g[1]}"></i>${eye ? `<span class="weye">${hsvg('eye', Math.round(sz * 0.62))}</span>` : ''}</span>`;
 const cardLabel = c => { const v = c[1]; return c[0] === 'w' ? (v === 'F' ? 'Wild +4' : 'Wild') : `${HC[c[0]][0]} ${v === 'S' ? 'Skip' : v === 'R' ? 'Reverse' : v === 'D' ? '+2' : v}`; };
 const cardFace = (c, big) => { const v = c[1];
-  if (c[0] === 'w') return v === 'F' ? `${wildQuad(big ? 26 : 22)}<b class="plus">+4</b>` : wildQuad(big ? 30 : 26);
-  return v === 'S' ? hsvg('skip', big ? 30 : 24) : v === 'R' ? hsvg('rev', big ? 30 : 24) : v === 'D' ? '+2' : v; };
+  if (c[0] === 'w') return v === 'F' ? `${wildQuad(big ? 26 : 22, true)}<b class="plus">+4</b>` : wildQuad(big ? 34 : 28, true);
+  const wm = `<span class="wm">${hsvg(c[0], big ? 52 : 40)}</span><i class="stud s1"></i><i class="stud s2"></i><i class="stud s3"></i><i class="stud s4"></i>`;
+  return wm + (v === 'S' ? hsvg('skip', big ? 30 : 24) : v === 'R' ? hsvg('rev', big ? 30 : 24) : v === 'D' ? `<span class="dd">${hsvg('two', big ? 18 : 14)}<span class="num">+2</span></span>` : `<span class="num">${v}</span>`); };
 const cardCorner = c => c[0] === 'w' ? (c[1] === 'F' ? '+4' : 'W') : c[1] === 'S' ? '⦸' : c[1] === 'R' ? '⇄' : c[1] === 'D' ? '+2' : c[1];
 const cardHtml = (c, cls = '', attrs = '') => c === 'back'
   ? `<span class="hcard back ${cls}" ${attrs}><span class="cv">${sprite('ghost', 22)}</span></span>`
-  : `<button class="hcard ${c[0] === 'w' ? 'w' : ''} ${cls}" style="--c:${c[0] === 'w' ? '#232A33' : HC[c[0]][1]}" data-card="${c}" aria-label="${cardLabel(c)}" ${attrs}><span class="ck tl">${cardCorner(c)}</span><span class="cv">${cardFace(c, cls.includes('big'))}</span><span class="ck br">${cardCorner(c)}</span></button>`;
+  : `<button class="hcard ${c[0] === 'w' ? 'w' : ''} ${cls}" style="--c:${c[0] === 'w' ? '#232A33' : HC[c[0]][1]}" data-card="${c}" aria-label="${cardLabel(c)}" ${attrs}><span class="ck tl">${cardCorner(c)}${c[0] !== 'w' ? hsvg(c[0], cls.includes('big') ? 10 : 8) : ''}</span><span class="cv">${cardFace(c, cls.includes('big'))}</span><span class="ck br">${cardCorner(c)}${c[0] !== 'w' ? hsvg(c[0], cls.includes('big') ? 10 : 8) : ''}</span></button>`;
 
 const G = {mode: null, s: null, me: null, rid: null, room: null, unsub: null, tick: null, botT: null, lastMv: -1, lastAt: 0, lastTurnMine: false};
 const gEl = () => $('#games');
@@ -1548,6 +1591,7 @@ function rulesSheet() {
    <div class="rulegrid"><div>${cardHtml('gS')}<span><b>Skip</b> — the next player loses a turn.</span></div><div>${cardHtml('bR')}<span><b>Reverse</b> — play changes direction (acts as Skip with 2 players).</span></div>
    <div>${cardHtml('yD')}<span><b>+2</b> — next player draws 2 and loses a turn.</span></div><div>${cardHtml('wW')}<span><b>Wild</b> — play on anything and choose the colour.</span></div>
    <div>${cardHtml('wF')}<span><b>Wild +4</b> — choose the colour; next player draws 4 and loses a turn.</span></div></div>
+   <p><b>Places</b> — the first player to empty their hand takes <b>1st place</b>, but the game goes on: the rest fight for 2nd, then 3rd, and the last one left takes the last place. 1st place = you won.</p>
    <p><b>Stacking</b> — you may play several cards of the same value at once: e.g. a red 2, another red 2 and a yellow 2, or two Skips, or two +2s. Tap a card, tap its twins, then drag or press <b>Play</b>. The first card must fit the pile; effects add up (two +2s = draw 4, two Skips skip two players) and the last card sets the colour.</p>
    <p><b>The saloon</b> — the Flatwoods Monster deals and reacts to every move. Your opponents are saloon regulars: every new round brings new faces, clothes and names.</p>
    <p><b>Keys</b> — <b>D</b> draw · <b>P</b> pass · <b>Enter</b> play the selected stack · <b>Esc</b> cancel · <b>S</b> sort by colour/value · <b>B</b> or <b>Space</b> shout BOO.</p>
@@ -1750,6 +1794,7 @@ function seatReactions(prev, s) {
   const r = {}; if (!prev || prev === s) return r;
   if (s.winner && !prev.winner) { s.order.forEach(p => r[p] = p === s.winner ? {c: 'rx-win', say: rpick(BUB.win)} : {c: 'rx-lose', say: Math.random() < 0.6 ? rpick(BUB.lose) : ''}); return r; }
   if ((s.booed || 0) > (prev.booed || 0) && prev.boo) r[prev.boo.p] = {c: 'rx-boo', say: 'BOO!'};
+  if ((s.done || []).length > (prev.done || []).length) { const f = s.done[s.done.length - 1]; r[f] = {c: 'rx-win', say: `${H.ord(s.done.length)} place!`}; }
   if (s.last && JSON.stringify(s.last) !== JSON.stringify(prev.last)) {
     const v = s.last.card[1], n = s.last.n || 1;
     r[s.last.p] = {c: 'rx-play', say: n > 1 ? `${n} of a kind!` : v === 'D' ? 'Take two!' : v === 'F' ? 'Draw four, partner.' : v === 'S' ? 'Skip ya!' : v === 'R' ? 'Turn around!' : v === 'W' ? `${HC[s.color][0]} it is.` : Math.random() < 0.45 ? rpick(BUB.play) : ''};
@@ -1761,9 +1806,9 @@ function seatReactions(prev, s) {
 function oppHtml(p, s, extra, rx) {
   const isCur = H.cur(s) === p && !s.winner, out = s.out.includes(p), n = s.hands[p].length, isNext = !s.winner && !isCur && s.order[H.step(s)] === p, booP = s.boo && s.boo.p === p;
   const say = rx?.say || (booP ? 'One left…' : isCur ? '…' : '');
-  const sd = figSeed(p), dl = -(sd % 3000) / 1000;
-  return `<div class="opp${isCur ? ' cur' : ''}${out ? ' out' : ''} ${rx?.c || ''}" data-seat="${esc(p)}" style="--dl:${dl}s">
-    <div class="plate"><b>${esc(s.names[p] || 'Player')}</b><span>${out ? 'left' : isCur ? 'playing' : isNext ? 'next up' : 'waiting'}${n === 1 && !out ? (booP ? ' · <em class="boo">BOO?</em>' : ' · last card') : ''} · <i>${n}</i></span>${extra}</div>
+  const sd = figSeed(p), dl = -(sd % 3000) / 1000, pl = (s.done || []).indexOf(p);
+  return `<div class="opp${isCur ? ' cur' : ''}${out ? ' out' : ''}${pl >= 0 ? ' fin' : ''} ${rx?.c || ''}" data-seat="${esc(p)}" style="--dl:${dl}s">
+    <div class="plate"><b>${esc(s.names[p] || 'Player')}</b><span>${pl >= 0 ? `<em class="place p${pl + 1}">${H.ord(pl + 1)} place</em>` : `${out ? 'left' : isCur ? 'playing' : isNext ? 'next up' : 'waiting'}${n === 1 && !out ? (booP ? ' · <em class="boo">BOO?</em>' : ' · last card') : ''} · <i>${n}</i>`}</span>${extra}</div>
     <div class="figwrap">${say ? `<span class="pbub${isCur && !rx ? ' think' : ''}">${esc(say)}</span>` : ''}${PPL.figSvg(sd, out ? 0 : n)}${!isBotId(p) ? `<span class="hav mini" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>` : ''}</div></div>`;
 }
 let lastWide = null;
@@ -1776,7 +1821,7 @@ function seatHtml(p, s, extra = '', me = false) {
   const av = isBotId(p) ? botAv(p, me ? 40 : 46) : `<span class="hav" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>`;
   const booP = s.boo && s.boo.p === p;
   return `<div class="seat${isCur ? ' cur' : ''}${out ? ' out' : ''}${me ? ' meseat' : ''}" data-seat="${esc(p)}">${av}<div class="sinfo"><b>${esc(me ? 'You' : s.names[p] || 'Player')}</b>
-    <span class="meta">${out ? 'left the table' : isCur ? '<span class="thk">playing<i>.</i><i>.</i><i>.</i></span>' : isNext ? 'next up' : 'waiting'}${n === 1 && !out ? (booP ? ' · <span class="boo">BOO?</span>' : ' · <span class="booed">last card</span>') : ''}</span>${extra}</div>
+    <span class="meta">${(s.done || []).includes(p) ? `<em class="place p${s.done.indexOf(p) + 1}">${H.ord(s.done.indexOf(p) + 1)} place</em>` : out ? 'left the table' : isCur ? '<span class="thk">playing<i>.</i><i>.</i><i>.</i></span>' : isNext ? 'next up' : 'waiting'}${n === 1 && !out ? (booP ? ' · <span class="boo">BOO?</span>' : ' · <span class="booed">last card</span>') : ''}</span>${extra}</div>
     ${out ? '' : `<span class="ccount" title="${n} cards in hand"><span class="fan">${'<i></i>'.repeat(Math.min(n, 5))}</span><b>${n}</b></span>`}</div>`;
 }
 const VORD = '0123456789SRDWF';
@@ -1786,6 +1831,11 @@ function fitHand() {
   h.style.setProperty('--ov', Math.max(-cw * 0.62, Math.min(8, gap)) + 'px');
 }
 addEventListener('resize', fitHand);
+function ffLocal() {
+  if (G.mode !== 'local' || !G.s) return; clearTimeout(G.botT); let s = G.s, g = 0;
+  while (!s.winner && g++ < 5000) { if (s.boo) { s = H.botBoo(s) ? H.booPress(s, s.boo.p) : H.booPenalty(s, Infinity); continue; } const p = H.cur(s); s = H.apply(s, p, H.botMove(s, p, s.bots[p] || 'hard')); }
+  G.s = s; renderTable();
+}
 function renderTable() {
   const s = G.s, el = gEl(); if (!s || !el) return;
   if (!el.classList.contains('on')) return;
@@ -1802,7 +1852,8 @@ function renderTable() {
   if (G.histKey !== dkey) { G.histKey = dkey; G.hist = []; }
   if (s.log && G.hist[0] !== s.log) { G.hist.unshift(s.log); G.hist.length = Math.min(G.hist.length, 4); }
   const curName = s.names[H.cur(s)] || 'Player';
-  const banner = s.winner ? '' : myTurn ? (s.drawn ? 'You drew a playable card — play it or pass' : sel.length ? `Stack of ${sel.length} ready — drag it onto the pile or press Play` : 'Your turn — play a glowing card, stack twins, or draw')
+  const myPlace = (s.done || []).indexOf(me), fight = H.ord((s.done || []).length + 1);
+  const banner = s.winner ? '' : myPlace >= 0 ? `You took ${H.ord(myPlace + 1)} place! The others fight for ${fight}${G.mode === 'local' ? ' <button class="lnk" id="hff">skip to results ▸</button>' : ''}` : myTurn ? (s.drawn ? 'You drew a playable card — play it or pass' : sel.length ? `Stack of ${sel.length} ready — drag it onto the pile or press Play` : ((s.done || []).length ? `Your turn — you're fighting for ${fight} place` : 'Your turn — play a glowing card, stack twins, or draw'))
     : `${esc(curName)} is thinking…`;
   const nPlayable = myTurn ? hand.filter(c => H.canPlay(s, c)).length : 0;
   const rx = seatReactions(prev, s), wide = innerWidth >= 1000; lastWide = wide;
@@ -1825,9 +1876,11 @@ function renderTable() {
       ${sel.length ? `<div class="stackbar"><span class="meta"><b>${sel.length}</b> × ${esc(cardLabel(sorted[sel[0]]).replace(/^\S+ /, ''))} selected — tap more cards of the same value. The last card picks the colour.</span><button class="b" id="hplaysel">Play ${sel.length}<span class="kbd"> (Enter)</span></button><button class="b s" id="hcansel">Cancel</button></div>` : ''}</div>
     </div></div>
     ${s.boo && s.boo.p === me && !s.winner ? `<button class="boobtn" id="hboo" aria-label="Shout BOO! (B)">BOO!<span class="boobar"><i style="animation-duration:${Math.max(0, s.boo.until - Date.now())}ms"></i></span></button>` : ''}
-    ${s.winner ? `<div class="gover"><div class="win govbox"><div class="tbar blood"><span>GAME OVER</span></div><div class="pad">${s.winner === me ? sprite('ghost', 64) : isBotId(s.winner) ? `<span class="pplav sunken big">${PPL.svg(botSeed(s.winner), 64)}</span>` : sprite('shadow', 64)}
-      <h2>${s.winner === me ? 'You win!' : `${esc(s.names[s.winner])} wins`}</h2><p class="meta">${s.winner === me ? 'The spirits bow to you.' : 'Better luck next haunting.'}</p>
-      <div class="row">${G.mode === 'local' ? '<button class="b" id="hagain">New round (new faces)</button>' : ''}<button class="b s" id="hback">Back to games</button></div></div></div></div>` : ''}
+    ${s.winner ? (() => { const pl = s.places || [s.winner], myP = pl.indexOf(me), won = myP === 0;
+      return `<div class="gover"><div class="win govbox"><div class="tbar ${won ? 'gold' : 'blood'}"><span>GAME OVER</span></div><div class="pad">
+      <h2 class="gres ${won ? 'won' : 'lost'}">${won ? 'YOU WON!' : 'YOU LOST'}</h2><p class="meta">${myP >= 0 ? `You took ${H.ord(myP + 1)} place of ${pl.length}.` : ''} ${won ? 'The spirits bow to you.' : 'Better luck next haunting.'}</p>
+      <ol class="standings">${pl.map((p, i) => `<li class="pl${i + 1}${p === me ? ' me' : ''}"><span class="medal">${H.ord(i + 1)}</span><span class="sav">${isBotId(p) ? PPL.svg(botSeed(p), 30) : avatarHtml(profCache.get(p), true)}</span><b>${esc(p === me ? 'You' : s.names[p] || 'Player')}</b>${s.out.includes(p) ? '<em>left</em>' : ''}</li>`).join('')}</ol>
+      <div class="row">${G.mode === 'local' ? '<button class="b" id="hagain">New round (new faces)</button>' : ''}<button class="b s" id="hback">Back to games</button></div></div></div></div>`; })() : ''}
   </div>`;
   if (myTurn && !G.lastTurnMine) sfx('msg', 0.35);
   if (s.winner && !G.overPlayed) { G.overPlayed = true; sfx(s.winner === me ? 'success' : 'error'); }
@@ -1843,6 +1896,7 @@ function renderTable() {
   $('#hdraw').onclick = () => doMove({a: 'draw'});
   if ($('#hdraw2')) $('#hdraw2').onclick = () => doMove({a: 'draw'});
   if ($('#hpass')) $('#hpass').onclick = () => doMove({a: 'pass'});
+  if ($('#hff')) $('#hff').onclick = ffLocal;
   $('#hsort').onclick = () => { G.sortBy = G.sortBy === 'value' ? 'colour' : 'value'; G.sel = null; sfx('select', 0.2); renderTable(); };
   $('#hhelp').onclick = rulesSheet;
   $('#hleave').onclick = leaveTable;
@@ -1969,6 +2023,8 @@ const fwPick = a => a[Math.random() * a.length | 0];
 function fwReact(prev, s) {
   if (!prev || s === prev) return;
   const me = G.me, nm = p => p === me ? 'You' : (s.names[p] || 'Player').replace(' (bot)', '');
+  if (!s.winner && (s.done || []).length > (prev.done || []).length) { const f = s.done[s.done.length - 1], k = s.done.length;
+    if (f === me) setFw(k === 1 ? 'love' : 'happy', `You take ${H.ord(k)} place!`, 4000); else setFw('excited', `${nm(f)} takes ${H.ord(k)} place! Now: fight for ${H.ord(k + 1)}!`, 4000); return; }
   if (s.winner && !prev.winner) { s.winner === me ? setFw('love', 'You win!! The spirits adore you ♥', 7000) : setFw(fwPick(['smug', 'cry']), `${nm(s.winner)} takes the whole pot!`, 7000); return; }
   if ((s.pen || 0) > (prev.pen || 0)) { setFw(fwPick(['laugh', 'angry']), 'Too slow! No BOO — draw 2!'); return; }
   if ((s.booed || 0) > (prev.booed || 0)) { setFw('laugh', 'BOOOOO! 👻'); return; }
@@ -2140,7 +2196,7 @@ async function doMove(mv) {
   } else await onlineMove(G.me, mv);
 }
 function leaveTable() {
-  if (G.s && !G.s.winner) {
+  if (G.s && !G.s.winner && !(G.s.done || []).includes(G.me)) {
     sheet(`<h3>Leave the table?</h3><p>${G.mode === 'online' ? 'Your cards go back to the deck and the game continues without you.' : 'This game will be lost.'}</p><button class="b d" id="y">Leave</button><button class="b s" id="cx">Stay</button>`);
     $('#cx').onclick = closeSheet;
     $('#y').onclick = async () => { closeSheet(); if (G.mode === 'online') await leaveOnline(); resetGame(); gamesHome(); };
