@@ -340,6 +340,56 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 .itoast{position:fixed;right:16px;bottom:16px;z-index:3000;width:300px;background:var(--gra)}.itoast .pad{padding:12px;font-size:14px}.itoast .row{margin-top:8px}
 @media (max-width:760px){.seat{min-width:0}.gmid{gap:12px}.hcard.big{width:70px;height:104px}.hcard.big .cv{inset:18px 8px;font-size:28px}.ginfo{min-width:0;align-items:center;text-align:center}.itoast{left:8px;right:8px;width:auto;bottom:80px}}
 @media (prefers-reduced-motion:reduce){.hcard.drop,.boo,.yt{animation:none}}
+.gtable.saloon{background:linear-gradient(180deg,rgba(10,6,4,.25),rgba(10,6,4,.55)),radial-gradient(ellipse at 50% 40%,transparent 40%,rgba(8,5,3,.7) 100%),var(--sal) center/cover;image-rendering:pixelated}
+.gtable.saloon>.tbar{background:linear-gradient(#7a2e34,#5e1f26);border-bottom:2px solid #24150c}
+.saloon .gtop{gap:12px;padding:14px 12px 0;position:relative;z-index:2}
+.saloon .seat{background:linear-gradient(#3a2414,#26170d);border:2px solid #0a0d11;box-shadow:inset 0 0 0 2px #6b4426,3px 3px 0 rgba(10,6,4,.6);min-width:200px;padding:8px 10px;color:#efe2bf;transition:transform .2s}
+.saloon .seat.cur{box-shadow:inset 0 0 0 2px #e0b65a,0 0 0 2px #e0b65a,0 0 18px rgba(224,182,90,.45);transform:translateY(-3px)}
+.saloon .seat .meta{color:#c9b48a}.seat .thk i{animation:blink 1s steps(2) infinite}.seat .thk i:nth-child(2){animation-delay:.2s}.seat .thk i:nth-child(3){animation-delay:.4s}
+.ccount{margin-left:auto;display:flex;flex-direction:column;align-items:center;gap:2px}.ccount b{font:18px 'Silkscreen',monospace;color:#efe2bf;line-height:1}
+.ccount .fan{display:flex;height:18px}.ccount .fan i{width:11px;height:16px;background:#10141A;border:1px solid #8a6a3a;margin-left:-6px;transform:rotate(calc(var(--k,0)*1deg))}.ccount .fan i:first-child{margin-left:0}
+.ccount .fan i:nth-child(1){--k:-14}.ccount .fan i:nth-child(2){--k:-7}.ccount .fan i:nth-child(4){--k:7}.ccount .fan i:nth-child(5){--k:14}
+.pplav{width:46px;height:51px;display:flex;align-items:flex-end;justify-content:center;background:linear-gradient(#5a3a22,#2a180e);overflow:hidden;flex:none}.pplav .ppl{display:block}.pplav.big{width:72px;height:80px;margin:0 auto}
+.meseat .pplav{width:40px;height:44px}
+.board{position:relative;margin:14px 14px 0;padding:14px;border-radius:60px 60px 28px 28px;background:var(--wood);background-size:128px 64px;image-rendering:pixelated;box-shadow:inset 0 0 0 3px #24150c,inset 0 4px 0 #8a5a32,0 0 0 3px #0a0d11,0 12px 0 #1a0e07,0 18px 30px rgba(0,0,0,.6);flex:1;display:flex;min-height:250px}
+.felt{position:relative;flex:1;display:flex;flex-direction:column;border-radius:48px 48px 18px 18px;background:radial-gradient(ellipse at 50% 45%,rgba(120,170,110,.18),transparent 60%),radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.45)),var(--felt);background-size:auto,auto,96px 96px;box-shadow:inset 0 0 0 3px #0a0d11,inset 0 0 0 5px #1d3424,inset 0 8px 18px rgba(0,0,0,.5)}
+.turnban{align-self:center;margin-top:12px;padding:5px 14px;background:rgba(10,13,17,.7);border:1px solid #6b4426;color:#efe2bf;font:17px 'VT323',monospace;letter-spacing:.5px;text-align:center}
+.turnban.me{background:#e0b65a;color:#24150c;border-color:#0a0d11;box-shadow:3px 3px 0 #0a0d11;font-family:'Silkscreen',monospace;font-size:13px;animation:banpulse 1.6s steps(2) infinite}@keyframes banpulse{50%{background:#f0cc78}}
+.saloon .gmid{gap:34px}
+.dlbl{font:12px 'Silkscreen',monospace;color:#d8cfae;letter-spacing:1px;text-shadow:1px 1px 0 #0a0d11}
+.drawbtn:not(:disabled) .hcard.back{box-shadow:0 0 0 3px #e0b65a,inset 0 0 0 3px #232A33,inset 0 0 0 5px #3a4552,3px 3px 0 #0a0d11;animation:dpulse 1.4s steps(2) infinite}@keyframes dpulse{50%{transform:translateY(-4px)}}
+.drawbtn:not(:disabled) .dlbl{color:#ffd75e}
+#hpile .hcard{box-shadow:0 0 0 3px var(--c),0 0 22px color-mix(in srgb,var(--c) 60%,transparent),3px 3px 0 #0a0d11}
+.saloon .curcol{color:#efe2bf}.saloon .dir{color:#d8cfae}.dirarr{display:inline-block;margin-right:6px;font-size:16px;animation:dspin 3s linear infinite}.dirarr.ccw{animation-direction:reverse}@keyframes dspin{to{transform:rotate(360deg)}}
+.hist{list-style:none;margin:4px 0 0;padding:0;font-size:13px;color:#d8cfae;max-width:250px}.hist li{padding:2px 0;border-top:1px dashed rgba(216,207,174,.18)}.hist li:first-child{color:#fff;border-top:0}.hist li:nth-child(3){opacity:.6}.hist li:nth-child(4){opacity:.35}
+.saloon .gme{margin:0 14px 12px;padding:10px 12px 12px;background:linear-gradient(rgba(36,21,12,.92),rgba(20,12,7,.95));border:2px solid #0a0d11;border-top:0;box-shadow:inset 0 0 0 2px #4e321d}
+.saloon .gme.myturn{box-shadow:inset 0 0 0 2px #e0b65a}
+.saloon .mebar .seat{box-shadow:none;background:transparent;border:0;min-width:0;padding:0}
+.mebtns .b{width:auto;margin:0;padding:7px 12px}@media (hover:none){.kbd{display:none}}.saloon .yt{color:#ffd75e}
+.hand{justify-content:safe center;gap:0;padding-top:20px}.hand .hcard{width:70px;height:104px}.hand .hcard .cv{inset:18px 8px;font-size:28px}.hand .hcard .ck{font-size:12px}
+.hand .hcard+.hcard{margin-left:var(--ov,8px)}.hand .hcard:hover,.hand .hcard.sel{z-index:2}.hand .hcard.ok:hover{transform:translateY(-22px)}
+.fwhover{animation:fhov 3.2s ease-in-out infinite}@keyframes fhov{50%{transform:translateY(-8px)}}
+.fwshadow{width:96px;height:10px;margin-top:-14px;border-radius:50%;background:radial-gradient(rgba(0,0,0,.55),transparent 70%);animation:fshad 3.2s ease-in-out infinite}@keyframes fshad{50%{transform:scaleX(.75);opacity:.6}}
+.fwart.a-bob{animation:none}
+.fwart svg *{transform-box:view-box}
+.fw-head{transform-origin:20px 27px;animation:fhead 3.2s steps(4) infinite}@keyframes fhead{50%{transform:translateY(-1px) rotate(2deg)}}
+.fw-body{transform-origin:20px 52px;animation:fbreath 2.4s steps(3) infinite}@keyframes fbreath{50%{transform:scaleY(1.03)}}
+.fw-armL{transform-origin:13px 31px;animation:armL 2.2s steps(4) infinite alternate}.fw-armR{transform-origin:26px 31px;animation:armR 2.2s steps(4) infinite alternate;animation-delay:-1.1s}
+@keyframes armL{from{transform:rotate(-6deg)}to{transform:rotate(10deg)}}@keyframes armR{from{transform:rotate(6deg)}to{transform:rotate(-10deg)}}
+@keyframes armUpL{from{transform:rotate(18deg)}to{transform:rotate(40deg)}}@keyframes armUpR{from{transform:rotate(-18deg)}to{transform:rotate(-40deg)}}
+.a-jump .fw-armL,.a-pop .fw-armL{animation:armUpL .22s steps(2) infinite alternate}.a-jump .fw-armR,.a-pop .fw-armR{animation:armUpR .22s steps(2) infinite alternate}
+.a-shake .fw-armL,.a-shiver .fw-armL{animation:armUpL .1s steps(2) infinite alternate}.a-shake .fw-armR,.a-shiver .fw-armR{animation:armUpR .1s steps(2) infinite alternate}
+.a-sink .fw-arm{animation:none}.a-sink .fw-armL{transform:rotate(-22deg)}.a-sink .fw-armR{transform:rotate(22deg)}.a-sink .fw-head{animation:none;transform:translateY(1px) rotate(-4deg)}
+.a-deal .fw-armR{animation:armUpR .18s steps(2) infinite alternate}.a-deal .fw-armL{animation:armL .5s steps(2) infinite alternate}
+.a-tilt .fw-armR{animation:none;transform:rotate(-55deg)}
+.fw-face{animation:fglow 2.4s steps(3) infinite}@keyframes fglow{0%,100%{filter:drop-shadow(0 0 .6px #ffd75e)}50%{filter:drop-shadow(0 0 1.8px #ffd75e) brightness(1.25)}}
+.fw-blink{display:none}.fwart.blinking .fw-face{display:none}.fwart.blinking .fw-blink{display:inline}
+.saloon .dealer{background:linear-gradient(180deg,rgba(20,12,7,.55),rgba(20,12,7,.15));border-right:0;padding-top:16px}
+.saloon .dname{color:#e0b65a}.saloon .dname span{color:#d8cfae}
+@media (prefers-reduced-motion:reduce){.fwhover,.fwshadow,.fwart svg *,.turnban.me,.drawbtn .hcard.back,.dirarr{animation:none!important}}
+@media (max-width:760px){.saloon .seat{min-width:0;padding:6px}.saloon .gtop{gap:6px;padding:8px 6px 0}.saloon .seat .sinfo b{max-width:90px;font-size:12px}.ccount b{font-size:14px}.ccount .fan{display:none}.pplav{width:36px;height:40px}.pplav .ppl{width:36px;height:40px}
+  .board{margin:10px 6px 0;padding:8px;border-radius:34px 34px 16px 16px;min-height:0}.felt{border-radius:26px 26px 10px 10px}.saloon .gmid{gap:14px;padding:10px}.hist{display:none}.saloon .gme{margin:0 6px 8px}.turnban{font-size:15px;margin:8px 8px 0}
+  .hand .hcard{width:60px;height:90px}.hand .hcard .cv{inset:15px 6px;font-size:23px}.fwhover{animation-duration:2.6s}.fwshadow{width:50px;margin-top:-6px}.saloon .dealer{flex-wrap:wrap}.fwshadow{display:none}}
 
 .ghero .grow{flex:1;min-width:260px}.glogo{margin-left:10px}
 </style></head>
@@ -1460,7 +1510,8 @@ function rulesSheet() {
    <div>${cardHtml('yD')}<span><b>+2</b> — next player draws 2 and loses a turn.</span></div><div>${cardHtml('wW')}<span><b>Wild</b> — play on anything and choose the colour.</span></div>
    <div>${cardHtml('wF')}<span><b>Wild +4</b> — choose the colour; next player draws 4 and loses a turn.</span></div></div>
    <p><b>Stacking</b> — you may play several cards of the same value at once: e.g. a red 2, another red 2 and a yellow 2, or two Skips, or two +2s. Tap a card, tap its twins, then drag or press <b>Play</b>. The first card must fit the pile; effects add up (two +2s = draw 4, two Skips skip two players) and the last card sets the colour.</p>
-   <p><b>The dealer</b> — the Flatwoods Monster deals the cards and reacts to every move.</p>
+   <p><b>The saloon</b> — the Flatwoods Monster deals and reacts to every move. Your opponents are saloon regulars: every new round brings new faces, clothes and names.</p>
+   <p><b>Keys</b> — <b>D</b> draw · <b>P</b> pass · <b>Enter</b> play the selected stack · <b>Esc</b> cancel · <b>S</b> sort by colour/value · <b>B</b> or <b>Space</b> shout BOO.</p>
    <p><b>BOO!</b> — when you are down to your last card a big <b>BOO!</b> button appears for 5 seconds. Press it in time, or you draw 2 cards as a penalty.</p><p class="meta">Drag cards onto the pile with the mouse (or tap them). First to get rid of all cards wins. Online turns have a 30-second timer.</p><button class="b s" id="cx">Got it</button>`);
   $('#cx').onclick = closeSheet;
 }
@@ -1476,7 +1527,9 @@ function botSetup() {
 function startLocal(n, lv) {
   resetGame();
   const me = user ? user.uid : 'me', order = [me], names = {[me]: user ? (user.displayName || 'You') : 'You'}, bots = {};
-  for (let i = 0; i < n; i++) { const id = 'bot:' + (i + 1); order.push(id); names[id] = BOTNAMES[i] + ' (bot)'; bots[id] = lv; }
+  const taken = new Set();
+  for (let i = 0; i < n; i++) { let sd, nm, ws; do { sd = newBotSeed(); nm = PPL.make(sd).name; ws = nm.replace(/"/g, '').split(' '); } while (ws.some(w => taken.has(w))); ws.forEach(w => taken.add(w));
+    const id = 'bot:' + sd; order.push(id); names[id] = nm; bots[id] = lv; }
   Object.assign(G, {mode: 'local', me, s: H.newGame(order, names, bots), lvl: lv, nb: n, sel: null, fw: null});
   sfx('success'); renderTable(); runBots();
 }
@@ -1491,15 +1544,152 @@ function runBots() {
   }, G.s.drawn ? 500 : 800 + Math.random() * 500);
 }
 
+// ---------- saloon guests: procedural pixel people (20x22), new look + name every round ----------
+const PPL = (() => {
+  const SK = [['#f1c9a5', '#d6a77f'], ['#e0ac84', '#c08760'], ['#c68a5e', '#a26a42'], ['#9a6440', '#7a4a2c'], ['#6e4429', '#52301b'], ['#f3d6bd', '#d9b294']];
+  const HAIR = ['#1c1410', '#3b2416', '#6b4426', '#a8742f', '#d9b56a', '#a9a296', '#8a3a1e', '#e8e2d6', '#2a2a30'];
+  const CL = ['#6a2f2b', '#2e4a3a', '#2f3f5a', '#6b5a3a', '#4a3a5a', '#7a6a52', '#3a3a3e', '#8a4a2a', '#c9bc98', '#5a6a4a', '#7a3048'];
+  const HATC = ['#3b2a1c', '#5a4030', '#1c1c1c', '#7a6248', '#c8b48a', '#4a2a1c', '#2a3036'];
+  const BAND = ['#8a2e2e', '#1c1410', '#d8b25a', '#3d6b3a', '#2f4f7a', '#c9bc98'];
+  const M = ['Silas', 'Ezekiel', 'Amos', 'Cyrus', 'Virgil', 'Hollis', 'Rufus', 'Clem', 'Otis', 'Wade', 'Boone', 'Earl', 'Luther', 'Thaddeus', 'Abner', 'Jesse', 'Cole', 'Wyatt', 'Elijah', 'Jeb', 'Ike', 'Gus', 'Hank', 'Lem', 'Ambrose', 'Josiah', 'Caleb', 'Ned'];
+  const F = ['Clementine', 'Delilah', 'Opal', 'Mae', 'Hattie', 'Rosalie', 'Pearl', 'Ida', 'Belle', 'Josie', 'Lottie', 'Minnie', 'Adelaide', 'Etta', 'Ruby', 'Cora', 'Nell', 'Tillie', 'Viola', 'Maude'];
+  const L = ['Calloway', 'Pruitt', 'McCoy', 'Hatfield', 'Blackwood', 'Tanner', 'Crane', 'Holloway', 'Dunmore', 'Whitlock', 'Briggs', 'Shelby', 'Garrett', 'Rourke', 'Coldwater', 'Pike', 'Stokes', 'Harlan', 'Boggs', 'Mercer', 'Ashby', 'Gentry', 'Rutledge', 'Quill', 'Larkin'];
+  const NICK = ['Lucky', 'Snake', 'Ace', 'Dusty', 'Slim', 'Kid', 'Deadeye', 'Lefty', 'Moonshine', 'Two-Bit', 'Holler'];
+  const rng = seed => { let a = seed >>> 0 || 7; return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; };
+  const cache = new Map();
+  function make(seed) {
+    if (cache.has(seed)) return cache.get(seed);
+    const r = rng(seed), P = a => a[r() * a.length | 0];
+    const W = 20, Hh = 22, g = Array.from({length: Hh}, () => Array(W).fill(null));
+    const R = (x, y, w, h, c) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (j >= 0 && j < Hh && i >= 0 && i < W) g[j][i] = c; };
+    const D = (x, y, c) => R(x, y, 1, 1, c);
+    const fem = r() < 0.42, [sk, sks] = P(SK), hc = P(HAIR), shirt = P(CL), eye = P(['#1c1410', '#2e4a6b', '#3d6b3a', '#5a3a22']);
+    const hat = fem ? P(['none', 'none', 'bonnet', 'cowboy', 'feather', 'none', 'feather']) : P(['cowboy', 'cowboy', 'bowler', 'top', 'bandana', 'miner', 'none', 'cowboy', 'none']);
+    const hatc = P(HATC), band = P(BAND);
+    const beard = fem ? 'none' : P(['none', 'mustache', 'handlebar', 'full', 'stubble', 'goatee', 'none', 'full', 'mustache']);
+    const hair = fem ? P(['long', 'bun', 'long', 'braid', 'curly']) : P(['short', 'short', 'bald', 'long', 'curly', 'short']);
+    const x0 = r(), acc = x0 < 0.13 ? 'patch' : x0 < 0.27 ? 'glasses' : x0 < 0.38 ? 'scar' : 'none';
+    const smoke = !fem && r() < 0.25, star = r() < 0.12, neck = fem ? P(['lace', 'choker', 'lace', 'none']) : P(['bandana', 'bowtie', 'bolo', 'none', 'bandana']);
+    const vest = r() < 0.55 ? P(CL.filter(c => c !== shirt)) : null, susp = !vest && !fem && r() < 0.5;
+    // body
+    R(3, 17, 14, 5, shirt); R(2, 18, 16, 4, shirt); D(3, 17, null); D(16, 17, null);
+    R(3, 19, 1, 3, 'rgba(0,0,0,.18)'); R(16, 19, 1, 3, 'rgba(0,0,0,.18)');
+    if (fem) { R(7, 17, 6, 1, sk); R(8, 18, 4, 1, sk); }
+    if (vest) { R(2, 18, 5, 4, vest); R(13, 18, 5, 4, vest); R(4, 17, 3, 1, vest); R(13, 17, 3, 1, vest); D(6, 20, '#d8b25a'); D(13, 20, '#d8b25a'); }
+    if (susp) { R(6, 17, 1, 5, '#2a1a10'); R(13, 17, 1, 5, '#2a1a10'); }
+    if (star) { D(15, 19, '#f0d070'); D(14, 20, '#e8c45a'); D(15, 20, '#fff2a8'); D(16, 20, '#e8c45a'); D(15, 21, '#e8c45a'); }
+    // neck + head
+    R(8, 15, 4, 2, sks); R(6, 6, 8, 9, sk); D(6, 6, null); D(13, 6, null); D(6, 14, null); D(13, 14, null); R(7, 14, 6, 1, sk);
+    R(12, 7, 2, 7, 'rgba(0,0,0,.08)'); R(5, 9, 1, 2, sks); R(14, 9, 1, 2, sks);
+    D(7, 10, '#efe8dc'); D(8, 10, eye); D(11, 10, eye); D(12, 10, '#efe8dc');
+    const brow = hc === '#e8e2d6' || hc === '#d9b56a' ? '#8a6a3a' : hc; R(7, 9, 2, 1, brow); R(11, 9, 2, 1, brow);
+    D(10, 11, sks); D(9, 12, sks); D(10, 12, sks);
+    R(9, 13, 2, 1, fem ? '#a8434d' : '#7a3a2e'); if (r() < 0.5) { D(8, 13, fem ? '#a8434d' : '#7a3a2e'); }
+    if (fem) { D(7, 12, '#e39a8a'); D(12, 12, '#e39a8a'); D(5, 11, '#e8c45a'); D(14, 11, '#e8c45a'); }
+    // hair
+    const top = () => { R(6, 5, 8, 2, hc); R(5, 6, 1, 4, hc); R(14, 6, 1, 4, hc); R(6, 7, 3, 1, hc); R(11, 7, 3, 1, hc); D(9, 7, hc); };
+    if (hair === 'short') top();
+    if (hair === 'bald') { R(7, 5, 6, 1, sk); R(5, 8, 1, 3, hc); R(14, 8, 1, 3, hc); }
+    if (hair === 'long') { top(); R(4, 7, 2, 10, hc); R(14, 7, 2, 10, hc); R(4, 17, 2, 2, hc); R(14, 17, 2, 2, hc); }
+    if (hair === 'curly') { R(5, 4, 10, 3, hc); D(6, 3, hc); D(9, 3, hc); D(12, 3, hc); R(4, 6, 2, 6, hc); R(14, 6, 2, 6, hc); D(6, 7, hc); D(13, 7, hc); }
+    if (hair === 'bun') { top(); R(8, 2, 4, 3, hc); D(8, 2, null); D(11, 2, null); }
+    if (hair === 'braid') { top(); R(4, 7, 2, 6, hc); R(14, 7, 2, 6, hc); for (let y = 13; y < 21; y++) D(15, y, y % 2 ? hc : 'rgba(0,0,0,.35)'); }
+    // facial hair
+    if (beard === 'mustache' || beard === 'handlebar' || beard === 'goatee') { R(8, 12, 4, 1, hc); if (beard === 'handlebar') { D(7, 13, hc); D(12, 13, hc); } if (beard === 'goatee') R(9, 14, 2, 2, hc); }
+    if (beard === 'full') { R(6, 12, 8, 3, hc); R(7, 14, 6, 1, hc); R(8, 15, 4, 1, hc); R(9, 13, 2, 1, '#5a2a22'); }
+    if (beard === 'stubble') for (let x = 7; x < 13; x++) for (let y = 13; y < 15; y++) if ((x + y) % 2) D(x, y, sks);
+    // accessories
+    if (acc === 'patch') { R(6, 9, 8, 1, '#1c1410'); R(7, 10, 2, 2, '#0a0d11'); }
+    if (acc === 'glasses') { D(7, 10, '#9fc4d6'); D(12, 10, '#9fc4d6'); R(9, 10, 2, 1, '#d8b25a'); D(6, 10, '#d8b25a'); D(13, 10, '#d8b25a'); }
+    if (acc === 'scar') { D(12, 9, '#c46a6a'); D(12, 11, '#c46a6a'); D(13, 12, '#c46a6a'); }
+    if (smoke) { R(11, 13, 3, 1, '#6b4426'); D(14, 13, '#ff8a3a'); D(15, 11, '#8798AA'); D(16, 10, '#aab8c5'); D(15, 9, '#8798AA'); }
+    // neckwear
+    if (neck === 'bandana') { R(7, 17, 6, 2, band); R(8, 19, 4, 1, band); R(9, 20, 2, 1, band); D(8, 17, 'rgba(255,255,255,.25)'); }
+    if (neck === 'bowtie') { R(8, 17, 4, 1, band); D(9, 18, band); D(10, 18, band); D(9, 17, 'rgba(0,0,0,.35)'); D(10, 17, 'rgba(0,0,0,.35)'); }
+    if (neck === 'bolo') { R(9, 17, 2, 1, '#d8b25a'); R(9, 18, 1, 3, '#1c1410'); R(10, 18, 1, 3, '#1c1410'); }
+    if (neck === 'lace') { R(6, 17, 1, 1, '#efe8dc'); R(13, 17, 1, 1, '#efe8dc'); R(7, 18, 1, 1, '#efe8dc'); R(12, 18, 1, 1, '#efe8dc'); D(9, 19, '#efe8dc'); D(10, 19, '#efe8dc'); }
+    if (neck === 'choker') { R(8, 16, 4, 1, '#1c1410'); D(10, 17, '#e8c45a'); }
+    // hats (drawn last, over the hair)
+    if (hat === 'cowboy') { R(6, 1, 8, 5, hatc); D(9, 1, null); D(10, 1, null); R(6, 4, 8, 1, band); R(2, 6, 16, 1, hatc); D(2, 5, hatc); D(17, 5, hatc); R(7, 2, 1, 3, 'rgba(255,255,255,.12)'); }
+    if (hat === 'bowler') { R(6, 2, 8, 4, hatc); D(6, 2, null); D(13, 2, null); R(6, 5, 8, 1, band); R(5, 6, 10, 1, hatc); }
+    if (hat === 'top') { R(7, 0, 6, 6, hatc); R(7, 4, 6, 1, band); R(5, 6, 10, 1, hatc); R(8, 0, 1, 4, 'rgba(255,255,255,.12)'); }
+    if (hat === 'bandana') { R(6, 5, 8, 3, band); R(14, 6, 2, 1, band); R(15, 7, 1, 2, band); D(8, 6, 'rgba(255,255,255,.3)'); D(11, 6, 'rgba(255,255,255,.3)'); }
+    if (hat === 'miner') { R(5, 3, 10, 4, '#c8a43a'); D(5, 3, null); D(14, 3, null); R(4, 7, 12, 1, '#a8862a'); R(9, 4, 2, 2, '#fff2a8'); D(8, 4, '#6a5a3a'); }
+    if (hat === 'bonnet') { const bc = P(['#c9bc98', '#9fb4c8', '#d8a8b0', '#a8c49a']); R(4, 4, 12, 4, bc); D(4, 4, null); D(15, 4, null); R(4, 8, 2, 7, bc); R(14, 8, 2, 7, bc); R(8, 15, 4, 1, band); R(5, 7, 10, 1, 'rgba(0,0,0,.15)'); }
+    if (hat === 'feather') { R(5, 5, 8, 2, hatc); R(4, 7, 10, 1, hatc); R(5, 6, 8, 1, band); R(12, 1, 1, 4, '#e8e2d6'); R(13, 2, 1, 3, '#c9bc98'); D(11, 2, '#e8e2d6'); }
+    // 1px outline around the silhouette
+    const out = g.map(row => [...row]);
+    for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) if (!g[y][x] && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => g[y + b]?.[x + a] && !String(g[y + b][x + a]).startsWith('rgba'))) out[y][x] = '#0a0d11';
+    let rects = '';
+    out.forEach((row, y) => { let x = 0; while (x < W) { const c = row[x]; if (!c) { x++; continue; } const s0 = x; while (x < W && row[x] === c) x++; rects += `<rect x="${s0}" y="${y}" width="${x - s0}" height="1" fill="${c}"/>`; } });
+    const first = fem ? P(F) : P(M), last = P(L);
+    const nick = acc === 'patch' ? 'One-Eye' : acc === 'glasses' && r() < 0.6 ? 'Doc' : smoke && r() < 0.5 ? 'Smokey' : star ? 'Sheriff' : hc === '#8a3a1e' && r() < 0.6 ? 'Red' : hat === 'miner' ? 'Digger' : r() < 0.3 ? P(NICK) : '';
+    const name = nick ? (r() < 0.5 ? `${nick} ${last}` : `${first} "${nick}"`) : `${first} ${last}`;
+    const o = {rects, name, fem};
+    cache.set(seed, o); return o;
+  }
+  return {make, svg: (seed, size = 46) => `<svg class="ppl" viewBox="0 0 20 22" width="${size}" height="${Math.round(size * 1.1)}" shape-rendering="crispEdges" aria-hidden="true">${make(seed).rects}</svg>`};
+})();
+const newBotSeed = () => 1 + Math.floor(Math.random() * 2e9);
+const botSeed = p => +String(p).slice(4) || 1;
+const botAv = (p, size = 46) => `<span class="botav pplav sunken">${PPL.svg(botSeed(p), size)}</span>`;
+
+// ---------- saloon scenery (generated pixel art, cached as data URLs) ----------
+const SAL = {};
+const FONT3 = {S: '111100111001111', A: '010101111101101', L: '100100100100111', O: '111101101101111', N: '101111111101101', W: '101101111111101', T: '111010010010010', E: '111100110100111', D: '110101101101110', R: '110101110101101', '$': '011110010011110', 0: '111101101101111', 5: '111100111001111', H: '101101111101101', U: '101101101101111'};
+function salCanvas(w, h, fn) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); let sd = 1234567; const rnd = () => (sd = sd * 16807 % 2147483647) / 2147483647; fn(g, (x, y, ww, hh, col) => { g.fillStyle = col; g.fillRect(x | 0, y | 0, ww | 0, hh | 0); }, rnd); return c.toDataURL(); }
+function salTxt(R, str, x, y, sc, col) { [...str].forEach((ch, i) => { const f = FONT3[ch]; if (!f) return; for (let k = 0; k < 15; k++) if (f[k] === '1') R(x + (i * 4 + k % 3) * sc, y + (k / 3 | 0) * sc, sc, sc, col); }); }
+function saloonBg() {
+  return SAL.bg || (SAL.bg = salCanvas(384, 216, (g, R, rnd) => {
+    for (let x = 0; x < 384; x += 12) { R(x, 0, 12, 150, ['#3b2416', '#43291a', '#4a2e1c', '#3f2618'][rnd() * 4 | 0]); R(x, 0, 1, 150, '#24150c');
+      for (let k = 0; k < 7; k++) R(x + 2 + rnd() * 8, rnd() * 150, 1, 4 + rnd() * 12, 'rgba(0,0,0,.2)');
+      if (rnd() < 0.35) { const ky = rnd() * 140; R(x + 4, ky, 3, 2, '#2a180e'); R(x + 5, ky - 1, 1, 1, '#2a180e'); } }
+    R(0, 0, 384, 7, '#24150c'); R(0, 7, 384, 2, '#6b4426');
+    R(0, 116, 384, 5, '#6b4426'); R(0, 116, 384, 1, '#8a5a32'); R(0, 121, 384, 2, '#1d110a');
+    for (let x = 0; x < 384; x += 32) { R(x, 123, 32, 27, '#2a180e'); R(x + 3, 127, 26, 19, '#33200f'); R(x + 3, 127, 26, 1, '#1d110a'); R(x + 3, 145, 26, 1, '#4e321d'); }
+    for (let y = 150; y < 216; y += 6) { R(0, y, 384, 6, (y / 6) % 2 ? '#2b1a0f' : '#311e10'); R(0, y, 384, 1, '#1a0f08'); for (let x = (y * 7) % 40; x < 384; x += 40 + rnd() * 30) R(x, y, 1, 6, '#1a0f08'); }
+    const shelf = (x0, w) => { R(x0 - 3, 14, w + 6, 98, '#24150c'); R(x0, 16, w, 94, '#1b100a');
+      for (const sy of [44, 76, 106]) { R(x0, sy, w, 3, '#6b4426'); R(x0, sy + 3, w, 2, '#120a06');
+        for (let x = x0 + 3; x < x0 + w - 6; x += 6 + (rnd() * 4 | 0)) { const bc = ['#3d6b3a', '#7a2e2e', '#8a6a2a', '#2e4a6b', '#5a4a3a', '#a08a5a', '#4a6a5a'][rnd() * 7 | 0], bh = 9 + (rnd() * 9 | 0);
+          if (rnd() < 0.15) { R(x, sy - 6, 5, 6, '#c9bc98'); R(x + 1, sy - 5, 3, 1, '#8a7a5a'); continue; }
+          R(x, sy - bh, 4, bh, bc); R(x + 1, sy - bh - 4, 2, 4, bc); R(x + 1, sy - bh - 5, 2, 1, '#2a180e'); R(x + 1, sy - bh + 2, 1, bh - 4, 'rgba(255,255,255,.28)'); if (rnd() < 0.55) R(x, sy - bh + 4, 4, 3, '#d8cfae'); } } };
+    shelf(10, 90); shelf(284, 90);
+    R(146, 16, 92, 44, '#24150c'); R(148, 18, 88, 40, '#6b4426'); R(151, 21, 82, 34, '#1b1410'); R(151, 21, 82, 1, '#3a2a1c');
+    salTxt(R, 'SALOON', 158, 27, 3, '#e0b65a'); R(158, 47, 68, 1, '#8a6a2a'); salTxt(R, 'HAUNT', 178, 50, 1, '#c25a62');
+    const poster = (x, y, seed) => { R(x, y, 30, 38, '#d9c8a0'); R(x, y, 30, 1, '#efe2bf'); R(x + 29, y, 1, 38, '#a8946a'); R(x + 2, y + 37, 26, 1, '#a8946a');
+      salTxt(R, 'WANTED', x + 3, y + 3, 1, '#3b2416'); R(x + 9, y + 11, 12, 13, '#b8a47a'); R(x + 11, y + 13, 8, 9, '#8a7450'); R(x + 9, y + 11, 12, 3, '#3b2416'); R(x + 7, y + 13, 16, 1, '#3b2416');
+      R(x + 12, y + 16, 2, 1, '#3b2416'); R(x + 16, y + 16, 2, 1, '#3b2416'); R(x + 13, y + 19, 4, 1, '#3b2416'); salTxt(R, seed, x + 6, y + 28, 1, '#7a2e2e'); R(x + 14, y + 1, 2, 2, '#8a8a8a'); };
+    poster(108, 64, '$500'); poster(246, 60, '$50'); 
+    const lamp = (x, y) => { R(x, y - 10, 1, 10, '#1c1410'); R(x - 3, y, 7, 2, '#3a2a1c'); R(x - 2, y + 2, 5, 7, '#ffcf7a'); R(x - 1, y + 3, 3, 4, '#fff2c0'); R(x - 3, y + 9, 7, 2, '#3a2a1c'); };
+    lamp(126, 26); lamp(258, 26); lamp(40, 128); lamp(344, 128);
+    g.globalCompositeOperation = 'lighter';
+    for (const [x, y, rr] of [[126, 32, 70], [258, 32, 70], [40, 134, 50], [344, 134, 50]]) { const gr = g.createRadialGradient(x, y, 2, x, y, rr); gr.addColorStop(0, 'rgba(255,170,80,.32)'); gr.addColorStop(1, 'rgba(255,170,80,0)'); g.fillStyle = gr; g.fillRect(x - rr, y - rr, rr * 2, rr * 2); }
+    g.globalCompositeOperation = 'source-over';
+    R(150, 64, 4, 6, '#d8cfae'); R(148, 66, 8, 2, '#d8cfae'); R(151, 70, 2, 4, '#d8cfae'); // little skull trophy
+    R(229, 64, 6, 2, '#8a6a3a'); R(228, 62, 1, 3, '#8a6a3a'); R(235, 62, 1, 3, '#8a6a3a');
+  }));
+}
+function woodTex() { return SAL.wood || (SAL.wood = salCanvas(64, 32, (g, R, rnd) => { R(0, 0, 64, 32, '#5a3820'); for (let y = 0; y < 32; y++) { if (rnd() < 0.5) R(0, y, 64, 1, rnd() < 0.5 ? '#633f24' : '#51321c'); } for (let k = 0; k < 40; k++) R(rnd() * 64, rnd() * 32, 4 + rnd() * 14, 1, rnd() < 0.5 ? '#3f2614' : '#714a2a'); for (let k = 0; k < 3; k++) { const x = rnd() * 60, y = rnd() * 30; R(x, y, 4, 2, '#3a2312'); R(x + 1, y, 2, 1, '#2a180e'); } })); }
+function feltTex() { return SAL.felt || (SAL.felt = salCanvas(48, 48, (g, R, rnd) => { R(0, 0, 48, 48, '#2a4a33'); for (let k = 0; k < 420; k++) R(rnd() * 48, rnd() * 48, 1, 1, ['#2f523a', '#264430', '#2c4d36', '#23402c'][rnd() * 4 | 0]); })); }
+
 // ---------- table ----------
 let hPrevTop = null;
-function seatHtml(p, s, extra = '') {
+function seatHtml(p, s, extra = '', me = false) {
   const isCur = H.cur(s) === p && !s.winner, out = s.out.includes(p), n = s.hands[p].length;
-  const av = isBotId(p) ? `<span class="botav sunken">${sprite(['shadow', 'ghost', 'eye'][(+p.slice(4) - 1) % 3], 26)}</span>` : `<span class="hav" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>`;
+  const isNext = !s.winner && !isCur && s.order[H.step(s)] === p;
+  const av = isBotId(p) ? botAv(p, me ? 40 : 46) : `<span class="hav" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>`;
   const booP = s.boo && s.boo.p === p;
-  return `<div class="seat${isCur ? ' cur' : ''}${out ? ' out' : ''}" data-seat="${esc(p)}">${av}<div class="sinfo"><b>${esc(s.names[p] || 'Player')}</b><span class="meta">${out ? 'left' : `${n} card${n === 1 ? '' : 's'}`}${n === 1 && !out ? (booP ? ' · <span class="boo">BOO?</span>' : ' · <span class="booed">last card</span>') : ''}</span>
-    <span class="mini">${'<i></i>'.repeat(Math.min(n, 12))}</span>${extra}</div></div>`;
+  return `<div class="seat${isCur ? ' cur' : ''}${out ? ' out' : ''}${me ? ' meseat' : ''}" data-seat="${esc(p)}">${av}<div class="sinfo"><b>${esc(me ? 'You' : s.names[p] || 'Player')}</b>
+    <span class="meta">${out ? 'left the table' : isCur ? '<span class="thk">playing<i>.</i><i>.</i><i>.</i></span>' : isNext ? 'next up' : 'waiting'}${n === 1 && !out ? (booP ? ' · <span class="boo">BOO?</span>' : ' · <span class="booed">last card</span>') : ''}</span>${extra}</div>
+    ${out ? '' : `<span class="ccount" title="${n} cards in hand"><span class="fan">${'<i></i>'.repeat(Math.min(n, 5))}</span><b>${n}</b></span>`}</div>`;
 }
+const VORD = '0123456789SRDWF';
+function fitHand() {
+  const h = $('#hhand'); if (!h) return; const cs = h.querySelectorAll('.hcard'), n = cs.length; if (n < 2) { h.style.setProperty('--ov', '8px'); return; }
+  const cw = cs[0].offsetWidth || 70, avail = h.clientWidth - 16, gap = (avail - cw) / (n - 1) - cw;
+  h.style.setProperty('--ov', Math.max(-cw * 0.62, Math.min(8, gap)) + 'px');
+}
+addEventListener('resize', fitHand);
 function renderTable() {
   const s = G.s, el = gEl(); if (!s || !el) return;
   if (!el.classList.contains('on')) return;
@@ -1509,47 +1699,70 @@ function renderTable() {
   const before = snapRects(), prev = G.prevS; G.prevS = s;
   const timer = G.mode === 'online' && G.room?.deadline && !s.winner ? `<span class="tbarx"><i id="tbar"></i></span>` : '';
   if (!myTurn || s.drawn) G.sel = null;
-  const sorted = [...hand].sort((a, b) => ('rgbyw'.indexOf(a[0]) - 'rgbyw'.indexOf(b[0])) || a.localeCompare(b));
+  const byVal = G.sortBy === 'value';
+  const sorted = [...hand].sort((a, b) => byVal ? (VORD.indexOf(a[1]) - VORD.indexOf(b[1])) || ('rgbyw'.indexOf(a[0]) - 'rgbyw'.indexOf(b[0])) : ('rgbyw'.indexOf(a[0]) - 'rgbyw'.indexOf(b[0])) || a.localeCompare(b));
   G.sorted = sorted; if (G.sel && G.sel.some(i => i >= sorted.length)) G.sel = null; const sel = G.sel || [];
-  el.innerHTML = `<div class="gtable win"><div class="tbar">${sprite('ghost', 14)}<span>HAUNT · ${G.mode === 'local' ? `vs bots (${esc(G.lvl)})` : 'online table'}</span><button class="lnk" id="hleave" style="margin-left:auto;color:#fff">Leave table</button></div>
-    <div class="gbody"><aside class="dealer" aria-label="Dealer"><div class="dname">DEALER <span>· Flatwoods Monster</span></div><div class="fwart a-${FW_ANIM[G.fw?.emo] || 'bob'}" id="fwart">${fwInner(G.fw?.emo || 'idle')}</div><div class="fwsay${G.fw?.say ? ' show' : ''}" id="fwsay" aria-live="polite">${esc(G.fw?.say || '')}</div></aside><div class="gmain">
+  const dkey = s.order.join() + '|' + s.discard[0];
+  if (G.histKey !== dkey) { G.histKey = dkey; G.hist = []; }
+  if (s.log && G.hist[0] !== s.log) { G.hist.unshift(s.log); G.hist.length = Math.min(G.hist.length, 4); }
+  const curName = s.names[H.cur(s)] || 'Player';
+  const banner = s.winner ? '' : myTurn ? (s.drawn ? 'You drew a playable card — play it or pass' : sel.length ? `Stack of ${sel.length} ready — drag it onto the pile or press Play` : 'Your turn — play a glowing card, stack twins, or draw')
+    : `${esc(curName)} is thinking…`;
+  const nPlayable = myTurn ? hand.filter(c => H.canPlay(s, c)).length : 0;
+  el.innerHTML = `<div class="gtable saloon win" style="--sal:url(${saloonBg()});--wood:url(${woodTex()});--felt:url(${feltTex()})"><div class="tbar">${sprite('ghost', 14)}<span>HAUNT · ${G.mode === 'local' ? `saloon table · ${esc(G.lvl)}` : 'online saloon'}</span><button class="lnk" id="hhelp" style="margin-left:auto;color:#fff">Rules</button><button class="lnk" id="hleave" style="color:#fff;margin-left:12px">Leave table</button></div>
+    <div class="gbody"><aside class="dealer" aria-label="Dealer"><div class="dname">DEALER <span>· Flatwoods Monster</span></div><div class="fwhover"><div class="fwart a-${FW_ANIM[G.fw?.emo] || 'bob'}" id="fwart">${fwInner(G.fw?.emo || 'idle')}</div></div><div class="fwshadow"></div><div class="fwsay${G.fw?.say ? ' show' : ''}" id="fwsay" aria-live="polite">${esc(G.fw?.say || '')}</div></aside><div class="gmain">
     <div class="gtop">${others.map(p => seatHtml(p, s, H.cur(s) === p ? timer : '')).join('')}</div>
-    <div class="gmid">
-      <div class="pile"><button class="drawbtn" id="hdraw" ${myTurn && !s.drawn ? '' : 'disabled'} aria-label="Draw a card">${cardHtml('back', 'big')}<span class="meta">${s.deck.length} left</span></button></div>
-      <div class="pile" id="hpile">${cardHtml(top, 'big' + (dropped ? ' drop' : ''), 'id="htop" tabindex="-1" aria-label="Top card: ' + cardLabel(top) + '"')}</div>
-      <div class="ginfo"><div class="curcol" style="--c:${HC[s.color][1]}"><span></span>${HC[s.color][0]}</div><div class="dir">${s.dir === 1 ? '↻ clockwise' : '↺ counter-clockwise'}</div><div class="glog">${esc(s.log || '')}</div></div>
-    </div>
-    <div class="gme${myTurn ? ' myturn' : ''}"><div class="mebar">${seatHtml(me, s, myTurn ? timer : '')}
-      <div class="mebtns">${myTurn ? (s.drawn ? '<span class="meta">You drew a playable card — play it or pass.</span><button class="b s" id="hpass" style="width:auto">Pass</button>' : '<span class="yt">YOUR TURN</span>') : `<span class="meta">Waiting for ${esc(s.names[H.cur(s)] || '')}…</span>`}</div></div>
-      <div class="hand" id="hhand">${sorted.map((c, i) => { const si = sel.indexOf(i), stk = sel.length && si < 0 && sameVal(c, sorted[sel[0]]);
-        return cardHtml(c, (si >= 0 ? 'sel' : stk ? 'stackable' : myTurn && H.canPlay(s, c) && !sel.length ? 'ok' : (myTurn ? 'no' : '')), `data-i="${i}"${si >= 0 ? ` data-n="${si + 1}"` : ''}`); }).join('')}</div>
-      ${sel.length ? `<div class="stackbar"><span class="meta"><b>${sel.length}</b> × ${esc(cardLabel(sorted[sel[0]]).replace(/^\S+ /, ''))} selected — tap more cards of the same value, then drag onto the pile or press Play. The last card picks the colour.</span><button class="b" id="hplaysel">Play ${sel.length}</button><button class="b s" id="hcansel">Cancel</button></div>` : ''}</div>
+    <div class="board"><div class="felt">
+      ${banner ? `<div class="turnban${myTurn ? ' me' : ''}" role="status">${banner}</div>` : ''}
+      <div class="gmid">
+        <div class="pile"><button class="drawbtn" id="hdraw" ${myTurn && !s.drawn ? '' : 'disabled'} aria-label="Draw a card (D)">${cardHtml('back', 'big')}<span class="dlbl">${myTurn && !s.drawn ? (nPlayable ? 'DRAW' : 'DRAW ◂') : 'DECK'} · ${s.deck.length}</span></button></div>
+        <div class="pile" id="hpile" style="--c:${HC[s.color][1]}">${cardHtml(top, 'big' + (dropped ? ' drop' : ''), 'id="htop" tabindex="-1" aria-label="Top card: ' + cardLabel(top) + '"')}<span class="dlbl">PILE</span></div>
+        <div class="ginfo"><div class="curcol" style="--c:${HC[s.color][1]}"><span></span>${HC[s.color][0]}</div><div class="dir"><span class="dirarr${s.dir === 1 ? '' : ' ccw'}">↻</span>${s.dir === 1 ? 'clockwise' : 'counter-clockwise'}</div>
+          <ol class="hist">${(G.hist || []).map(t => `<li>${esc(t)}</li>`).join('')}</ol></div>
+      </div>
     </div></div>
-    ${s.boo && s.boo.p === me && !s.winner ? `<button class="boobtn" id="hboo" aria-label="Shout BOO!">BOO!<span class="boobar"><i style="animation-duration:${Math.max(0, s.boo.until - Date.now())}ms"></i></span></button>` : ''}
-    ${s.winner ? `<div class="gover"><div class="win govbox"><div class="tbar blood"><span>GAME OVER</span></div><div class="pad">${sprite(s.winner === me ? 'ghost' : 'shadow', 64)}
+    <div class="gme${myTurn ? ' myturn' : ''}"><div class="mebar">${seatHtml(me, s, myTurn ? timer : '', true)}
+      <div class="mebtns"><button class="b s sm" id="hsort" title="Sort hand (S)">Sort: ${byVal ? 'value' : 'colour'}</button>${myTurn && s.drawn ? '<button class="b sm" id="hpass">Pass<span class="kbd"> (P)</span></button>' : ''}${myTurn && !s.drawn && !nPlayable ? '<button class="b sm" id="hdraw2">Draw<span class="kbd"> (D)</span></button>' : ''}${myTurn && !s.drawn && nPlayable ? '<span class="yt">YOUR TURN</span>' : ''}</div></div>
+      <div class="hand" id="hhand">${sorted.map((c, i) => { const si = sel.indexOf(i), stk = sel.length && si < 0 && sameVal(c, sorted[sel[0]]);
+        return cardHtml(c, (si >= 0 ? 'sel' : stk ? 'stackable' : myTurn && H.canPlay(s, c) && !sel.length && (!s.drawn || c === s.drawn) ? 'ok' : (myTurn ? 'no' : '')), `data-i="${i}"${si >= 0 ? ` data-n="${si + 1}"` : ''}`); }).join('')}</div>
+      ${sel.length ? `<div class="stackbar"><span class="meta"><b>${sel.length}</b> × ${esc(cardLabel(sorted[sel[0]]).replace(/^\S+ /, ''))} selected — tap more cards of the same value. The last card picks the colour.</span><button class="b" id="hplaysel">Play ${sel.length}<span class="kbd"> (Enter)</span></button><button class="b s" id="hcansel">Cancel</button></div>` : ''}</div>
+    </div></div>
+    ${s.boo && s.boo.p === me && !s.winner ? `<button class="boobtn" id="hboo" aria-label="Shout BOO! (B)">BOO!<span class="boobar"><i style="animation-duration:${Math.max(0, s.boo.until - Date.now())}ms"></i></span></button>` : ''}
+    ${s.winner ? `<div class="gover"><div class="win govbox"><div class="tbar blood"><span>GAME OVER</span></div><div class="pad">${s.winner === me ? sprite('ghost', 64) : isBotId(s.winner) ? `<span class="pplav sunken big">${PPL.svg(botSeed(s.winner), 64)}</span>` : sprite('shadow', 64)}
       <h2>${s.winner === me ? 'You win!' : `${esc(s.names[s.winner])} wins`}</h2><p class="meta">${s.winner === me ? 'The spirits bow to you.' : 'Better luck next haunting.'}</p>
-      <div class="row">${G.mode === 'local' ? '<button class="b" id="hagain">Play again</button>' : ''}<button class="b s" id="hback">Back to games</button></div></div></div></div>` : ''}
+      <div class="row">${G.mode === 'local' ? '<button class="b" id="hagain">New round (new faces)</button>' : ''}<button class="b s" id="hback">Back to games</button></div></div></div></div>` : ''}
   </div>`;
   if (myTurn && !G.lastTurnMine) sfx('msg', 0.35);
   if (s.winner && !G.overPlayed) { G.overPlayed = true; sfx(s.winner === me ? 'success' : 'error'); }
   G.lastTurnMine = myTurn;
-  // avatars for humans
   s.order.filter(p => !isBotId(p) && p !== 'me').forEach(async p => { if (profCache.has(p)) return; const pr = await getProfile(p); document.querySelectorAll(`.hav[data-av="${CSS.escape(p)}"]`).forEach(n => n.innerHTML = avatarHtml(pr, true)); });
-  bindHandDrag();
+  fitHand(); bindHandDrag();
   if ($('#hboo')) $('#hboo').onclick = pressBoo;
-  const dkey = s.order.join() + '|' + s.discard[0];
   if (s.moves === 0 && G.dealtFor !== dkey) { G.dealtFor = dkey; setTimeout(() => dealAnim(s), 80); }
   else { animateChanges(prev, s, before); fwReact(prev, s); }
   if (myTurn && !G.wasMyTurn) G.myTurnAt = Date.now(); G.wasMyTurn = myTurn;
   if ($('#hplaysel')) $('#hplaysel').onclick = playSelection;
   if ($('#hcansel')) $('#hcansel').onclick = () => { G.sel = null; renderTable(); };
   $('#hdraw').onclick = () => doMove({a: 'draw'});
+  if ($('#hdraw2')) $('#hdraw2').onclick = () => doMove({a: 'draw'});
   if ($('#hpass')) $('#hpass').onclick = () => doMove({a: 'pass'});
+  $('#hsort').onclick = () => { G.sortBy = G.sortBy === 'value' ? 'colour' : 'value'; G.sel = null; sfx('select', 0.2); renderTable(); };
+  $('#hhelp').onclick = rulesSheet;
   $('#hleave').onclick = leaveTable;
   if ($('#hagain')) $('#hagain').onclick = () => startLocal(G.nb, G.lvl);
   if ($('#hback')) $('#hback').onclick = async () => { if (G.mode === 'online') await leaveOnline(true); resetGame(); gamesHome(); };
   paintTimer();
 }
+document.addEventListener('keydown', e => {
+  if (!G.s || !gEl()?.classList.contains('on') || e.target.closest?.('input,textarea,select,[contenteditable]') || $('#sheet')?.classList.contains('open') || e.ctrlKey || e.metaKey || e.altKey) return;
+  const s = G.s, mine = H.cur(s) === G.me && !s.winner, k = e.key.toLowerCase();
+  if ((k === 'b' || k === ' ') && s.boo?.p === G.me) { e.preventDefault(); pressBoo(); }
+  else if (k === 'd' && mine && !s.drawn) doMove({a: 'draw'});
+  else if (k === 'p' && mine && s.drawn) doMove({a: 'pass'});
+  else if (k === 'enter' && G.sel?.length) { e.preventDefault(); playSelection(); }
+  else if (k === 'escape' && G.sel?.length) { G.sel = null; renderTable(); }
+  else if (k === 's') { G.sortBy = G.sortBy === 'value' ? 'colour' : 'value'; G.sel = null; renderTable(); }
+});
 // ---------- Flatwoods monster dealer: pixel art (40x54), emotions, speech ----------
 const FW_ROWS = [
   '..................OLhO..................',
@@ -1607,7 +1820,9 @@ const FW_ROWS = [
   '..........OO.OO.OO.OO.OO.OO.OO..........',
   '........................................'];
 const FW_P = {R: '#c25a62', O: '#0a0d11', o: '#2a0c12', H: '#8a2a36', L: '#b04a55', h: '#5e1a24', F: '#1e2a24', B: '#3c5a3e', b: '#273d2b', G: '#5c7d58', C: '#d8cfae'};
-const FW_BASE = FW_ROWS.map((row, y) => { let r = '', x = 0; while (x < 40) { const ch = row[x]; if (!FW_P[ch]) { x++; continue; } const s0 = x; while (x < 40 && row[x] === ch) x++; r += `<rect x="${s0}" y="${y}" width="${x - s0}" height="1" fill="${FW_P[ch]}"/>`; } return r; }).join('');
+const FW_AL = {27: 9, 28: 13, 29: 12, 30: 12, 31: 12, 32: 12, 33: 12}, FW_AR = {27: 30, 28: 26, 29: 27, 30: 27, 31: 27, 32: 27, 33: 27};
+const fwPartOf = (x, y) => y in FW_AL && x <= FW_AL[y] ? 'L' : y in FW_AR && x >= FW_AR[y] ? 'R' : y <= 27 ? 'H' : 'B';
+const FW_PARTS = (() => { const o = {L: '', R: '', H: '', B: ''}; FW_ROWS.forEach((row, y) => { let x = 0; while (x < 40) { const ch = row[x]; if (!FW_P[ch]) { x++; continue; } const pt = fwPartOf(x, y), s0 = x; while (x < 40 && row[x] === ch && fwPartOf(x, y) === pt) x++; o[pt] += `<rect x="${s0}" y="${y}" width="${x - s0}" height="1" fill="${FW_P[ch]}"/>`; } }); return o; })();
 const FW_FACE = (() => {
   const Y = '#ffd75e', y = '#9c7a26', W = '#f0eee4', K = '#0a0d11', Rd = '#ff4d5a', Pk = '#ff7aa8', Bl = '#7ab8e0', Tg = '#c25a62';
   const m = ops => ops.flatMap(o => [o, [39 - o[0] - (o[2] || 1), o[1], o[2] || 1, o[3] || 1, o[4]]]);
@@ -1637,7 +1852,8 @@ const FW_FACE = (() => {
 const FW_ANIM = {idle: 'bob', blink: 'bob', happy: 'jump', laugh: 'jump', excited: 'jump', love: 'jump', surprised: 'pop', shocked: 'shake', angry: 'shake', sad: 'sink', cry: 'sink', smug: 'tilt', scared: 'shiver', sleepy: 'sink', thinking: 'tilt', dizzy: 'spin', wink: 'bob', deal: 'deal'};
 const FW_FX = {love: '♥', angry: '#', sleepy: 'z', excited: '!', shocked: '!!', surprised: '?', thinking: '…', dizzy: '@', laugh: 'ha', cry: '', scared: '!'};
 const fwCache = {};
-const fwSvg = emo => fwCache[emo] || (fwCache[emo] = `<svg viewBox="0 0 40 54" shape-rendering="crispEdges" role="img" aria-label="Flatwoods monster looks ${emo}">${FW_BASE}${(FW_FACE[emo] || FW_FACE.idle).map(([x, y, w = 1, h = 1, c]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`).join('')}</svg>`);
+const fwFace = emo => (FW_FACE[emo] || FW_FACE.idle).map(([x, y, w = 1, h = 1, c]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`).join('');
+const fwSvg = emo => fwCache[emo] || (fwCache[emo] = `<svg viewBox="0 0 40 54" shape-rendering="crispEdges" role="img" aria-label="Flatwoods monster looks ${emo}"><g class="fw-body">${FW_PARTS.B}</g><g class="fw-arm fw-armL">${FW_PARTS.L}</g><g class="fw-arm fw-armR">${FW_PARTS.R}</g><g class="fw-head">${FW_PARTS.H}<g class="fw-face">${fwFace(emo)}</g><g class="fw-blink">${fwFace('blink')}</g></g></svg>`);
 const fwInner = emo => `${fwSvg(emo)}${FW_FX[emo] ? `<span class="fwfx">${FW_FX[emo]}</span>` : ''}`;
 let fwT = 0;
 function setFw(emo, say, ms = 2600) {
@@ -1650,7 +1866,7 @@ function setFw(emo, say, ms = 2600) {
 setInterval(() => { // blinking, and getting sleepy when the human takes a long time
   const art = $('#fwart'); if (!art || !G.s || G.s.winner || G.fw?.emo !== 'idle' && G.fw) return;
   if (G.s && H.cur(G.s) === G.me && G.myTurnAt && Date.now() - G.myTurnAt > 15000) { G.myTurnAt = Date.now(); setFw('sleepy', 'Zzz… your move…', 3500); return; }
-  art.innerHTML = fwInner('blink'); setTimeout(() => { if ((!G.fw || G.fw.emo === 'idle') && $('#fwart')) $('#fwart').innerHTML = fwInner('idle'); }, 170);
+  art.classList.add('blinking'); setTimeout(() => $('#fwart')?.classList.remove('blinking'), 170);
 }, 3700);
 const fwPick = a => a[Math.random() * a.length | 0];
 function fwReact(prev, s) {
@@ -1891,15 +2107,15 @@ function renderLobby() {
     <h2 style="margin:0 0 6px">${r.public ? 'Waiting for players' : 'Your table'}</h2>
     <p class="meta">${r.public ? (seats.length >= 2 ? `Starting in <b id="hcd">${wait}</b>s or when the table is full.` : 'Looking for more players… you can also fill the table with bots.') : 'Invite friends, add bots, then start when ready (2–4 seats).'}</p>
     <div class="seats">${[0, 1, 2, 3].map(i => { const p = seats[i]; if (!p) return '<div class="lseat empty sunken">empty seat</div>';
-      return `<div class="lseat raised">${isBotId(p) ? `<span class="botav sunken">${sprite('shadow', 22)}</span>` : `<span class="hav" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>`}<b>${esc(r.names[p] || 'Player')}</b>${p === r.host ? '<span class="badge">HOST</span>' : ''}${host && isBotId(p) ? `<button class="lnk red" data-rb="${esc(p)}">remove</button>` : ''}</div>`; }).join('')}</div>
+      return `<div class="lseat raised">${isBotId(p) ? botAv(p, 30) : `<span class="hav" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>`}<b>${esc(r.names[p] || 'Player')}</b>${p === r.host ? '<span class="badge">HOST</span>' : ''}${host && isBotId(p) ? `<button class="lnk red" data-rb="${esc(p)}">remove</button>` : ''}</div>`; }).join('')}</div>
     <div class="row hbtns">${host ? `<button class="b" id="hstart" ${seats.length >= 2 ? '' : 'disabled'}>▶ Start game</button>${seats.length < 4 ? '<button class="b s" id="haddbot">🤖 Add bot</button>' : ''}` : '<span class="meta">The host will start the game.</span>'}<button class="b d" id="hlv">Leave</button></div>
     ${!r.public ? `<label class="lbl" for="hlink">Invite link (room code ${esc(G.rid)})</label><div class="fl"><input id="hlink" readonly value="${esc(link)}" class="grow"><button class="b s" id="hcopy" style="width:auto">Copy</button></div>` : ''}
     </div></div>${!r.public ? '<section class="panel win"><div class="tbar"><span>INVITE FRIENDS</span></div><div class="pad" id="hfriends"><p class="meta">Loading friends…</p></div></section>' : ''}</div>`;
   seats.filter(p => !isBotId(p)).forEach(async p => { const pr = await getProfile(p); document.querySelectorAll(`.hav[data-av="${CSS.escape(p)}"]`).forEach(n => n.innerHTML = avatarHtml(pr, true)); });
   $('#hlv').onclick = async () => { await leaveOnline(true); resetGame(); gamesHome(); };
   if ($('#hstart')) $('#hstart').onclick = startOnline;
-  if ($('#haddbot')) $('#haddbot').onclick = async () => { const used = seats.filter(isBotId).length, id = 'bot:' + (used + 1 + Math.floor(Math.random() * 1000));
-    const nm = BOTNAMES[used % 3] + ' (bot)'; try { await updateDoc(roomRef(G.rid), {seats: [...seats, id], [`bots.${id}`]: 'normal', [`names.${id}`]: nm}); } catch { toast('Could not add a bot.'); } };
+  if ($('#haddbot')) $('#haddbot').onclick = async () => { const sd = newBotSeed(), id = 'bot:' + sd;
+    const nm = PPL.make(sd).name; try { await updateDoc(roomRef(G.rid), {seats: [...seats, id], [`bots.${id}`]: 'normal', [`names.${id}`]: nm}); } catch { toast('Could not add a bot.'); } };
   el.querySelector('.seats').onclick = async e => { const b = e.target.closest('[data-rb]'); if (!b) return; const id = b.dataset.rb;
     try { await updateDoc(roomRef(G.rid), {seats: seats.filter(x => x !== id)}); } catch {} };
   if ($('#hcopy')) $('#hcopy').onclick = async () => { $('#hlink').select(); try { await navigator.clipboard.writeText(link); $('#hcopy').textContent = 'Copied!'; } catch {} };
