@@ -779,7 +779,16 @@ document.querySelectorAll('#rail button[data-v]').forEach(b => b.onclick = () =>
 });
 
 // ---------- map ----------
-const map = L.map('map', {minZoom: 5, maxBounds: [[31, -88], [46, -71]], maxBoundsViscosity: .8}).setView([37.5, -80.5], 7);
+const MAP_AREA = L.latLngBounds([[31, -88], [46, -71]]);
+const map = L.map('map', {minZoom: 5, maxBounds: MAP_AREA, maxBoundsViscosity: .8, worldCopyJump: true}).setView([37.5, -80.5], 7);
+// the whole world is open only for the admin; everyone else stays inside the Appalachia area
+let worldOpen = false;
+function mapAccessSync() {
+  const open = typeof isAdmin === 'function' && isAdmin();
+  if (open === worldOpen) return; worldOpen = open;
+  if (open) { map.setMaxBounds(null); map.setMinZoom(2); }
+  else { map.setMinZoom(5); map.setMaxBounds(MAP_AREA); if (!MAP_AREA.contains(map.getCenter())) map.setView([37.5, -80.5], 7); }
+}
 const usgs = (n, z) => L.tileLayer(`https://basemap.nationalmap.gov/arcgis/rest/services/${n}/MapServer/tile/{z}/{y}/{x}`, {maxZoom: z, attribution: 'USGS The National Map'});
 const topo = usgs('USGSTopo', 16);
 const pxLayer = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {maxZoom: 17, maxNativeZoom: 16, tileSize: 512, zoomOffset: -1, className: 'tl-px', attribution: 'USGS The National Map'});
@@ -887,7 +896,8 @@ map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
   
   const q = $('#q'), res = $('#qres'); let pin = null, token = 0, last = {s: new Map(), p: [], c: null};
   const hide = () => { res.style.display = 'none'; };
-  const inArea = c => c.lat >= 31 && c.lat <= 46 && c.lon >= -88 && c.lon <= -71;
+  const inAreaFixed = c => c.lat >= 31 && c.lat <= 46 && c.lon >= -88 && c.lon <= -71;
+  const inArea = c => worldOpen ? Math.abs(c.lat) <= 90 && Math.abs(c.lon) <= 180 : inAreaFixed(c);
   const drop = (ll, title, zoom) => {
     map.setView(ll, zoom); if (pin) pin.remove();
     const box = document.createElement('div');
@@ -918,7 +928,7 @@ map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
     });
     let places = [];
     tasks.push((async () => {
-      try { const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=6&countrycodes=us&accept-language=en&viewbox=-88,46,-71,31&bounded=1&q=' + encodeURIComponent(text)); places = await r.json(); } catch {}
+      try { const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=6&accept-language=en&' + (worldOpen ? '' : 'countrycodes=us&viewbox=-88,46,-71,31&bounded=1&') + 'q=' + encodeURIComponent(text)); places = await r.json(); } catch {}
     })());
     await Promise.all(tasks); if (my !== token) return;
     last = {s: found, p: places, c: null};
@@ -1037,7 +1047,7 @@ function verifySheet(sent) {
   $('#rf').onclick = async () => { await user.reload(); await user.getIdToken(true); user = auth.currentUser;
     if (user.emailVerified) { closeSheet(); profile(); } else $('#m').textContent = 'Not verified yet.'; };
 }
-onAuthStateChanged(auth, u => { user = u; profile(); watchInvites(); liveAuthChanged(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
+onAuthStateChanged(auth, u => { user = u; mapAccessSync(); profile(); watchInvites(); liveAuthChanged(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
 const pPanel = (title, body, extra = '') => `<section class="panel win"${extra}><div class="tbar"><span>${title}</span></div><div class="pad">${body}</div></section>`;
 function profile() {
   const el = $('#profile'); pageBg(el, null);
