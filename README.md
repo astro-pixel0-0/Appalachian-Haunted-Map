@@ -13,3 +13,8 @@ Free stack: Firebase Spark (Auth + Firestore, **no Storage needed** — photos a
 
 Moderation: new reports appear in the Firestore `reports` collection; delete offending docs in `sightings` / `photos` / `threads` yourself.
 Limits: free Firestore ≈ 50k reads/day; OSM tiles are for light use only (the default map is USGS).
+
+## Credits
+- Sounds by JDSherbert – https://jdsherbert.itch.io (Pixel UI SFX Pack, used under the author's asset license; the raw sound files are not distributed in this repository)
+- Map data: USGS The National Map, © OpenStreetMap contributors
+- Weather: Open-Meteo.com
