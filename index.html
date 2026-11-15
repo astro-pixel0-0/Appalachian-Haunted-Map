@@ -50,6 +50,8 @@ main{flex:1;position:relative;min-width:0;min-height:0}
 .view[data-title]{border:1px solid var(--lo);box-shadow:inset 1px 1px 0 var(--hi),inset -1px -1px 0 var(--lo)}
 .view[data-title]::before{content:attr(data-title);display:block;position:sticky;top:0;z-index:5;margin:0 -16px 12px;padding:6px 12px;background:var(--gra2);font-family:var(--px);font-size:13px;letter-spacing:1px;color:var(--fro)}
 .view:not(#mapv)>*{max-width:780px;margin-left:auto;margin-right:auto}
+.view:not(#mapv)>button,.view:not(#mapv)>a,.view:not(#mapv)>input{display:block}
+#sheetBody>button.b{display:block}
 #mapv{padding:0;overflow:hidden;background:transparent}
 .mapwin{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--gra)}
 .seg{margin-left:auto;display:flex}.seg button{padding:3px 10px;white-space:nowrap;background:var(--gra);color:var(--mut);font-size:12px;font-family:'IBM Plex Sans',sans-serif;letter-spacing:0}
