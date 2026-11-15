@@ -15,6 +15,6 @@ Moderation: new reports appear in the Firestore `reports` collection; delete off
 Limits: free Firestore ≈ 50k reads/day; OSM tiles are for light use only (the default map is USGS).
 
 ## Credits
-- Sounds by JDSherbert – https://jdsherbert.itch.io (Pixel UI SFX Pack, used under the author's asset license; the raw sound files are not distributed in this repository)
+- Interface sounds: "Pixelated UI" by Atelier Magicae (used under the creators' terms; the raw sound files are not distributed in this repository). Typing sound is synthesized in code.
 - Map data: USGS The National Map, © OpenStreetMap contributors
 - Weather: Open-Meteo.com
