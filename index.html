@@ -304,6 +304,15 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 .colpick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.colbtn{height:70px;background:var(--c);color:#fff;font-family:var(--px);font-size:16px;letter-spacing:1px;text-shadow:2px 2px 0 #0a0d11}
 .seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:12px 0}
 .lseat{display:flex;align-items:center;gap:8px;padding:10px;background:var(--gra);min-height:62px}.lseat.empty{justify-content:center;color:var(--mut);font-size:12px;background:var(--mid)}
+.flycard{position:fixed;left:0;top:0;z-index:4500;pointer-events:none;will-change:transform}.flycard .hcard{box-shadow:inset 0 0 0 3px rgba(255,255,255,.2),6px 8px 0 rgba(10,13,17,.6)}
+.hcard.dragging{box-shadow:inset 0 0 0 3px rgba(255,255,255,.3),10px 14px 0 rgba(10,13,17,.55);transition:none;cursor:grabbing}
+.hand .hcard{touch-action:pan-x;cursor:var(--cur-hot)}.hand .hcard.ok{cursor:grab}
+#hpile{transition:transform .15s}#hpile.target{transform:scale(1.08)}#hpile.target .hcard{box-shadow:0 0 0 3px var(--sag),0 0 0 6px rgba(132,151,122,.35),3px 3px 0 #0a0d11}
+.booed{color:var(--mut)}
+.boobtn{position:absolute;left:50%;bottom:185px;transform:translateX(-50%);z-index:20;padding:14px 34px 18px;background:var(--blo);color:#fff;border:3px solid #0a0d11;box-shadow:inset 0 0 0 3px #e0838b,6px 6px 0 #0a0d11;font-family:'Silkscreen',var(--px);font-size:34px;letter-spacing:4px;text-shadow:3px 3px 0 #0a0d11;animation:boopulse .5s steps(2) infinite}
+.boobtn:hover{background:#b0505a}.boobar{position:absolute;left:10px;right:10px;bottom:6px;height:5px;background:#0a0d11}.boobar i{display:block;height:100%;background:#E4EAF0;animation:boobar linear forwards;transform-origin:left}
+@keyframes boobar{from{transform:scaleX(1)}to{transform:scaleX(0)}}@keyframes boopulse{50%{transform:translateX(-50%) scale(1.06)}}
+@media (prefers-reduced-motion:reduce){.boobtn{animation:none}.boobar i{animation:none}}
 .itoast{position:fixed;right:16px;bottom:16px;z-index:3000;width:300px;background:var(--gra)}.itoast .pad{padding:12px;font-size:14px}.itoast .row{margin-top:8px}
 @media (max-width:760px){.seat{min-width:0}.gmid{gap:12px}.hcard.big{width:70px;height:104px}.hcard.big .cv{inset:18px 8px;font-size:28px}.ginfo{min-width:0;align-items:center;text-align:center}.itoast{left:8px;right:8px;width:auto;bottom:80px}}
 @media (prefers-reduced-motion:reduce){.hcard.drop,.boo,.yt{animation:none}}
@@ -1307,13 +1316,13 @@ const H = {
     s.hands[p].splice(i, 1); s.discard.push(card); s.color = card[0] === 'w' ? color : card[0]; s.drawn = null; s.moves++;
     const name = s.names[p] || 'Player', v = card[1];
     s.last = {p, card, color: s.color};
-    if (!s.hands[p].length) { s.winner = p; s.log = `${name} wins!`; return s; }
+    if (!s.hands[p].length) { s.winner = p; s.boo = null; s.log = `${name} wins!`; return s; }
     if (v === 'S') { const nx = s.order[H.step(s)]; s.turn = H.step(s, 2); s.log = `${name} skipped ${s.names[nx]}`; }
     else if (v === 'R') { s.dir *= -1; s.turn = H.active(s).length === 2 ? s.turn : H.step(s); s.log = `${name} reversed the order`; }
     else if (v === 'D' || v === 'F') { const k = v === 'D' ? 2 : 4, nx = s.order[H.step(s)]; H.give(s, nx, k); s.turn = H.step(s, 2); s.log = `${s.names[nx]} draws ${k}!`; }
     else { s.turn = H.step(s); s.log = card[0] === 'w' ? `${name} changed color to ${HC[s.color][0]}` : `${name} played`; }
-    if (s.hands[p].length === 1) s.log += ' — BOO! Last card!';
-    return s;
+    if (s.hands[p].length === 1) { s.boo = {p, until: Date.now() + 5000}; s.log += ` — ${name} must shout BOO!`; }
+    return H.norm(s);
   },
   drawTurn(s0, p) {
     const s = H.clone(s0); if (s.winner || H.cur(s) !== p) throw 'not your turn'; if (s.drawn) throw 'already drew';
@@ -1321,12 +1330,12 @@ const H = {
     if (!c) { s.turn = H.step(s); s.log = `${s.names[p]} could not draw`; return s; }
     s.hands[p].push(c);
     if (H.canPlay({...s, drawn: null}, c)) { s.drawn = c; s.log = `${s.names[p]} drew a card`; } else { s.turn = H.step(s); s.log = `${s.names[p]} drew and passed`; }
-    return s;
+    return H.norm(s);
   },
   pass(s0, p) { const s = H.clone(s0); if (s.winner || H.cur(s) !== p || !s.drawn) throw 'cannot pass'; s.drawn = null; s.turn = H.step(s); s.moves++; s.log = `${s.names[p]} passed`; return s; },
   timeout(s0) { const p = H.cur(s0); let s = s0.drawn ? H.pass(s0, p) : H.drawTurn(s0, p); if (s.drawn && H.cur(s) === p) s = H.pass(s, p); s.log = `${s0.names[p]} ran out of time`; return s; },
   leave(s0, p) {
-    const s = H.clone(s0); if (s.out.includes(p) || !s.order.includes(p)) return s;
+    const s = H.clone(s0); H.norm(s); if (s.out.includes(p) || !s.order.includes(p)) return s;
     const wasTurn = H.cur(s) === p && !s.winner; s.out.push(p); s.deck.push(...s.hands[p]); s.hands[p] = []; s.moves++;
     s.log = `${s.names[p]} left the table`;
     const act = H.active(s);
@@ -1334,6 +1343,12 @@ const H = {
     if (wasTurn) { s.drawn = null; s.turn = H.step(s); }
     return s;
   },
+  // ---- BOO! (last-card call) ----
+  norm(s) { if (s.boo && (s.hands[s.boo.p]?.length !== 1 || s.out.includes(s.boo.p) || s.winner)) s.boo = null; return s; },
+  booPress(s0, p) { const s = H.clone(s0); if (!s.boo || s.boo.p !== p) return s0; s.boo = null; s.booed = (s.booed || 0) + 1; s.log = `${s.names[p]} shouted BOO! 👻`; return s; },
+  booPenalty(s0, now = Date.now()) { if (!s0.boo || now < s0.boo.until) return s0; const s = H.clone(s0), p = s.boo.p; s.boo = null;
+    if (s.hands[p]?.length === 1 && !s.winner) { H.give(s, p, 2); s.log = `${s.names[p]} forgot to shout BOO! — draws 2`; s.pen = (s.pen || 0) + 1; } return s; },
+  botBoo(s) { if (!s.boo) return false; const lv = s.bots[s.boo.p]; if (!lv) return false; const chance = lv === 'easy' ? 65 : lv === 'normal' ? 88 : 100; return ((s.moves * 7919 + s.boo.until) % 100) < chance; },
   // ---- bots ----
   bestColor(hand) { const n = {r: 0, g: 0, b: 0, y: 0}; hand.forEach(c => { if (c[0] !== 'w') n[c[0]] += c[1] > '9' ? 2 : 1; }); return Object.keys(n).sort((a, b) => n[b] - n[a])[0]; },
   botMove(s, p, level = 'normal') {
@@ -1404,7 +1419,7 @@ function rulesSheet() {
    <div class="rulegrid"><div>${cardHtml('gS')}<span><b>Skip</b> — the next player loses a turn.</span></div><div>${cardHtml('bR')}<span><b>Reverse</b> — play changes direction (acts as Skip with 2 players).</span></div>
    <div>${cardHtml('yD')}<span><b>+2</b> — next player draws 2 and loses a turn.</span></div><div>${cardHtml('wW')}<span><b>Wild</b> — play on anything and choose the colour.</span></div>
    <div>${cardHtml('wF')}<span><b>Wild +4</b> — choose the colour; next player draws 4 and loses a turn.</span></div></div>
-   <p class="meta">First to get rid of all cards wins. Online turns have a 30-second timer.</p><button class="b s" id="cx">Got it</button>`);
+   <p><b>BOO!</b> — when you are down to your last card a big <b>BOO!</b> button appears for 5 seconds. Press it in time, or you draw 2 cards as a penalty.</p><p class="meta">Drag cards onto the pile with the mouse (or tap them). First to get rid of all cards wins. Online turns have a 30-second timer.</p><button class="b s" id="cx">Got it</button>`);
   $('#cx').onclick = closeSheet;
 }
 
@@ -1439,7 +1454,8 @@ let hPrevTop = null;
 function seatHtml(p, s, extra = '') {
   const isCur = H.cur(s) === p && !s.winner, out = s.out.includes(p), n = s.hands[p].length;
   const av = isBotId(p) ? `<span class="botav sunken">${sprite(['shadow', 'ghost', 'eye'][(+p.slice(4) - 1) % 3], 26)}</span>` : `<span class="hav" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>`;
-  return `<div class="seat${isCur ? ' cur' : ''}${out ? ' out' : ''}">${av}<div class="sinfo"><b>${esc(s.names[p] || 'Player')}</b><span class="meta">${out ? 'left' : `${n} card${n === 1 ? '' : 's'}`}${n === 1 && !out ? ' · <span class="boo">BOO!</span>' : ''}</span>
+  const booP = s.boo && s.boo.p === p;
+  return `<div class="seat${isCur ? ' cur' : ''}${out ? ' out' : ''}" data-seat="${esc(p)}">${av}<div class="sinfo"><b>${esc(s.names[p] || 'Player')}</b><span class="meta">${out ? 'left' : `${n} card${n === 1 ? '' : 's'}`}${n === 1 && !out ? (booP ? ' · <span class="boo">BOO?</span>' : ' · <span class="booed">last card</span>') : ''}</span>
     <span class="mini">${'<i></i>'.repeat(Math.min(n, 12))}</span>${extra}</div></div>`;
 }
 function renderTable() {
@@ -1447,19 +1463,21 @@ function renderTable() {
   if (!el.classList.contains('on')) return;
   const me = G.me, myTurn = H.cur(s) === me && !s.winner, hand = s.hands[me] || [];
   const meIdx = s.order.indexOf(me), others = [...s.order.slice(meIdx + 1), ...s.order.slice(0, meIdx)];
-  const top = H.top(s), dropped = top !== hPrevTop; hPrevTop = top;
+  const top = H.top(s), dropped = top !== hPrevTop && !G.noDrop; hPrevTop = top; G.noDrop = false;
+  const before = snapRects(), prev = G.prevS; G.prevS = s;
   const timer = G.mode === 'online' && G.room?.deadline && !s.winner ? `<span class="tbarx"><i id="tbar"></i></span>` : '';
   const sorted = [...hand].sort((a, b) => ('rgbyw'.indexOf(a[0]) - 'rgbyw'.indexOf(b[0])) || a.localeCompare(b));
   el.innerHTML = `<div class="gtable win"><div class="tbar">${sprite('ghost', 14)}<span>HAUNT · ${G.mode === 'local' ? `vs bots (${esc(G.lvl)})` : 'online table'}</span><button class="lnk" id="hleave" style="margin-left:auto;color:#fff">Leave table</button></div>
     <div class="gtop">${others.map(p => seatHtml(p, s, H.cur(s) === p ? timer : '')).join('')}</div>
     <div class="gmid">
       <div class="pile"><button class="drawbtn" id="hdraw" ${myTurn && !s.drawn ? '' : 'disabled'} aria-label="Draw a card">${cardHtml('back', 'big')}<span class="meta">${s.deck.length} left</span></button></div>
-      <div class="pile">${cardHtml(top, 'big' + (dropped ? ' drop' : ''), 'tabindex="-1" aria-label="Top card: ' + cardLabel(top) + '"')}</div>
+      <div class="pile" id="hpile">${cardHtml(top, 'big' + (dropped ? ' drop' : ''), 'id="htop" tabindex="-1" aria-label="Top card: ' + cardLabel(top) + '"')}</div>
       <div class="ginfo"><div class="curcol" style="--c:${HC[s.color][1]}"><span></span>${HC[s.color][0]}</div><div class="dir">${s.dir === 1 ? '↻ clockwise' : '↺ counter-clockwise'}</div><div class="glog">${esc(s.log || '')}</div></div>
     </div>
     <div class="gme${myTurn ? ' myturn' : ''}"><div class="mebar">${seatHtml(me, s, myTurn ? timer : '')}
       <div class="mebtns">${myTurn ? (s.drawn ? '<span class="meta">You drew a playable card — play it or pass.</span><button class="b s" id="hpass" style="width:auto">Pass</button>' : '<span class="yt">YOUR TURN</span>') : `<span class="meta">Waiting for ${esc(s.names[H.cur(s)] || '')}…</span>`}</div></div>
       <div class="hand" id="hhand">${sorted.map(c => cardHtml(c, myTurn && H.canPlay(s, c) ? 'ok' : (myTurn ? 'no' : ''))).join('')}</div></div>
+    ${s.boo && s.boo.p === me && !s.winner ? `<button class="boobtn" id="hboo" aria-label="Shout BOO!">BOO!<span class="boobar"><i style="animation-duration:${Math.max(0, s.boo.until - Date.now())}ms"></i></span></button>` : ''}
     ${s.winner ? `<div class="gover"><div class="win govbox"><div class="tbar blood"><span>GAME OVER</span></div><div class="pad">${sprite(s.winner === me ? 'ghost' : 'shadow', 64)}
       <h2>${s.winner === me ? 'You win!' : `${esc(s.names[s.winner])} wins`}</h2><p class="meta">${s.winner === me ? 'The spirits bow to you.' : 'Better luck next haunting.'}</p>
       <div class="row">${G.mode === 'local' ? '<button class="b" id="hagain">Play again</button>' : ''}<button class="b s" id="hback">Back to games</button></div></div></div></div>` : ''}
@@ -1469,7 +1487,9 @@ function renderTable() {
   G.lastTurnMine = myTurn;
   // avatars for humans
   s.order.filter(p => !isBotId(p) && p !== 'me').forEach(async p => { if (profCache.has(p)) return; const pr = await getProfile(p); document.querySelectorAll(`.hav[data-av="${CSS.escape(p)}"]`).forEach(n => n.innerHTML = avatarHtml(pr, true)); });
-  $('#hhand').onclick = e => { const b = e.target.closest('.hcard.ok'); if (!b) return; playCard(b.dataset.card); };
+  bindHandDrag();
+  if ($('#hboo')) $('#hboo').onclick = pressBoo;
+  animateChanges(prev, s, before);
   $('#hdraw').onclick = () => doMove({a: 'draw'});
   if ($('#hpass')) $('#hpass').onclick = () => doMove({a: 'pass'});
   $('#hleave').onclick = leaveTable;
@@ -1477,10 +1497,116 @@ function renderTable() {
   if ($('#hback')) $('#hback').onclick = async () => { if (G.mode === 'online') await leaveOnline(true); resetGame(); gamesHome(); };
   paintTimer();
 }
-function playCard(card) {
+// ---------- card motion: flights, drag & drop ----------
+const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+function snapRects() {
+  const r = {seats: {}};
+  document.querySelectorAll('#games .seat[data-seat]').forEach(n => { r.seats[n.dataset.seat] = n.getBoundingClientRect(); });
+  ['hpile', 'hdraw', 'hhand'].forEach(id => { const n = document.getElementById(id); if (n) r[id] = n.getBoundingClientRect(); });
+  return r;
+}
+function fly(html, from, to, {dur = 320, delay = 0, rot = 0, scaleTo = 1} = {}) {
+  return new Promise(res => {
+    if (!from || !to || reduceMotion()) return res();
+    const w = document.createElement('div'); w.className = 'flycard'; w.innerHTML = html; const c = w.firstElementChild;
+    document.body.appendChild(w);
+    const cw = c.offsetWidth || 84, ch = c.offsetHeight || 124;
+    const fx = from.left + from.width / 2 - cw / 2, fy = from.top + from.height / 2 - ch / 2, tx = to.left + to.width / 2 - cw / 2, ty = to.top + to.height / 2 - ch / 2;
+    w.style.left = '0px'; w.style.top = '0px';
+    const a = w.animate([{transform: `translate(${fx}px,${fy}px) rotate(${rot}deg) scale(${from.width < 60 ? 0.5 : 1})`}, {transform: `translate(${tx}px,${ty}px) rotate(0deg) scale(${scaleTo})`}],
+      {duration: dur, delay, easing: 'cubic-bezier(.2,.8,.25,1)', fill: 'both'});
+    let done = false; const fin = () => { if (done) return; done = true; w.remove(); res(); };
+    a.onfinish = fin; a.oncancel = fin; setTimeout(fin, dur + delay + 200);
+  });
+}
+function hideTopUntil(p) { const t = $('#htop'); if (!t) return; t.style.visibility = 'hidden'; p.then(() => { const n = $('#htop'); if (n) n.style.visibility = ''; }); }
+function animateChanges(prev, s, before) {
+  if (!prev || !before || reduceMotion()) return;
+  const now = snapRects(), me = G.me;
+  const lastChanged = s.last && JSON.stringify(s.last) !== JSON.stringify(prev.last);
+  if (lastChanged && s.discard.length !== prev.discard.length || lastChanged && H.top(s) !== H.top(prev)) {
+    if (G.selfFly && s.last.p === me) G.selfFly = false;
+    else { const from = s.last.p === me ? before.hhand : (before.seats[s.last.p] || now.seats[s.last.p]);
+      hideTopUntil(fly(cardHtml(s.last.card, 'big'), from, now.hpile, {rot: -18 + Math.random() * 36})); }
+  }
+  s.order.forEach((p, i) => {
+    const gained = (s.hands[p]?.length || 0) - (prev.hands[p]?.length || 0);
+    if (gained > 0) { const to = p === me ? now.hhand : now.seats[p];
+      for (let k = 0; k < Math.min(gained, 4); k++) fly(cardHtml('back', p === me ? 'big' : ''), now.hdraw, to, {delay: k * 90, dur: 360, scaleTo: p === me ? 1 : 0.5}); }
+  });
+}
+function bindHandDrag() {
+  const hand = $('#hhand'); if (!hand) return;
+  let st = null;
+  hand.onpointerdown = e => {
+    const b = e.target.closest('.hcard'); if (!b || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    const r = b.getBoundingClientRect();
+    st = {b, x: e.clientX, y: e.clientY, r, drag: false, lx: e.clientX, vx: 0, clone: null, id: e.pointerId};
+  };
+  hand.onpointermove = e => {
+    if (!st || e.pointerId !== st.id) return;
+    const dx = e.clientX - st.x, dy = e.clientY - st.y;
+    if (!st.drag) {
+      if (Math.hypot(dx, dy) < 7) return;
+      if (!st.b.classList.contains('ok')) { if (Math.abs(dy) > 12 && dy < 0) { shake(st.b); st = null; } return; }
+      st.drag = true; try { st.b.setPointerCapture(e.pointerId); } catch {}
+      const c = st.b.cloneNode(true); c.classList.add('dragging'); c.classList.remove('ok');
+      Object.assign(c.style, {position: 'fixed', left: st.r.left + 'px', top: st.r.top + 'px', margin: 0, zIndex: 4000, pointerEvents: 'none'});
+      document.body.appendChild(c); st.clone = c; st.b.style.opacity = '0.25'; sfx('select', 0.2);
+    }
+    st.vx = st.vx * 0.7 + (e.clientX - st.lx) * 0.3; st.lx = e.clientX;
+    const rot = Math.max(-18, Math.min(18, st.vx * 1.6));
+    st.clone.style.transform = `translate(${dx}px,${dy}px) rotate(${rot}deg) scale(1.08)`;
+    const pile = $('#hpile')?.getBoundingClientRect(), hr = hand.getBoundingClientRect();
+    const over = pile && (e.clientX > pile.left - 60 && e.clientX < pile.right + 60 && e.clientY > pile.top - 60 && e.clientY < pile.bottom + 60 || e.clientY < hr.top - 70);
+    st.over = over; $('#hpile')?.classList.toggle('target', !!over);
+  };
+  const end = e => {
+    if (!st || e.pointerId !== st.id) return;
+    const s0 = st; st = null; $('#hpile')?.classList.remove('target');
+    if (!s0.drag) { if (e.type === 'pointerup') { if (s0.b.classList.contains('ok')) clickPlay(s0.b); else if (G.s && H.cur(G.s) === G.me) shake(s0.b); } return; }
+    const c = s0.clone, card = s0.b.dataset.card, cr = c.getBoundingClientRect();
+    if (s0.over && e.type === 'pointerup') {
+      const pile = $('#hpile').getBoundingClientRect(); c.style.transform = ''; c.style.left = cr.left + 'px'; c.style.top = cr.top + 'px';
+      const a = c.animate([{transform: 'scale(1.08)'}, {transform: `translate(${pile.left + pile.width / 2 - cr.left - cr.width / 2}px,${pile.top + pile.height / 2 - cr.top - cr.height / 2}px) scale(1.25)`}],
+        {duration: 200, easing: 'cubic-bezier(.2,.8,.25,1)', fill: 'forwards'});
+      let dn = false; const fin = () => { if (dn) return; dn = true; c.remove(); playCard(card, true); }; a.onfinish = fin; setTimeout(fin, 350);
+    } else {
+      const a = c.animate([{transform: c.style.transform}, {transform: 'translate(0,0) rotate(0) scale(1)'}], {duration: 220, easing: 'cubic-bezier(.3,1.4,.5,1)', fill: 'forwards'});
+      let dn = false; const fin = () => { if (dn) return; dn = true; c.remove(); s0.b.style.opacity = ''; }; a.onfinish = fin; setTimeout(fin, 380);
+    }
+  };
+  hand.onpointerup = end; hand.onpointercancel = end;
+  hand.onclick = e => { if (e.detail !== 0) return; const b = e.target.closest('.hcard.ok'); if (b) playCard(b.dataset.card); };
+}
+function shake(b) { if (reduceMotion()) return; b.animate([{transform: 'translateX(0)'}, {transform: 'translateX(-5px)'}, {transform: 'translateX(5px)'}, {transform: 'translateX(-3px)'}, {transform: 'translateX(0)'}], {duration: 240}); sfx('error', 0.2); }
+function clickPlay(b) {
+  const card = b.dataset.card;
+  if (card[0] === 'w') { playCard(card); return; }
+  const from = b.getBoundingClientRect(), to = $('#hpile')?.getBoundingClientRect();
+  b.style.visibility = 'hidden';
+  fly(cardHtml(card, 'big'), from, to, {dur: 260}).then(() => playCard(card, true));
+}
+function pressBoo() {
+  if (!G.s?.boo || G.s.boo.p !== G.me) return;
+  sfx('success'); const b = $('#hboo'); if (b && !reduceMotion()) b.animate([{transform: 'translateX(-50%) scale(1)'}, {transform: 'translateX(-50%) scale(1.4)', opacity: 0}], {duration: 300, fill: 'forwards'});
+  if (G.mode === 'local') { G.s = H.booPress(G.s, G.me); setTimeout(renderTable, 250); }
+  else onlineMove(G.me, st => H.booPress(st, G.me));
+}
+// local BOO timer: bots shout, late players get +2
+function booLoop() {
+  if (G.mode !== 'local' || !G.s || G.s.winner || !G.s.boo) return;
+  const b = G.s.boo, now = Date.now();
+  if (isBotId(b.p) && H.botBoo(G.s) && now > b.until - 5000 + 900 + (G.s.moves % 7) * 180) { G.s = H.booPress(G.s, b.p); renderTable(); return; }
+  if (now >= b.until) { G.s = H.booPenalty(G.s, now); if (b.p === G.me) sfx('error'); renderTable(); runBots(); }
+}
+setInterval(booLoop, 200);
+function playCard(card, flown) {
+  if (flown) { G.selfFly = true; G.noDrop = true; }
   if (card[0] === 'w') {
     sheet(`<h3>Choose a colour</h3><div class="colpick">${'rgby'.split('').map(c => `<button class="colbtn raised" data-c="${c}" style="--c:${HC[c][1]}">${HC[c][0]}</button>`).join('')}</div><button class="b s" id="cx">Cancel</button>`);
     $('#cx').onclick = closeSheet;
+    $('#cx').onclick = () => { G.selfFly = false; G.noDrop = false; closeSheet(); renderTable(); };
     document.querySelector('.colpick').onclick = e => { const b = e.target.closest('[data-c]'); if (!b) return; closeSheet(); doMove({a: 'play', card, color: b.dataset.c}); };
   } else doMove({a: 'play', card});
 }
@@ -1546,7 +1672,7 @@ function openRoom(id) {
     if (s.moves !== G.lastMv) { G.lastMv = s.moves; G.lastAt = Date.now(); if (G.s && s.last && s.last !== G.s.last && s.last.p !== G.me) sfx('click', 0.25); }
     G.s = s; G.mode = 'online'; renderTable();
   }, () => { toast('Lost connection to the table.'); });
-  G.tick = setInterval(onlineTick, 1000);
+  G.tick = setInterval(onlineTick, 500);
 }
 function renderLobby() {
   const r = G.room, el = gEl(); if (!r || !el.classList.contains('on')) return;
@@ -1608,7 +1734,7 @@ async function onlineMove(p, mvOrFn, expectMoves) {
       tx.update(roomRef(G.rid), {st: JSON.stringify(ns), mv: ns.moves, deadline: Date.now() + 30000, status: ns.winner ? 'done' : 'playing'});
     });
     if (p === G.me && typeof mvOrFn !== 'function') sfx(mvOrFn.a === 'play' ? 'click' : 'select', 0.3);
-  } catch (e) { if (e !== 'stale' && p === G.me) sfx('error'); }
+  } catch (e) { if (e !== 'stale' && p === G.me) { sfx('error'); G.selfFly = false; renderTable(); } }
   G.busy = false;
 }
 // every client keeps the table moving: bots, timeouts, auto-start
@@ -1618,6 +1744,9 @@ function onlineTick() {
   const s = G.s; if (!s || s.winner || G.mode !== 'online') return;
   paintTimer();
   const p = H.cur(s), host = r.host === G.me, idle = Date.now() - G.lastAt;
+  if (s.boo) { const b = s.boo, now = Date.now();
+    if (isBotId(b.p) && host && H.botBoo(s) && now > b.until - 3800) { onlineMove(b.p, st => H.booPress(st, b.p)); return; }
+    if (now > b.until + (b.p === G.me ? 0 : host ? 600 : 2500)) { if (b.p === G.me) sfx('error'); onlineMove(b.p, st => H.booPenalty(st)); return; } }
   if (isBotId(p) && idle > (host ? 900 : 6000)) onlineMove(p, st => H.apply(st, p, H.botMove(st, p, st.bots[p])), s.moves);
   else if (!isBotId(p) && Date.now() > (r.deadline || 0) + (p === G.me ? 0 : host ? 2000 : 8000)) onlineMove(p, st => H.timeout(st), s.moves);
 }
