@@ -145,6 +145,29 @@ input[type=checkbox]{width:auto;margin:0 8px 0 0}label.ck{display:flex;align-ite
 .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
 .fcard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;background:var(--gra);color:var(--ink);font-size:12px;overflow:hidden}.fcard span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pwrap>.meta:last-child{margin-top:16px}
+#forum>.pwrap{max-width:1000px}
+.pcard .pad{padding:12px}
+.pwrap .pad.fhead{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.fhead .grow{flex:1;min-width:200px}.fhead .meta{margin:4px 0 0}
+.ftool{display:flex;flex-wrap:wrap;gap:8px;padding-top:0!important}
+.ftags{border-bottom:0;padding:0 12px 12px;flex-wrap:wrap}.chip .dot{width:8px;height:8px;display:inline-block}
+.tlist{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.trow{display:flex;align-items:center;gap:12px;width:100%;padding:12px;background:var(--gra);color:var(--ink);text-align:left}
+.trow:hover{background:var(--gra2)}.tmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}.tmain b{font-size:15px;overflow-wrap:anywhere}
+.tmeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px;color:var(--mut)}
+.tprev{font-size:13px;color:#b9c4cf;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tcount{flex:none;display:flex;flex-direction:column;align-items:center;min-width:62px;padding:6px 8px;background:var(--mid)}.tcount b{font-family:var(--vt);font-weight:400;font-size:26px;line-height:1}.tcount small{font-size:10px;color:var(--mut);text-transform:uppercase}
+.tagc{display:inline-block;padding:1px 7px;font-size:11px;font-weight:600;letter-spacing:.3px;color:var(--mid);background:var(--tc)}
+.tbar .tagc{margin-left:auto;font-family:'IBM Plex Sans',sans-serif}
+.post{background:var(--gra);margin:0 0 10px}.post .pad{padding:12px 14px}
+.post.op .ttl{margin:0 0 10px;font-family:'IBM Plex Sans',sans-serif;font-weight:600;letter-spacing:0;font-size:22px;overflow-wrap:anywhere}
+.post.byop{box-shadow:inset 3px 0 0 var(--sag),inset 1px 1px 0 var(--hi),inset -1px -1px 0 var(--lo)}
+.phd{display:flex;align-items:center;gap:10px}.phd>div{display:flex;flex-direction:column;min-width:0}.phd .meta{margin:0}
+.pnum{margin-left:auto;font-family:var(--vt);font-size:18px;color:var(--mut)}
+.pbody2{white-space:pre-wrap;line-height:1.6;margin:10px 0 6px;overflow-wrap:anywhere}
+.acts{display:flex;gap:14px}
+.lnk{background:none;border:0;padding:4px 0;color:var(--mut);font-size:12px;text-decoration:underline dotted}.lnk:hover{color:var(--ink)}.lnk.red{color:var(--red)}
+.empty.win{background:var(--gra);padding:28px}
+#pl{margin-bottom:12px}
 a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)}a.prof:hover{color:#fff}
 .pcard{background:var(--gra);margin:0 0 12px;overflow:hidden}
 .pban{position:relative;height:150px;background:#1a2027;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -248,7 +271,7 @@ import * as cfg from './config.js';
 const firebaseConfig = cfg.firebaseConfig;
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, updateProfile, deleteUser } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch, query, where, orderBy, limit, limitToLast, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch, getCountFromServer, query, where, orderBy, limit, limitToLast, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
 const $ = s => document.querySelector(s);
@@ -1062,46 +1085,105 @@ async function deleteMyProfileData() {
 }
 
 // ---------- forums ----------
-let threads = [];
+const FTAGS = [['general', 'General', '#8798AA'], ['sightings', 'Sightings', '#84977A'], ['expeditions', 'Expeditions', '#d9c27a'], ['evidence', 'Evidence', '#AAB8C5'],
+  ['legends', 'Legends & Lore', '#a08cc8'], ['abandoned', 'Abandoned Places', '#b7a08f'], ['offtopic', 'Off-topic', '#6b7a88']];
+const ftag = k => FTAGS.find(([x]) => x === k) || FTAGS[0];
+const tagChip = k => { const [, label, col] = ftag(k); return `<span class="tagc" style="--tc:${col}">${esc(label)}</span>`; };
+const ago = ts => { const d = ts?.toDate ? ts.toDate() : null; if (!d) return 'just now'; const s0 = (Date.now() - d) / 1000;
+  return s0 < 60 ? 'just now' : s0 < 3600 ? `${Math.floor(s0 / 60)}m ago` : s0 < 86400 ? `${Math.floor(s0 / 3600)}h ago` : s0 < 604800 ? `${Math.floor(s0 / 86400)}d ago` : d.toLocaleDateString(); };
+let threads = [], fState = {tag: '', q: '', sort: 'new'};
+const replyCounts = new Map();
+function newThreadSheet() {
+  if (!canPost()) return;
+  sheet(`<h3>New thread</h3><label class="lbl" for="tg">Category</label><select id="tg">${FTAGS.map(([k, label]) => `<option value="${k}"${k === (fState.tag || 'general') ? ' selected' : ''}>${esc(label)}</option>`).join('')}</select>
+    <label class="lbl" for="t">Topic</label><input id="t" maxlength="100" placeholder="e.g. Strange lights over Spruce Knob last night">
+    <label class="lbl" for="b">Message</label><textarea id="b" maxlength="2000" placeholder="What happened, where, when…" style="min-height:140px"></textarea>
+    <p class="err" id="e"></p><button class="b" id="go">Post thread</button><button class="b s" id="cx">Cancel</button>`);
+  $('#cx').onclick = closeSheet;
+  $('#go').onclick = async () => { const t = $('#t').value.trim(); if (t.length < 3) { $('#e').textContent = 'Topic is too short.'; return; }
+    $('#go').disabled = true;
+    try { const ref = await addDoc(collection(db, 'threads'), {title: t, body: $('#b').value.trim().slice(0, 2000), tag: $('#tg').value, authorID: user.uid, authorName: user.displayName || 'User', createdAt: serverTimestamp()});
+      closeSheet(); sfx('success'); const g = await getDoc(ref); openThread({id: ref.id, ...g.data()}); }
+    catch { $('#e').textContent = 'Could not post.'; $('#go').disabled = false; } };
+}
+function drawThreadList() {
+  const tl = $('#tl'); if (!tl) return;
+  let list = threads.filter(t => (!fState.tag || (t.tag || 'general') === fState.tag) && (!fState.q || (t.title + ' ' + (t.body || '')).toLowerCase().includes(fState.q)));
+  if (fState.sort === 'replies') list = [...list].sort((a, b) => (replyCounts.get(b.id) || 0) - (replyCounts.get(a.id) || 0));
+  $('#fcount').textContent = `${list.length} thread${list.length === 1 ? '' : 's'}`;
+  if (!list.length) { tl.innerHTML = `<div class="empty win">${sprite('ghost', 48)}<p>${threads.length ? 'Nothing matches this filter.' : 'No threads yet.'}</p><button class="b" id="nt2" style="width:auto;display:inline-block">＋ Start the first thread</button></div>`; $('#nt2').onclick = newThreadSheet; return; }
+  tl.innerHTML = list.map(t => `<button class="trow raised" data-id="${esc(t.id)}"><span class="tav" data-av="${esc(t.authorID)}">${avatarHtml(profCache.get(t.authorID), true)}</span>
+    <span class="tmain"><b>${esc(t.title)}</b><span class="tmeta">${tagChip(t.tag)}<span>by ${esc(t.authorName || 'User')}</span><span>· ${ago(t.createdAt)}</span></span>
+    ${t.body ? `<span class="tprev">${esc(t.body.slice(0, 140))}${t.body.length > 140 ? '…' : ''}</span>` : ''}</span>
+    <span class="tcount sunken"><b data-rc="${esc(t.id)}">${replyCounts.has(t.id) ? replyCounts.get(t.id) : '·'}</b><small>replies</small></span></button>`).join('');
+}
 async function forumList() {
   const el = $('#forum');
-  el.innerHTML = `<h2>Forums</h2><button class="b" id="nt">＋ New thread</button><div id="tl"><p class="meta">Loading…</p></div>`;
-  $('#nt').onclick = () => { if (!canPost()) return;
-    sheet(`<h3>New thread</h3><input id="t" maxlength="100" placeholder="Topic"><textarea id="b" maxlength="2000" placeholder="Message"></textarea><p class="err" id="e"></p><button class="b" id="go">Post</button><button class="b s" id="cx">Cancel</button>`);
-    $('#cx').onclick = closeSheet;
-    $('#go').onclick = async () => { const t = $('#t').value.trim(); if (t.length < 3) { $('#e').textContent = 'Topic is too short.'; return; }
-      try { await addDoc(collection(db, 'threads'), {title: t, body: $('#b').value.trim().slice(0, 2000), authorID: user.uid, authorName: user.displayName || 'User', createdAt: serverTimestamp()}); closeSheet(); forumList(); sfx('success'); }
-      catch { $('#e').textContent = 'Could not post.'; } }; };
+  el.innerHTML = `<div class="pwrap"><div class="pcard win"><div class="tbar">${sprite('eye', 14)}<span>COMMUNITY FORUMS</span></div>
+    <div class="pad fhead"><div class="grow"><h2 style="margin:0">Campfire Talk</h2><p class="meta">Share sightings, plan expeditions and swap local legends.</p></div><button class="b" id="nt" style="width:auto">＋ New thread</button></div>
+    <div class="pad ftool"><div class="search sunken" style="max-width:none;flex:1 1 240px"><svg viewBox="0 0 8 8" width="16" height="16" fill="#8798AA" aria-hidden="true" shape-rendering="crispEdges"><path d="M1 0h4v1h-4zM0 1h1v1h-1zM5 1h1v1h-1zM0 2h1v1h-1zM5 2h1v1h-1zM0 3h1v1h-1zM5 3h1v1h-1zM1 4h4v1h-4zM5 5h1v1h-1zM6 6h1v1h-1zM7 7h1v1h-1z"/></svg><input id="fq" placeholder="Search threads…" aria-label="Search threads" value="${esc(fState.q)}"></div>
+      <select id="fs" aria-label="Sort threads" style="width:auto;margin:0"><option value="new"${fState.sort === 'new' ? ' selected' : ''}>Newest</option><option value="replies"${fState.sort === 'replies' ? ' selected' : ''}>Most replies</option></select></div>
+    <div class="chips ftags" id="ftg"><button class="chip${!fState.tag ? ' on' : ''}" data-t="">All</button>${FTAGS.map(([k, label, col]) => `<button class="chip${fState.tag === k ? ' on' : ''}" data-t="${k}"><span class="dot" style="background:${col}"></span>${esc(label)}</button>`).join('')}<span class="meta" id="fcount" style="margin-left:auto;align-self:center;white-space:nowrap"></span></div></div>
+    <div id="tl" class="tlist"><p class="meta">Loading…</p></div></div>`;
+  $('#nt').onclick = newThreadSheet;
+  let qT; $('#fq').oninput = e => { clearTimeout(qT); qT = setTimeout(() => { fState.q = e.target.value.trim().toLowerCase(); drawThreadList(); }, 200); };
+  $('#fs').onchange = e => { fState.sort = e.target.value; drawThreadList(); };
+  $('#ftg').onclick = e => { const c = e.target.closest('[data-t]'); if (!c) return; fState.tag = c.dataset.t; document.querySelectorAll('#ftg .chip').forEach(x => x.classList.toggle('on', x === c)); drawThreadList(); };
+  $('#tl').onclick = e => { const i = e.target.closest('.trow'); if (i) openThread(threads.find(t => t.id === i.dataset.id)); };
   try {
     const snap = await getDocs(query(collection(db, 'threads'), orderBy('createdAt', 'desc'), limit(100)));
     threads = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(t => okItem(t.authorID, t.id));
-    $('#tl').innerHTML = threads.length ? threads.map(t => `<div class="item" data-id="${esc(t.id)}"><b>${esc(t.title)}</b><div class="meta">${esc(t.authorName)} · ${fmt(t.createdAt)}</div></div>`).join('') : '<p class="meta">No threads yet. Start the first one!</p>';
-    $('#tl').onclick = e => { const i = e.target.closest('.item'); if (i) openThread(threads.find(t => t.id === i.dataset.id)); };
+    drawThreadList();
+    // avatars + reply counts load in the background
+    [...new Set(threads.map(t => t.authorID))].slice(0, 60).forEach(async uid => { const pr = await getProfile(uid);
+      document.querySelectorAll(`.tav[data-av="${CSS.escape(uid)}"]`).forEach(n => n.innerHTML = avatarHtml(pr, true)); });
+    await Promise.all(threads.slice(0, 50).map(async t => { try { const c = await getCountFromServer(collection(db, `threads/${t.id}/posts`)); replyCounts.set(t.id, c.data().count);
+      const b = document.querySelector(`[data-rc="${CSS.escape(t.id)}"]`); if (b) b.textContent = c.data().count; } catch {} }));
+    if (fState.sort === 'replies') drawThreadList();
   } catch { $('#tl').innerHTML = '<p class="err">Could not load forums.</p>'; }
 }
+const postActions = (p, kind) => user && (user.uid === p.authorID || isAdmin())
+  ? `<button class="lnk red" data-a="del" data-id="${esc(p.id)}">Delete</button>`
+  : `<button class="lnk" data-a="rep" data-id="${esc(p.id)}">Report</button>${kind === 'post' ? `<button class="lnk" data-a="blk" data-u="${esc(p.authorID)}">Block user</button>` : ''}`;
 async function openThread(t) {
+  if (!t) return;
   const el = $('#forum'), mine = user && (user.uid === t.authorID || isAdmin());
-  el.innerHTML = `<button class="b s" id="bk">← Back</button><h2>${esc(t.title)}</h2><p style="white-space:pre-wrap">${esc(t.body)}</p><p class="meta">${plink(t.authorID, t.authorName)} · ${fmt(t.createdAt)}</p>
-   ${mine ? '<button class="b d" id="dt">Delete thread</button>' : '<button class="b d" id="rt">Report thread</button>'}
-   <h3>Replies</h3><div id="pl"><p class="meta">Loading…</p></div><textarea id="rp" maxlength="2000" placeholder="Reply…" style="min-height:70px"></textarea><button class="b" id="sd">Send</button>`;
+  const op = await getProfile(t.authorID);
+  el.innerHTML = `<div class="pwrap"><button class="b s" id="bk" style="width:auto;display:inline-block">← All threads</button>
+    <article class="post win op"><div class="tbar">${sprite('eye', 14)}<span>THREAD</span>${tagChip(t.tag)}</div><div class="pad">
+      <h2 class="ttl">${esc(t.title)}</h2>
+      <div class="phd">${avatarHtml(op, true)}<div><b>${plink(t.authorID, t.authorName)}</b><span class="meta">${ago(t.createdAt)} · ${fmt(t.createdAt)}</span></div></div>
+      ${t.body ? `<p class="pbody2">${esc(t.body)}</p>` : ''}
+      <div class="acts">${mine ? '<button class="lnk red" id="dt">Delete thread</button>' : '<button class="lnk" id="rt">Report thread</button>'}</div></div></article>
+    <h3 id="rh">Replies</h3><div id="pl"><p class="meta">Loading…</p></div>
+    <section class="panel win"><div class="tbar"><span>WRITE A REPLY</span></div><div class="pad">
+      <textarea id="rp" maxlength="2000" placeholder="${user ? 'Share what you know…' : 'Sign in to reply'}" style="min-height:90px"></textarea>
+      <div class="fl"><span class="meta grow" id="rc">0 / 2000</span><button class="b" id="sd" style="width:auto">Send reply</button></div></div></section></div>`;
   $('#bk').onclick = forumList;
+  $('#rp').oninput = () => { $('#rc').textContent = `${$('#rp').value.length} / 2000`; };
   if (mine) $('#dt').onclick = async () => { await deleteDoc(doc(db, 'threads', t.id)); forumList(); }; else $('#rt').onclick = async () => { await report('thread', t.id); forumList(); };
   const load = async () => {
     const snap = await getDocs(query(collection(db, `threads/${t.id}/posts`), orderBy('createdAt'), limit(500)));
     const posts = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(p => okItem(p.authorID, p.id));
-    $('#pl').innerHTML = posts.length ? posts.map(p => `<div class="item"><div style="white-space:pre-wrap">${esc(p.text)}</div><div class="meta">${plink(p.authorID, p.authorName)} · ${fmt(p.createdAt)}</div>
-      ${user && (user.uid === p.authorID || isAdmin()) ? `<button class="b d" data-a="del" data-id="${esc(p.id)}">Delete</button>` : `<button class="b d" data-a="rep" data-id="${esc(p.id)}">Report</button><button class="b d" data-a="blk" data-u="${esc(p.authorID)}">Block user</button>`}</div>`).join('') : '<p class="meta">No replies yet.</p>';
-    $('#pl').onclick = async e => { const b = e.target.closest('button'); if (!b) return;
+    replyCounts.set(t.id, posts.length);
+    $('#rh').textContent = `${posts.length} ${posts.length === 1 ? 'reply' : 'replies'}`;
+    const profs = await Promise.all(posts.map(p => getProfile(p.authorID)));
+    $('#pl').innerHTML = posts.length ? posts.map((p, i) => `<article class="post win${p.authorID === t.authorID ? ' byop' : ''}"><div class="pad">
+      <div class="phd">${avatarHtml(profs[i], true)}<div><b>${plink(p.authorID, p.authorName)}</b>${p.authorID === t.authorID ? ' <span class="badge">AUTHOR</span>' : ''}<span class="meta">${ago(p.createdAt)}</span></div><span class="pnum">#${i + 1}</span></div>
+      <p class="pbody2">${esc(p.text)}</p><div class="acts">${postActions(p, 'post')}</div></div></article>`).join('') : `<div class="empty win"><p>No replies yet — be the first.</p></div>`;
+    $('#pl').onclick = async e => { const b = e.target.closest('button[data-a]'); if (!b) return;
       if (b.dataset.a === 'del') { await deleteDoc(doc(db, `threads/${t.id}/posts`, b.dataset.id)); load(); }
       if (b.dataset.a === 'rep') { await report('post', b.dataset.id); load(); }
       if (b.dataset.a === 'blk') { block(b.dataset.u); load(); } };
   };
   load().catch(() => $('#pl').innerHTML = '<p class="err">Could not load replies.</p>');
   $('#sd').onclick = async () => { if (!canPost()) return; const x = $('#rp').value.trim(); if (!x) return;
-    try { await addDoc(collection(db, `threads/${t.id}/posts`), {text: x.slice(0, 2000), authorID: user.uid, authorName: user.displayName || 'User', createdAt: serverTimestamp()}); $('#rp').value = ''; load(); sfx('success'); }
-    catch { toast('Could not post reply.'); } };
+    $('#sd').disabled = true;
+    try { await addDoc(collection(db, `threads/${t.id}/posts`), {text: x.slice(0, 2000), authorID: user.uid, authorName: user.displayName || 'User', createdAt: serverTimestamp()}); $('#rp').value = ''; $('#rc').textContent = '0 / 2000'; await load(); sfx('success');
+      $('#pl').lastElementChild?.scrollIntoView({behavior: 'smooth', block: 'center'}); }
+    catch { toast('Could not post reply.'); }
+    $('#sd').disabled = false; };
 }
-
 
 // ---------- Discord / feedback ----------
 const DISCORD = 'https://discord.gg/MUftwFDjW', FEEDBACK_TO = 'danrabbit333@gmail.com';
