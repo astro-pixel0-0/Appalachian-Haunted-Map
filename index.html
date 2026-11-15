@@ -118,6 +118,29 @@ input[type=checkbox]{width:auto;margin:0 8px 0 0}label.ck{display:flex;align-ite
 #chatwin{display:none}body.chatmode #chatwin{display:flex;flex-direction:column;flex:1;min-height:0;background:var(--gra)}body.chatmode #top,body.chatmode #body{display:none}
 .chead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;padding-top:calc(6px + env(safe-area-inset-top));background:var(--blo);color:#fff;font-family:var(--px);letter-spacing:1px}
 #cbody{flex:1;display:flex;flex-direction:column;min-height:0}#cbody #ml{max-height:none;flex:1;padding:8px}.composer{padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--mid)}.att img{max-width:100%}
+/* profiles */
+a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)}a.prof:hover{color:#fff}
+.pcard{background:var(--gra);margin:0 0 12px;overflow:hidden}
+.pban{position:relative;height:150px;background:#1a2027;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pban img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.pban .spr{opacity:.18}
+.phead{display:flex;align-items:flex-end;gap:14px;padding:0 14px;margin-top:-46px;position:relative}
+.pname{padding-bottom:6px;min-width:0}.pname h2{margin:0;font-size:22px;overflow-wrap:anywhere}
+.pbody{padding:10px 14px 14px}.pbio{white-space:pre-wrap;line-height:1.55;margin:8px 0;overflow-wrap:anywhere}
+.plinks{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.plinks a.chip{text-decoration:none}
+.fr{--n:8px;display:inline-block;flex:none;padding:4px;background:var(--mid);clip-path:polygon(var(--n) 0,calc(100% - var(--n)) 0,100% var(--n),100% calc(100% - var(--n)),calc(100% - var(--n)) 100%,var(--n) 100%,0 calc(100% - var(--n)),0 var(--n))}
+.fr>div{padding:2px;background:var(--mid);clip-path:inherit}
+.fr .av{display:flex;align-items:center;justify-content:center;width:96px;height:96px;background:var(--gra2);object-fit:cover;--n:6px;clip-path:polygon(var(--n) 0,calc(100% - var(--n)) 0,100% var(--n),100% calc(100% - var(--n)),calc(100% - var(--n)) 100%,var(--n) 100%,0 calc(100% - var(--n)),0 var(--n))}
+.fr.sm .av{width:44px;height:44px}.fr.sm{padding:3px;--n:5px}
+.fr-frost{background:#AAB8C5}.fr-sage{background:#84977A}.fr-blood{background:#974048}.fr-steel{background:#8798AA}
+.fr-spectral{background:repeating-linear-gradient(45deg,#AAB8C5 0 6px,#974048 6px 12px);background-size:17px 17px;animation:spec 1.2s steps(4) infinite}
+@keyframes spec{to{background-position:17px 0}}
+@media (prefers-reduced-motion:reduce){.fr-spectral{animation:none}}
+.frames{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0}.frames label{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;cursor:var(--cur-hot)}
+.frames input{position:absolute;opacity:0;width:1px;height:1px}.frames input:checked+.fr{outline:2px dashed var(--fro);outline-offset:3px}
+.frames input:focus-visible+.fr{outline:2px solid #fff;outline-offset:3px}
+.fl{display:flex;align-items:center;gap:10px}.fl .grow{flex:1;min-width:0}
+.adminbox{border:1px dashed var(--blo);padding:8px 10px;margin:8px 0;font-size:13px}
+.lbl{display:block;font-size:12px;color:var(--mut);margin-top:8px}
 @media (min-width:1000px){#obs.open{display:flex}#sheet{align-items:center}}
 @media (max-width:900px){#coords{display:none}}
 @media (max-width:760px){
@@ -553,7 +576,7 @@ async function showSighting(s) {
   selId = s.id; render(); sfx('select');
   $('#obsT').textContent = 'OBSERVATION';
   panel(`<div class="obs-head"><div class="obs-ico sunken">${catIco(s.category, 40)}</div><div style="min-width:0">
-     <span class="tag${isAb(s.category) ? ' ab' : ''}">${esc(c[1])}</span><h3>${esc(s.title)}</h3><p class="meta">${esc(s.authorName)} · ${fmt(s.createdAt)}</p></div></div>
+     <span class="tag${isAb(s.category) ? ' ab' : ''}">${esc(c[1])}</span><h3>${esc(s.title)}</h3><p class="meta">${plink(s.authorID, s.authorName)} · ${fmt(s.createdAt)}</p></div></div>
    <div id="ph"></div>
    ${s.details ? `<p style="white-space:pre-wrap;line-height:1.55">${esc(s.details)}</p>` : ''}
    <div class="grid2 sunken"><div><span>Coordinates</span><b>${(+s.lat).toFixed(5)}, ${(+s.lon).toFixed(5)}</b></div><div><span>Weather now</span><b id="owx">…</b></div></div>
@@ -606,21 +629,179 @@ onAuthStateChanged(auth, u => { user = u; profile(); if (!authReady) { authReady
 function profile() {
   const el = $('#profile');
   if (!user) { el.innerHTML = `<h2>Profile</h2><button class="b" id="si">Sign in or create account</button><p class="meta">Browsing is open to everyone. A verified email is required to post.</p>${contact()}${links()}`; $('#si').onclick = () => authSheet(); return; }
-  el.innerHTML = `<h2>${esc(user.displayName || 'User')}</h2><p class="meta">${esc(user.email)}</p><p>${user.emailVerified ? '✅ Email verified' : '⚠️ Email not verified'}</p>
+  el.innerHTML = `<div id="myp"></div><h3>Account</h3><p class="meta">Email (private — only you and the admin can see it): ${esc(user.email)}</p><p>${user.emailVerified ? '✅ Email verified' : '⚠️ Email not verified'}</p>
    ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<button class="b s" id="so">Sign out</button><button class="b d" id="da">Delete account</button>${isAdmin() ? '<h3 style="margin-top:24px">Admin · reports</h3><div id="adm"><p class="meta">Loading…</p></div>' : ''}${contact()}${links()}`;
   if (!user.emailVerified) $('#vf').onclick = () => verifySheet();
+  syncPrivate(); if (user.emailVerified) myProfileSection(); else $('#myp').innerHTML = profileCard(null, user.displayName) + '<p class="meta">Verify your email to customise your profile and add friends.</p>';
   if (isAdmin()) loadReports();
   $('#so').onclick = () => signOut(auth);
-  $('#da').onclick = () => { sheet(`<h3>Delete account?</h3><p>This removes your account and your map reports.</p><button class="b d" id="y">Delete</button><button class="b s" id="n">Cancel</button>`);
+  $('#da').onclick = () => { sheet(`<h3>Delete account?</h3><p>This removes your account, your profile, friends list and your map reports.</p><button class="b d" id="y">Delete</button><button class="b s" id="n">Cancel</button>`);
     $('#n').onclick = closeSheet;
     $('#y').onclick = async () => { try {
       const snap = await getDocs(query(collection(db, 'sightings'), where('authorID', '==', user.uid)));
       for (const d of snap.docs) { await deleteDoc(d.ref); await deleteDoc(doc(db, 'photos', d.id)).catch(() => {}); }
-      await deleteUser(user); closeSheet();
+      await deleteMyProfileData(); await deleteUser(user); closeSheet();
     } catch (e) { toast('For security, sign out and sign in again, then retry.'); } }; };
 }
 const links = () => `<p class="meta" style="margin-top:24px">Map: USGS The National Map, © OpenStreetMap contributors. Sounds by JDSherbert – <a href="https://jdsherbert.itch.io" target="_blank" rel="noopener">jdsherbert.itch.io</a>. Community reports are unverified. <a href="#" id="tm" onclick="return false">Rules</a></p>`;
 document.addEventListener('click', e => { if (e.target.id === 'tm') terms(false); });
+
+
+// ---------- user profiles, friends ----------
+const NETS = [['website', 'Website'], ['discord', 'Discord'], ['youtube', 'YouTube'], ['tiktok', 'TikTok'], ['instagram', 'Instagram'], ['x', 'X / Twitter'], ['telegram', 'Telegram'], ['reddit', 'Reddit']];
+const FRAMES = [['none', 'None'], ['frost', 'Frost'], ['sage', 'Sage'], ['blood', 'Blood'], ['steel', 'Steel'], ['spectral', 'Spectral']];
+const JPEG = /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/;
+const safeUrl = u => { try { const x = new URL(String(u)); return x.protocol === 'https:' ? x.href : null; } catch { return null; } };
+const plink = (uid, name) => uid ? `<a href="#" class="prof" data-uid="${esc(uid)}">${esc(name || 'User')}</a>` : esc(name || 'User');
+document.addEventListener('click', e => { const a = e.target.closest('a.prof'); if (!a) return; e.preventDefault(); e.stopPropagation(); openProfile(a.dataset.uid); }, true);
+const profCache = new Map();
+const getProfile = async (uid, fresh) => {
+  if (!fresh && profCache.has(uid)) return profCache.get(uid);
+  let p = null; try { const d = await getDoc(doc(db, 'users', uid)); p = d.exists() ? d.data() : null; } catch {}
+  profCache.set(uid, p); return p;
+};
+const avatarHtml = (p, sm) => {
+  const f = FRAMES.some(([k]) => k === p?.frame) ? p.frame : 'none';
+  const img = p && typeof p.avatar === 'string' && JPEG.test(p.avatar) ? `<img class="av" alt="" src="${p.avatar}">` : `<div class="av">${sprite('ghost', sm ? 26 : 56)}</div>`;
+  return `<span class="fr fr-${f}${sm ? ' sm' : ''}"><div>${img}</div></span>`;
+};
+const profileCard = (p, fallbackName) => {
+  const name = esc(p?.name || fallbackName || 'User');
+  const ban = p && typeof p.banner === 'string' && JPEG.test(p.banner) ? `<img alt="" src="${p.banner}">` : sprite('ghost', 96);
+  const lk = p && p.links && typeof p.links === 'object' ? NETS.map(([k, label]) => { const u = safeUrl(p.links[k]); return u ? `<a class="chip" href="${esc(u)}" target="_blank" rel="noopener nofollow ugc">${esc(label)}</a>` : ''; }).join('') : '';
+  return `<div class="pcard win"><div class="pban">${ban}</div><div class="phead">${avatarHtml(p)}<div class="pname"><h2>${name}</h2></div></div>
+    <div class="pbody">${p?.bio ? `<p class="pbio">${esc(p.bio)}</p>` : '<p class="meta">No description yet.</p>'}${lk ? `<div class="plinks">${lk}</div>` : ''}<div id="pextra"></div></div></div>`;
+};
+// keep the admin-only email copy in sync (readable only by its owner and the admin)
+let privSynced = null;
+const syncPrivate = () => { if (!user || !user.email || privSynced === user.uid) return; privSynced = user.uid;
+  setDoc(doc(db, 'private', user.uid), {email: user.email}).catch(() => { privSynced = null; }); };
+
+async function friendState(uid) {
+  if (!user || uid === user.uid) return 'self';
+  try {
+    if ((await getDoc(doc(db, `users/${user.uid}/friends`, uid))).exists()) return 'friend';
+    if ((await getDoc(doc(db, `requests/${user.uid}/in`, uid))).exists()) return 'incoming';
+    if ((await getDoc(doc(db, `requests/${uid}/in`, user.uid))).exists()) return 'outgoing';
+  } catch {}
+  return 'none';
+}
+const myName = () => (user.displayName || 'User').slice(0, 30);
+async function acceptFriend(uid, name) {
+  const b = writeBatch(db);
+  b.set(doc(db, `users/${user.uid}/friends`, uid), {name: String(name || 'User').slice(0, 30), at: serverTimestamp()});
+  b.set(doc(db, `users/${uid}/friends`, user.uid), {name: myName(), at: serverTimestamp()});
+  b.delete(doc(db, `requests/${user.uid}/in`, uid));
+  await b.commit();
+}
+async function removeFriend(uid) {
+  const b = writeBatch(db);
+  b.delete(doc(db, `users/${user.uid}/friends`, uid)); b.delete(doc(db, `users/${uid}/friends`, user.uid));
+  await b.commit();
+}
+
+async function openProfile(uid) {
+  if (!uid) return;
+  if (user && uid === user.uid) { closeSheet(); showView('profile'); return; }
+  sheet('<p class="meta">Loading profile…</p>');
+  const p = await getProfile(uid, true);
+  let fcount = 0; try { fcount = (await getDocs(collection(db, `users/${uid}/friends`))).size; } catch {}
+  sheet(profileCard(p) + `<p class="meta">${fcount} friend${fcount === 1 ? '' : 's'}</p><div id="fbtn"></div><div id="adm1"></div><button class="b s" id="cx">Close</button>`);
+  $('#cx').onclick = closeSheet;
+  const draw = async () => {
+    const st = await friendState(uid), box = $('#fbtn'); if (!box) return;
+    const nm = p?.name || 'User';
+    box.innerHTML = st === 'friend' ? '<button class="b s" id="fr1">✓ Friends — remove</button>'
+      : st === 'incoming' ? '<div class="row"><button class="b" id="fr1">Accept friend request</button><button class="b s" id="fr2">Decline</button></div>'
+      : st === 'outgoing' ? '<button class="b s" id="fr1">Request sent — cancel</button>'
+      : st === 'none' ? '<button class="b" id="fr1">＋ Add friend</button>' : '';
+    const f1 = $('#fr1'), f2 = $('#fr2');
+    if (f1) f1.onclick = async () => {
+      if (st === 'none' && !canPost()) return;
+      try {
+        if (st === 'friend') await removeFriend(uid);
+        else if (st === 'incoming') { await acceptFriend(uid, nm); sfx('success'); }
+        else if (st === 'outgoing') await deleteDoc(doc(db, `requests/${uid}/in`, user.uid));
+        else { await setDoc(doc(db, `requests/${uid}/in`, user.uid), {name: myName(), at: serverTimestamp()}); sfx('success'); }
+        draw();
+      } catch { toast('Could not update friends. Try again.'); }
+    };
+    if (f2) f2.onclick = async () => { try { await deleteDoc(doc(db, `requests/${user.uid}/in`, uid)); draw(); } catch { toast('Could not decline.'); } };
+  };
+  draw();
+  if (isAdmin()) {
+    try { const pv = await getDoc(doc(db, 'private', uid)); const a = $('#adm1');
+      if (a) a.innerHTML = `<div class="adminbox">🔒 Admin only · email: <b>${esc(pv.exists() ? pv.data().email : 'not recorded yet')}</b><br><span class="meta">User ID: ${esc(uid)}</span></div>`; } catch {}
+  }
+}
+
+async function myProfileSection() {
+  const box = $('#myp'); if (!box || !user) return;
+  const p = await getProfile(user.uid, true);
+  box.innerHTML = profileCard(p, user.displayName) + '<button class="b" id="ep">✏️ Edit profile</button><h3>Friends</h3><div id="freq"></div><div id="flist"><p class="meta">Loading…</p></div>';
+  $('#ep').onclick = () => { if (canPost()) editProfile(p); };
+  try {
+    const rq = await getDocs(collection(db, `requests/${user.uid}/in`));
+    const rbox = $('#freq'); if (rbox && rq.size) rbox.innerHTML = '<p class="meta">Friend requests</p>' + rq.docs.map(d => `<div class="item fl"><span class="grow">${plink(d.id, d.data().name)}</span><button class="b" style="width:auto" data-acc="${esc(d.id)}" data-n="${esc(d.data().name)}">Accept</button><button class="b s" style="width:auto" data-dec="${esc(d.id)}">Decline</button></div>`).join('');
+    if (rbox) rbox.onclick = async e => { const a = e.target.closest('[data-acc]'), d = e.target.closest('[data-dec]');
+      try { if (a) { await acceptFriend(a.dataset.acc, a.dataset.n); sfx('success'); } if (d) await deleteDoc(doc(db, `requests/${user.uid}/in`, d.dataset.dec)); if (a || d) myProfileSection(); } catch { toast('Could not update friends.'); } };
+    const fr = await getDocs(collection(db, `users/${user.uid}/friends`));
+    const fl = $('#flist'); if (fl) fl.innerHTML = fr.size ? fr.docs.map(d => `<div class="item">${plink(d.id, d.data().name)}</div>`).join('') : '<p class="meta">No friends yet. Open someone’s profile by tapping their name and press “Add friend”.</p>';
+  } catch { const fl = $('#flist'); if (fl) fl.innerHTML = '<p class="err">Could not load friends (publish the latest rules).</p>'; }
+}
+
+const cropJpeg = (file, w, h, q) => new Promise((res, rej) => { const img = new Image();
+  img.onload = () => { const c = document.createElement('canvas'); c.width = w; c.height = h; const k = Math.max(w / img.width, h / img.height);
+    const sw = w / k, sh = h / k; c.getContext('2d').drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 0, w, h);
+    URL.revokeObjectURL(img.src); res(c.toDataURL('image/jpeg', q)); };
+  img.onerror = rej; img.src = URL.createObjectURL(file); });
+
+function editProfile(p0) {
+  const p = {...(p0 || {})}; let avatar = JPEG.test(p.avatar || '') ? p.avatar : '', banner = JPEG.test(p.banner || '') ? p.banner : '';
+  const fr = FRAMES.some(([k]) => k === p.frame) ? p.frame : 'none';
+  sheet(`<h3>Edit profile</h3>
+   <label class="lbl" for="pn">Display name</label><input id="pn" maxlength="30" value="${esc(p.name || user.displayName || '')}">
+   <label class="lbl" for="pb">About you</label><textarea id="pb" maxlength="300" placeholder="Favourite haunts, what you hunt for, gear…">${esc(p.bio || '')}</textarea>
+   <span class="lbl">Avatar</span><div class="fl"><span id="avp"></span><div class="grow"><input type="file" id="pa" accept="image/*" aria-label="Choose avatar"><button class="b s" id="par" style="width:auto">Remove</button></div></div>
+   <span class="lbl">Frame</span><div class="frames" id="frs">${FRAMES.map(([k, label]) => `<label><input type="radio" name="frame" value="${k}"${k === fr ? ' checked' : ''}><span class="fr fr-${k} sm"><div><div class="av">${sprite('ghost', 22)}</div></div></span>${esc(label)}</label>`).join('')}</div>
+   <span class="lbl">Banner</span><div id="bnp" class="pban sunken" style="height:90px"></div><input type="file" id="pbn" accept="image/*" aria-label="Choose banner"><button class="b s" id="pbr" style="width:auto">Remove banner</button>
+   <span class="lbl">Links (full https:// addresses)</span>
+   ${NETS.map(([k, label]) => `<label class="lbl" for="l_${k}">${esc(label)}</label><input id="l_${k}" type="url" inputmode="url" maxlength="200" placeholder="https://" value="${esc((p.links && p.links[k]) || '')}">`).join('')}
+   <p class="err" id="e"></p><button class="b" id="go">Save profile</button><button class="b s" id="cx">Cancel</button>`);
+  const paint = () => {
+    $('#avp').innerHTML = avatarHtml({avatar, frame: document.querySelector('#frs input:checked')?.value});
+    $('#bnp').innerHTML = banner ? `<img alt="" src="${banner}">` : sprite('ghost', 48);
+  };
+  paint();
+  $('#frs').onchange = paint;
+  $('#pa').onchange = async e => { const f = e.target.files[0]; if (f) { try { avatar = await cropJpeg(f, 192, 192, 0.85); paint(); } catch { $('#e').textContent = 'Could not read that image.'; } } };
+  $('#pbn').onchange = async e => { const f = e.target.files[0]; if (f) { try { banner = await cropJpeg(f, 960, 320, 0.75); paint(); } catch { $('#e').textContent = 'Could not read that image.'; } } };
+  $('#par').onclick = () => { avatar = ''; paint(); }; $('#pbr').onclick = () => { banner = ''; paint(); };
+  $('#cx').onclick = closeSheet;
+  $('#go').onclick = async () => {
+    const name = $('#pn').value.trim().slice(0, 30); if (name.length < 2) { $('#e').textContent = 'Name is too short.'; return; }
+    const links = {};
+    for (const [k, label] of NETS) { const v = $('#l_' + k).value.trim(); if (!v) continue; const u = safeUrl(v);
+      if (!u) { $('#e').textContent = `${label}: use a full https:// link.`; return; } links[k] = u.slice(0, 200); }
+    const data = {name, bio: $('#pb').value.trim().slice(0, 300), frame: document.querySelector('#frs input:checked')?.value || 'none', links, updatedAt: serverTimestamp()};
+    if (avatar) data.avatar = avatar; if (banner) data.banner = banner;
+    $('#go').disabled = true;
+    try {
+      await setDoc(doc(db, 'users', user.uid), data);
+      if (name !== user.displayName) await updateProfile(user, {displayName: name});
+      profCache.delete(user.uid); closeSheet(); sfx('success'); profile();
+    } catch { $('#e').textContent = 'Could not save. Images may be too large — try another picture.'; $('#go').disabled = false; }
+  };
+}
+
+async function deleteMyProfileData() {
+  const uid = user.uid;
+  try { const fr = await getDocs(collection(db, `users/${uid}/friends`));
+    for (const d of fr.docs) { await deleteDoc(doc(db, `users/${d.id}/friends`, uid)).catch(() => {}); await deleteDoc(d.ref).catch(() => {}); } } catch {}
+  try { const rq = await getDocs(collection(db, `requests/${uid}/in`)); for (const d of rq.docs) await deleteDoc(d.ref).catch(() => {}); } catch {}
+  await deleteDoc(doc(db, 'users', uid)).catch(() => {});
+  await deleteDoc(doc(db, 'private', uid)).catch(() => {});
+}
 
 // ---------- forums ----------
 let threads = [];
@@ -642,7 +823,7 @@ async function forumList() {
 }
 async function openThread(t) {
   const el = $('#forum'), mine = user && (user.uid === t.authorID || isAdmin());
-  el.innerHTML = `<button class="b s" id="bk">← Back</button><h2>${esc(t.title)}</h2><p style="white-space:pre-wrap">${esc(t.body)}</p><p class="meta">${esc(t.authorName)} · ${fmt(t.createdAt)}</p>
+  el.innerHTML = `<button class="b s" id="bk">← Back</button><h2>${esc(t.title)}</h2><p style="white-space:pre-wrap">${esc(t.body)}</p><p class="meta">${plink(t.authorID, t.authorName)} · ${fmt(t.createdAt)}</p>
    ${mine ? '<button class="b d" id="dt">Delete thread</button>' : '<button class="b d" id="rt">Report thread</button>'}
    <h3>Replies</h3><div id="pl"><p class="meta">Loading…</p></div><textarea id="rp" maxlength="2000" placeholder="Reply…" style="min-height:70px"></textarea><button class="b" id="sd">Send</button>`;
   $('#bk').onclick = forumList;
@@ -650,7 +831,7 @@ async function openThread(t) {
   const load = async () => {
     const snap = await getDocs(query(collection(db, `threads/${t.id}/posts`), orderBy('createdAt'), limit(500)));
     const posts = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(p => okItem(p.authorID, p.id));
-    $('#pl').innerHTML = posts.length ? posts.map(p => `<div class="item"><div style="white-space:pre-wrap">${esc(p.text)}</div><div class="meta">${esc(p.authorName)} · ${fmt(p.createdAt)}</div>
+    $('#pl').innerHTML = posts.length ? posts.map(p => `<div class="item"><div style="white-space:pre-wrap">${esc(p.text)}</div><div class="meta">${plink(p.authorID, p.authorName)} · ${fmt(p.createdAt)}</div>
       ${user && (user.uid === p.authorID || isAdmin()) ? `<button class="b d" data-a="del" data-id="${esc(p.id)}">Delete</button>` : `<button class="b d" data-a="rep" data-id="${esc(p.id)}">Report</button><button class="b d" data-a="blk" data-u="${esc(p.authorID)}">Block user</button>`}</div>`).join('') : '<p class="meta">No replies yet.</p>';
     $('#pl').onclick = async e => { const b = e.target.closest('button'); if (!b) return;
       if (b.dataset.a === 'del') { await deleteDoc(doc(db, `threads/${t.id}/posts`, b.dataset.id)); load(); }
@@ -799,8 +980,8 @@ async function openGroup(g) {
   const shown = members.filter(m => !blocked.has(m.id));
   el.innerHTML = `<button class="b s" id="bk">← Back</button><h2>${g.private ? '🔒 ' : ''}${esc(g.name)}</h2>
    <p class="meta">📍 ${esc(g.place || '')}${g.when ? ' · 🗓 ' + esc(g.when) : ''}</p><p style="white-space:pre-wrap">${esc(g.description)}</p>
-   <p class="meta">Created by ${esc(g.authorName)}</p>
-   <h3>Members (${shown.length})</h3><div id="mem">${shown.map(m => `<div class="item" style="display:flex;justify-content:space-between;align-items:center"><span>${esc(m.name)}${m.id === g.authorID ? ' 👑' : ''}</span>${(owner || adm) && m.id !== g.authorID ? `<u data-kick="${esc(m.id)}" style="color:var(--red);cursor:pointer">remove</u>` : ''}</div>`).join('') || '<p class="meta">—</p>'}</div>
+   <p class="meta">Created by ${plink(g.authorID, g.authorName)}</p>
+   <h3>Members (${shown.length})</h3><div id="mem">${shown.map(m => `<div class="item" style="display:flex;justify-content:space-between;align-items:center"><span>${plink(m.id, m.name)}${m.id === g.authorID ? ' 👑' : ''}</span>${(owner || adm) && m.id !== g.authorID ? `<u data-kick="${esc(m.id)}" style="color:var(--red);cursor:pointer">remove</u>` : ''}</div>`).join('') || '<p class="meta">—</p>'}</div>
    ${member || adm ? '<button class="b" id="oc">💬 Open chat in a new window</button>' : ''}
    ${g.private && (member || adm) ? '<button class="b s" id="iv">🔗 Invite link</button>' : ''}
    ${typeof g.lat === 'number' ? '<button class="b s" id="sm">Show on map</button>' : ''}
@@ -825,7 +1006,7 @@ async function openGroup(g) {
 async function showMembers(g) {
   try {
     const ms = await getDocs(collection(db, `groups/${g.id}/members`)), list = ms.docs.map(d => ({id: d.id, ...d.data()}));
-    sheet(`<h3>Members (${list.length})</h3>${list.map(m => `<div class="item">${esc(m.name)}${m.id === g.authorID ? ' 👑' : ''}</div>`).join('')}<button class="b s" id="cx">Close</button>`);
+    sheet(`<h3>Members (${list.length})</h3>${list.map(m => `<div class="item">${plink(m.id, m.name)}${m.id === g.authorID ? ' 👑' : ''}</div>`).join('')}<button class="b s" id="cx">Close</button>`);
     $('#cx').onclick = closeSheet;
   } catch { toast('Could not load members.'); }
 }
@@ -878,7 +1059,7 @@ function mountChat(box, g, readonly) {
     if (a) body += a.kind === 'file'
       ? `<button class="b s dl" data-mid="${esc(m.id)}" data-name="${esc(a.name)}" style="margin:4px 0">📄 ${esc(a.name)} · ${Math.max(1, Math.round((a.size || 0) / 1024))} KB</button>`
       : `<div class="att" data-mid="${esc(m.id)}" data-kind="${esc(a.kind)}">⏳ ${a.kind === 'audio' ? 'Voice message…' : 'Photo…'}</div>`;
-    d.innerHTML = `<small><b>${esc(m.authorName)}</b> · <span class="t">${fmt(m.createdAt)}</span></small>${body}<small>${me || isAdmin() ? `<u data-a="del" data-id="${esc(m.id)}">delete</u> ` : ''}${me ? '' : `<u data-a="rep" data-id="${esc(m.id)}">report</u>`}</small>`;
+    d.innerHTML = `<small><b>${plink(m.authorID, m.authorName)}</b> · <span class="t">${fmt(m.createdAt)}</span></small>${body}<small>${me || isAdmin() ? `<u data-a="del" data-id="${esc(m.id)}">delete</u> ` : ''}${me ? '' : `<u data-a="rep" data-id="${esc(m.id)}">report</u>`}</small>`;
     ml.appendChild(d); const at = d.querySelector('.att'); if (at) io.observe(at);
   };
   const unsub = onSnapshot(query(collection(db, `groups/${g.id}/messages`), orderBy('createdAt'), limitToLast(100)), snap => {
