@@ -520,6 +520,25 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 @media (max-width:999px){.pfig{width:128px;height:144px}}@media (max-width:760px){.scene .pfig{width:96px;height:108px}}@media (max-width:520px){.pod .pfig{width:64px;height:72px}.pod1 .pfig{width:96px;height:108px}}
 .pfig .pf-head,.pfig .pf-blink{transform-origin:50% 60%}
 .pplav{width:46px;height:57px}.meseat .pplav{width:40px;height:49px}.restrow .pplav{width:30px;height:37px}
+
+.mtools{margin-left:6px}.mtools button.on{background:var(--blo,#974048);color:#fff}
+.medot{width:22px;height:22px;display:flex;align-items:center;justify-content:center}.medot i{width:12px;height:12px;background:#5f86ad;border:2px solid #fff;box-shadow:0 0 0 2px #10141A,0 0 12px #5f86ad;animation:mepulse 1.6s steps(2) infinite}@keyframes mepulse{50%{box-shadow:0 0 0 2px #10141A,0 0 0 7px rgba(95,134,173,.35)}}
+.ulmk{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:#84977A;color:#10141A;font:13px 'Silkscreen',monospace;border:2px solid #10141A;box-shadow:2px 2px 0 rgba(0,0,0,.5)}.ulmk.old{background:#8798AA;opacity:.75}
+.ulclus{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:#84977A;color:#10141A;font:14px 'Silkscreen',monospace;border:2px solid #10141A;box-shadow:0 0 0 3px rgba(132,151,122,.4)}
+.livemk{width:46px;height:22px;display:flex;align-items:center;justify-content:center;background:#b8343e;border:2px solid #10141A;box-shadow:0 0 0 0 rgba(184,52,62,.6);animation:livep 1.4s infinite}.livemk span{font:11px 'Silkscreen',monospace;color:#fff;letter-spacing:1px}
+@keyframes livep{0%{box-shadow:0 0 0 0 rgba(184,52,62,.7)}70%{box-shadow:0 0 0 12px rgba(184,52,62,0)}100%{box-shadow:0 0 0 0 rgba(184,52,62,0)}}
+#livewin{display:none;position:fixed;right:16px;bottom:16px;width:min(460px,calc(100vw - 32px));max-height:calc(100vh - 32px);z-index:1200;flex-direction:column}#livewin.open{display:flex}
+#livewin .tbar .ttl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lrec{color:#fff;margin-right:8px;animation:blink 1s steps(2) infinite}
+.lbody{display:flex;flex-direction:column;gap:8px;padding:8px;min-height:0;flex:1}
+.lvid{position:relative;background:#000;aspect-ratio:16/9}.lvid video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+.lstat{position:absolute;inset:auto 8px 8px 8px;color:#fff;font:16px 'VT323',monospace;text-shadow:1px 1px 0 #000}.lbadge{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;padding:2px 6px;font:14px 'VT323',monospace}
+.lctl{gap:6px}.lctl .b{width:auto;flex:1;margin:0;padding:7px 8px}.b.danger{background:#974048;color:#fff}
+.lchatbox{display:flex;flex-direction:column;gap:6px;min-height:0;flex:1}.lchat{height:180px;overflow:auto;padding:6px 8px;font-size:14px}.lmsg{margin:2px 0;word-wrap:break-word}.lmsg b{color:var(--fro,#AAB8C5);cursor:pointer}
+.lform{display:flex;gap:6px}.lform input{flex:1;min-width:0;padding:8px}.lform .b{width:auto;margin:0}
+@media (max-width:640px){#livewin{inset:0;width:auto;max-height:none;right:0;bottom:0}.lchat{height:auto;flex:1}}
+.presrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+.pres{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--mut,#8798AA)}.pres i{width:10px;height:10px;background:#5c6e78;border:1px solid #10141A}.pres.on{color:#a8c49a}.pres.on i{background:#84d36a;box-shadow:0 0 6px #84d36a}
+@media (max-width:760px){.mtools button{padding-left:6px;padding-right:6px}}
 </style></head>
 <body><div id="app">
 <header id="top" class="raised">
@@ -543,7 +562,7 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
  <section class="view on" id="mapv">
   <div class="mapwin win">
    <div class="tbar"><span id="tico"></span><span class="ttl">MAP.EXE — Appalachia</span>
-    <div class="seg" role="group" aria-label="Map style"><button id="stPx" class="on" aria-pressed="true" title="Pixel map in the site palette">Pixel</button><button id="stPc" aria-pressed="false" title="Pixel satellite map with real colors">Pixel color</button><button id="stDt" aria-pressed="false" title="Normal detailed map">Detailed</button></div></div>
+    <div class="seg" role="group" aria-label="Map style"><button id="stPx" class="on" aria-pressed="true" title="Pixel map in the site palette">Pixel</button><button id="stPc" aria-pressed="false" title="Pixel satellite map with real colors">Pixel color</button><button id="stDt" aria-pressed="false" title="Normal detailed map">Detailed</button></div><div class="seg mtools" role="group" aria-label="Map tools"><button id="locBtn" aria-pressed="false" title="Show my location (only you can see it)">📍 Me</button><button id="liveBtn" title="Start a live stream from your location">● Go live</button><button id="admLocBtn" hidden aria-pressed="false" title="Admin: show or hide everyone's shared location">👥 Users</button></div></div>
    <div class="chips" id="chips"></div>
    <div class="mapbox sunken"><div id="map"></div><div id="hint"></div></div>
    <div class="status sunken"><span><b>●</b> <span id="cnt">0</span> reports in view</span><span id="zm">Zoom 7</span></div>
@@ -1018,7 +1037,7 @@ function verifySheet(sent) {
   $('#rf').onclick = async () => { await user.reload(); await user.getIdToken(true); user = auth.currentUser;
     if (user.emailVerified) { closeSheet(); profile(); } else $('#m').textContent = 'Not verified yet.'; };
 }
-onAuthStateChanged(auth, u => { user = u; profile(); watchInvites(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
+onAuthStateChanged(auth, u => { user = u; profile(); watchInvites(); liveAuthChanged(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
 const pPanel = (title, body, extra = '') => `<section class="panel win"${extra}><div class="tbar"><span>${title}</span></div><div class="pad">${body}</div></section>`;
 function profile() {
   const el = $('#profile'); pageBg(el, null);
@@ -1254,7 +1273,8 @@ async function openProfile(uid) {
   const p = await getProfile(uid, true);
   let fcount = 0; try { fcount = (await getDocs(collection(db, `users/${uid}/friends`))).size; } catch {}
   const rcount = await countReports(uid);
-  sheet(profileCard(p, 'User', {title: 'USER PROFILE', stats: statCell(rcount, 'Reports') + statCell(fcount, fcount === 1 ? 'Friend' : 'Friends')}) + `<div id="fbtn"></div><div id="adm1"></div><button class="b s" id="cx">Close</button>`);
+  sheet(profileCard(p, 'User', {title: 'USER PROFILE', stats: statCell(rcount, 'Reports') + statCell(fcount, fcount === 1 ? 'Friend' : 'Friends')}) + `<div class="presrow" id="pres1"><span class="pres"><i></i>…</span></div><div id="fbtn"></div><div id="adm1"></div><button class="b s" id="cx">Close</button>`);
+  presenceOf(uid).then(pr => { const e = $('#pres1'); if (e) e.innerHTML = presenceHtml(pr); });
   if (p) pageBg($('#sheetBody'), p.pbg);
   $('#cx').onclick = closeSheet;
   const draw = async () => {
@@ -1288,7 +1308,7 @@ async function myProfileSection() {
   const box = $('#myp'); if (!box || !user) return;
   const p = await getProfile(user.uid, true);
   pageBg($('#profile'), p?.pbg);
-  box.innerHTML = profileCard(p, user.displayName, {self: true, admin: isAdmin(), title: 'MY PROFILE', statsId: 'mystats', action: '<button class="b" id="ep">✏️ Edit profile</button>'});
+  box.innerHTML = profileCard(p, user.displayName, {self: true, admin: isAdmin(), title: 'MY PROFILE', statsId: 'mystats', action: '<button class="b" id="ep">✏️ Edit profile</button>'}) + '<div class="presrow"><span class="pres on"><i></i>Online</span><span class="meta">Others see when you were last online.</span></div>';
   const fp = $('#fpanel'); if (!fp) return;
   fp.innerHTML = `
     <div class="search sunken" style="max-width:none;margin:6px 0"><svg viewBox="0 0 8 8" width="16" height="16" fill="#8798AA" aria-hidden="true" shape-rendering="crispEdges"><path d="M1 0h4v1h-4zM0 1h1v1h-1zM5 1h1v1h-1zM0 2h1v1h-1zM5 2h1v1h-1zM0 3h1v1h-1zM5 3h1v1h-1zM1 4h4v1h-4zM5 5h1v1h-1zM6 6h1v1h-1zM7 7h1v1h-1z"/></svg><input id="fsq" maxlength="30" placeholder="Find people by nickname…" aria-label="Find people by nickname" autocomplete="off" enterkeyhint="search"></div>
@@ -1482,6 +1502,225 @@ async function openThread(t) {
     catch { toast('Could not post reply.'); }
     $('#sd').disabled = false; };
 }
+
+// ---------- presence: online status + last seen (Firestore heartbeat; online = seen in the last 2.5 min) ----------
+const PRES_TTL = 150000;
+async function heartbeat(off = false) {
+  if (!user || !user.emailVerified || (document.hidden && !off)) return;
+  try { await setDoc(doc(db, 'presence', user.uid), {t: serverTimestamp(), off}); } catch {}
+}
+setInterval(() => heartbeat(), 90000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) heartbeat(); });
+addEventListener('pagehide', () => heartbeat(true));
+async function presenceOf(uid) { try { const d = await getDoc(doc(db, 'presence', uid)); if (!d.exists()) return null; const v = d.data(); return {t: v.t?.toDate ? v.t.toDate().getTime() : null, off: !!v.off}; } catch { return null; } }
+const isOnline = pr => !!pr && !pr.off && pr.t && Date.now() - pr.t < PRES_TTL;
+function seenAgo(ms) {
+  const s = (Date.now() - ms) / 1000;
+  if (s < 60) return 'just now'; if (s < 3600) return `${Math.floor(s / 60)} min ago`; if (s < 86400) return `${Math.floor(s / 3600)} h ago`;
+  if (s < 7 * 86400) return `${Math.floor(s / 86400)} d ago`;
+  return new Date(ms).toLocaleDateString([], {day: 'numeric', month: 'short', year: 'numeric'});
+}
+const presenceHtml = pr => isOnline(pr) ? '<span class="pres on"><i></i>Online</span>'
+  : `<span class="pres"><i></i>${pr?.t ? `Last seen ${seenAgo(pr.t)}` : 'Last seen: unknown'}</span>`;
+
+// ---------- my location: visible only to me (and stored for the site admin while sharing is on) ----------
+let locWatch = null, locMk = null, locCirc = null, locLast = null, locCentered = false;
+const locIcon = L.divIcon({className: '', html: '<div class="medot"><i></i></div>', iconSize: [22, 22]});
+function locConsent() { try { return localStorage.getItem('locConsent') === '1'; } catch { return false; } }
+function locSetBtn() { const b = $('#locBtn'); if (b) { b.classList.toggle('on', !!locWatch); b.setAttribute('aria-pressed', !!locWatch); } }
+function locStart() {
+  if (!navigator.geolocation) { toast('Location is not supported on this device.'); return; }
+  locCentered = false;
+  locWatch = navigator.geolocation.watchPosition(p => {
+    const ll = [p.coords.latitude, p.coords.longitude], acc = Math.min(p.coords.accuracy || 50, 5000);
+    if (!locMk) { locMk = L.marker(ll, {icon: locIcon, zIndexOffset: 1000, title: 'You are here'}).addTo(map); locCirc = L.circle(ll, {radius: acc, color: '#5f86ad', weight: 1, fillOpacity: 0.12, interactive: false}).addTo(map); }
+    else { locMk.setLatLng(ll); locCirc.setLatLng(ll).setRadius(acc); }
+    if (!locCentered) { locCentered = true; map.setView(ll, Math.max(map.getZoom(), 12)); }
+    locSave(ll, acc);
+  }, e => { locStop(true); toast(e.code === 1 ? 'Location permission was denied. Allow it in your browser settings to see yourself on the map.' : 'Could not get your location.'); }, {enableHighAccuracy: true, maximumAge: 15000, timeout: 20000});
+  try { localStorage.setItem('locOn', '1'); } catch {} locSetBtn();
+}
+async function locSave(ll, acc) {
+  if (!user || !user.emailVerified) return;
+  const now = Date.now(); if (locLast && now - locLast.t < 60000 && map.distance(ll, locLast.ll) < 100) return;
+  locLast = {t: now, ll};
+  try { await setDoc(doc(db, 'userloc', user.uid), {lat: ll[0], lng: ll[1], acc: Math.round(acc), name: myName(), t: serverTimestamp()}); } catch {}
+}
+async function locStop(silent) {
+  if (locWatch !== null) navigator.geolocation.clearWatch(locWatch); locWatch = null; locLast = null;
+  if (locMk) { map.removeLayer(locMk); map.removeLayer(locCirc); locMk = locCirc = null; }
+  try { localStorage.setItem('locOn', '0'); } catch {} locSetBtn();
+  if (user && user.emailVerified) { try { await deleteDoc(doc(db, 'userloc', user.uid)); } catch {} }
+}
+function locToggle() {
+  if (locWatch !== null) { locStop(); return; }
+  if (locConsent()) { locStart(); return; }
+  sheet(`<h2>📍 Show my location</h2><p>Your position appears on the map <b>only for you</b> — other users can't see it.</p>
+    <p class="meta">While this is on and you are signed in, your last position is also saved for the <b>site administrator</b> (for safety on expeditions). Turning it off removes it.</p>
+    <div class="row"><button class="b" id="locOk">Turn on</button><button class="b s" id="cx">Cancel</button></div>`);
+  $('#cx').onclick = closeSheet;
+  $('#locOk').onclick = () => { try { localStorage.setItem('locConsent', '1'); } catch {} closeSheet(); locStart(); };
+}
+function locRestore() { let on = false; try { on = localStorage.getItem('locOn') === '1'; } catch {} if (on && locConsent() && locWatch === null) locStart(); }
+
+// ---------- admin: everyone's shared locations (can be hidden when there are too many) ----------
+const admLayer = L.markerClusterGroup({maxClusterRadius: 40, iconCreateFunction: c => L.divIcon({className: '', html: `<div class="ulclus">${c.getChildCount()}</div>`, iconSize: [34, 34]})});
+let admUnsub = null, admCount = 0;
+function admLocOn() { try { return localStorage.getItem('admLoc') !== '0'; } catch { return true; } }
+function admLocSync() {
+  const b = $('#admLocBtn'); if (!b) return;
+  b.hidden = !isAdmin();
+  const want = isAdmin() && admLocOn();
+  b.classList.toggle('on', want); b.setAttribute('aria-pressed', want);
+  b.innerHTML = `👥 Users${want ? ` <b>${admCount}</b>` : ''}`;
+  if (want && !admUnsub) {
+    admLayer.addTo(map);
+    admUnsub = onSnapshot(collection(db, 'userloc'), snap => {
+      admLayer.clearLayers(); admCount = 0;
+      snap.forEach(d => { const v = d.data(); if (typeof v.lat !== 'number') return; admCount++;
+        const t = v.t?.toDate ? v.t.toDate().getTime() : Date.now(), old = Date.now() - t > 3600000;
+        L.marker([v.lat, v.lng], {icon: L.divIcon({className: '', html: `<div class="ulmk${old ? ' old' : ''}" title="${esc(v.name || 'User')}">${esc((v.name || '?').slice(0, 1).toUpperCase())}</div>`, iconSize: [26, 26]}), title: v.name})
+          .bindPopup(`<b>${esc(v.name || 'User')}</b><br><span class="meta">updated ${seenAgo(t)} · ±${v.acc || '?'} m</span><br><button class="b" style="margin-top:6px" data-prof="${esc(d.id)}">Open profile</button>`)
+          .addTo(admLayer); });
+      const bb = $('#admLocBtn'); if (bb && admLocOn()) bb.innerHTML = `👥 Users <b>${admCount}</b>`;
+    }, () => {});
+  } else if (!want && admUnsub) { admUnsub(); admUnsub = null; admLayer.clearLayers(); map.removeLayer(admLayer); }
+}
+map.on('popupopen', e => { const b = e.popup.getElement()?.querySelector('[data-prof]'); if (b) b.onclick = () => openProfile(b.dataset.prof); });
+
+// ---------- live streams from a point on the map (WebRTC, signalling through Firestore) + chat ----------
+const ICE = {iceServers: [{urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302']}]};
+const LIVE_MAX = 8, LIVE_TTL = 120000;
+const liveLayer = L.layerGroup().addTo(map);
+let liveUnsub = null;
+function liveWatch() {
+  if (liveUnsub || !user || !user.emailVerified) return;
+  liveUnsub = onSnapshot(query(collection(db, 'streams'), where('live', '==', true)), snap => {
+    liveLayer.clearLayers();
+    snap.forEach(d => { const s = d.data(), hb = s.hb?.toDate ? s.hb.toDate().getTime() : Date.now(); if (Date.now() - hb > LIVE_TTL) return;
+      L.marker([s.lat, s.lng], {icon: L.divIcon({className: '', html: `<div class="livemk"><span>LIVE</span></div>`, iconSize: [46, 22]}), zIndexOffset: 900, title: s.title})
+        .bindTooltip(`${esc(s.title)} — ${esc(s.name)}`).on('click', () => liveOpen(d.id)).addTo(liveLayer); });
+  }, () => {});
+}
+function liveUnwatch() { if (liveUnsub) { liveUnsub(); liveUnsub = null; } liveLayer.clearLayers(); }
+const waitIce = pc => new Promise(res => { if (pc.iceGatheringState === 'complete') return res(); const t = setTimeout(res, 3500); pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete') { clearTimeout(t); res(); } }); });
+let LIVE = null; // {sid, role, stream, pcs, unsubs, hbT, pc}
+function liveWin(html) {
+  let w = $('#livewin'); if (!w) { w = document.createElement('div'); w.id = 'livewin'; w.className = 'win'; document.body.appendChild(w); }
+  w.innerHTML = html; w.classList.add('open'); return w;
+}
+function liveCloseUI() { const w = $('#livewin'); if (w) { w.classList.remove('open'); w.innerHTML = ''; } }
+function liveChat(sid, box) {
+  const list = box.querySelector('.lchat'), form = box.querySelector('.lform'), inp = form.querySelector('input');
+  const un = onSnapshot(query(collection(db, `streams/${sid}/chat`), orderBy('at'), limitToLast(80)), snap => {
+    const near = list.scrollHeight - list.scrollTop - list.clientHeight < 60;
+    list.innerHTML = snap.docs.map(d => { const m = d.data(); return `<div class="lmsg"><b data-u="${esc(m.uid)}">${esc(m.name)}</b> ${esc(m.text)}</div>`; }).join('') || '<p class="meta">No messages yet — say hi!</p>';
+    if (near) list.scrollTop = list.scrollHeight;
+  }, () => {});
+  list.onclick = e => { const b = e.target.closest('[data-u]'); if (b) openProfile(b.dataset.u); };
+  form.onsubmit = async e => { e.preventDefault(); const text = inp.value.trim().slice(0, 300); if (!text) return; inp.value = '';
+    try { await addDoc(collection(db, `streams/${sid}/chat`), {uid: user.uid, name: myName(), text, at: serverTimestamp()}); } catch { toast('Could not send the message.'); } };
+  return un;
+}
+const liveShell = (title, sub, role) => `<div class="tbar blood"><span class="lrec">● LIVE</span><span class="ttl">${esc(title)}</span><button class="x raised" id="lvx" aria-label="Close">✕</button></div>
+  <div class="lbody"><div class="lvid sunken"><video id="lvv" playsinline autoplay ${role === 'host' ? 'muted' : ''}></video><div class="lstat" id="lvs">${esc(sub)}</div>
+  <div class="lbadge" id="lvn">👁 0</div></div>
+  ${role === 'host' ? '<div class="row lctl"><button class="b s" id="lvmic">🎙 Mic on</button><button class="b s" id="lvflip">🔄 Camera</button><button class="b danger" id="lvend">■ End stream</button></div>' : ''}
+  <div class="lchatbox"><div class="lchat sunken"></div><form class="lform"><input class="sunken" maxlength="300" placeholder="Write in the stream chat…" aria-label="Chat message"><button class="b">Send</button></form></div></div>`;
+function goLiveSheet() {
+  if (!canPost()) return;
+  if (LIVE) { toast('You are already in a stream.'); return; }
+  if (!navigator.mediaDevices?.getUserMedia) { toast('Live video is not supported in this browser.'); return; }
+  sheet(`<h2>🔴 Go live</h2><p class="meta">Stream video from where you are. Everyone signed in sees a <b>LIVE</b> marker on the map and can watch and chat. Up to ${LIVE_MAX} viewers at once.</p>
+    <label>Title<input class="sunken" id="lvt" maxlength="80" placeholder="e.g. Strange lights over the ridge"></label>
+    <label>Place on the map<select class="sunken" id="lvp"><option value="me">My current location</option><option value="map">Center of the map view</option></select></label>
+    <label>Camera<select class="sunken" id="lvc"><option value="environment">Back camera</option><option value="user">Front camera</option></select></label>
+    <div class="row"><button class="b" id="lvgo">Start streaming</button><button class="b s" id="cx">Cancel</button></div>`);
+  $('#cx').onclick = closeSheet;
+  $('#lvgo').onclick = async () => {
+    const title = $('#lvt').value.trim() || 'Live from the field', place = $('#lvp').value, facing = $('#lvc').value;
+    $('#lvgo').disabled = true;
+    let ll = map.getCenter(); ll = [ll.lat, ll.lng];
+    if (place === 'me') { try { const p = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: true, timeout: 15000})); ll = [p.coords.latitude, p.coords.longitude]; } catch { toast('Could not get your location — using the center of the map instead.'); } }
+    let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: true}); }
+    catch { toast('Camera or microphone access was denied.'); return; }
+    closeSheet(); liveHost(title, ll, stream, facing);
+  };
+}
+async function liveHost(title, ll, stream, facing) {
+  let ref; try { ref = await addDoc(collection(db, 'streams'), {owner: user.uid, name: myName(), title, lat: ll[0], lng: ll[1], live: true, startedAt: serverTimestamp(), hb: serverTimestamp()}); }
+  catch { stream.getTracks().forEach(t => t.stop()); toast('Could not start the stream (check the database rules).'); return; }
+  const sid = ref.id; LIVE = {sid, role: 'host', stream, pcs: new Map(), unsubs: [], facing};
+  const w = liveWin(liveShell(title, 'You are live', 'host'));
+  const v = $('#lvv'); v.srcObject = stream;
+  LIVE.unsubs.push(liveChat(sid, w));
+  LIVE.hbT = setInterval(() => updateDoc(doc(db, 'streams', sid), {hb: serverTimestamp()}).catch(() => {}), 30000);
+  // answer every viewer that asks to watch
+  LIVE.unsubs.push(onSnapshot(collection(db, `streams/${sid}/peers`), snap => {
+    $('#lvn') && ($('#lvn').textContent = `👁 ${snap.size}`);
+    snap.docChanges().forEach(async ch => {
+      const vid = ch.doc.id, d = ch.doc.data();
+      if (ch.type === 'removed') { LIVE?.pcs.get(vid)?.close(); LIVE?.pcs.delete(vid); return; }
+      if (!d.offer || d.answer || d.full || LIVE.pcs.has(vid)) return;
+      if (LIVE.pcs.size >= LIVE_MAX) { updateDoc(ch.doc.ref, {full: true}).catch(() => {}); return; }
+      const pc = new RTCPeerConnection(ICE); LIVE.pcs.set(vid, pc);
+      LIVE.stream.getTracks().forEach(t => pc.addTrack(t, LIVE.stream));
+      pc.onconnectionstatechange = () => { if (['failed', 'closed'].includes(pc.connectionState)) { pc.close(); LIVE?.pcs.delete(vid); } };
+      try { await pc.setRemoteDescription({type: 'offer', sdp: d.offer}); const ans = await pc.createAnswer(); await pc.setLocalDescription(ans); await waitIce(pc);
+        await updateDoc(ch.doc.ref, {answer: pc.localDescription.sdp}); } catch { pc.close(); LIVE?.pcs.delete(vid); }
+    });
+  }, () => {}));
+  $('#lvx').onclick = $('#lvend').onclick = () => liveEnd();
+  $('#lvmic').onclick = () => { const a = LIVE.stream.getAudioTracks()[0]; if (!a) return; a.enabled = !a.enabled; $('#lvmic').textContent = a.enabled ? '🎙 Mic on' : '🔇 Mic off'; };
+  $('#lvflip').onclick = async () => {
+    const facing = LIVE.facing === 'user' ? 'environment' : 'user';
+    try { const ns = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing}}); const nt = ns.getVideoTracks()[0], ot = LIVE.stream.getVideoTracks()[0];
+      LIVE.pcs.forEach(pc => pc.getSenders().find(s => s.track?.kind === 'video')?.replaceTrack(nt)); LIVE.stream.removeTrack(ot); ot.stop(); LIVE.stream.addTrack(nt); LIVE.facing = facing; $('#lvv').srcObject = LIVE.stream; }
+    catch { toast('Could not switch the camera.'); }
+  };
+  sfx('success'); liveWatch();
+}
+async function liveEnd() {
+  if (!LIVE) { liveCloseUI(); return; }
+  const L0 = LIVE; LIVE = null;
+  L0.unsubs.forEach(u => u()); clearInterval(L0.hbT);
+  if (L0.role === 'host') {
+    L0.pcs.forEach(pc => pc.close()); L0.stream.getTracks().forEach(t => t.stop());
+    try { await updateDoc(doc(db, 'streams', L0.sid), {live: false, endedAt: serverTimestamp()}); } catch {}
+  } else {
+    L0.pc?.close(); try { await deleteDoc(doc(db, `streams/${L0.sid}/peers`, user.uid)); } catch {}
+  }
+  liveCloseUI();
+}
+addEventListener('pagehide', () => { if (LIVE?.role === 'host') updateDoc(doc(db, 'streams', LIVE.sid), {live: false}).catch(() => {}); else if (LIVE) deleteDoc(doc(db, `streams/${LIVE.sid}/peers`, user.uid)).catch(() => {}); });
+async function liveOpen(sid) {
+  if (!canPost()) return;
+  if (LIVE) { if (LIVE.sid === sid) return; await liveEnd(); }
+  const sd = await getDoc(doc(db, 'streams', sid)).catch(() => null); if (!sd?.exists() || !sd.data().live) { toast('This stream has ended.'); return; }
+  const s = sd.data(); if (s.owner === user.uid) { toast('This is your own stream.'); return; }
+  LIVE = {sid, role: 'viewer', unsubs: []};
+  const w = liveWin(liveShell(s.title, `Connecting to ${s.name}…`, 'viewer'));
+  $('#lvx').onclick = () => liveEnd();
+  LIVE.unsubs.push(liveChat(sid, w));
+  LIVE.unsubs.push(onSnapshot(doc(db, 'streams', sid), d => { if (!d.exists() || !d.data().live) { const st = $('#lvs'); if (st) { st.textContent = 'The stream has ended.'; st.classList.add('show'); } } }, () => {}));
+  const pc = new RTCPeerConnection(ICE); LIVE.pc = pc;
+  pc.addTransceiver('video', {direction: 'recvonly'}); pc.addTransceiver('audio', {direction: 'recvonly'});
+  const ms = new MediaStream(); pc.ontrack = e => { ms.addTrack(e.track); const v = $('#lvv'); if (v && v.srcObject !== ms) v.srcObject = ms; const st = $('#lvs'); if (st) st.textContent = ''; };
+  pc.onconnectionstatechange = () => { const st = $('#lvs'); if (!st) return; if (pc.connectionState === 'failed') st.textContent = 'Could not connect — the network between you and the streamer blocks direct video. Try another network.'; };
+  try {
+    const off = await pc.createOffer(); await pc.setLocalDescription(off); await waitIce(pc);
+    const pref = doc(db, `streams/${sid}/peers`, user.uid);
+    await setDoc(pref, {offer: pc.localDescription.sdp, name: myName(), at: serverTimestamp()});
+    LIVE.unsubs.push(onSnapshot(pref, async d => { const v = d.data(); if (!v) return;
+      if (v.full) { const st = $('#lvs'); if (st) st.textContent = `The stream is full (${LIVE_MAX} viewers max). Try again later.`; return; }
+      if (v.answer && !pc.currentRemoteDescription) { try { await pc.setRemoteDescription({type: 'answer', sdp: v.answer}); } catch {} } }, () => {}));
+  } catch { const st = $('#lvs'); if (st) st.textContent = 'Could not connect to the stream.'; }
+}
+
+$('#locBtn').onclick = locToggle; $('#liveBtn').onclick = goLiveSheet;
+$('#admLocBtn').onclick = () => { try { localStorage.setItem('admLoc', admLocOn() ? '0' : '1'); } catch {} admLocSync(); };
+let locRestored = false;
+function liveAuthChanged() { heartbeat(); admLocSync(); if (user && user.emailVerified) liveWatch(); else liveUnwatch(); if (!locRestored) { locRestored = true; locRestore(); } }
 
 // ---------- HAUNT card game: rules engine (pure, JSON state) ----------
 const HC = {r: ['Blood', '#b84a55'], g: ['Moss', '#7f9a6e'], b: ['Steel', '#5f86ad'], y: ['Bone', '#cdb36a']};
