@@ -291,6 +291,31 @@ document.addEventListener('click', e => {
   const el = e.target.closest('button, a, .chip, .qi, .item[data-id], u[data-a], u[data-kick]'); if (!el || el.id === 'snd') return;
   if (['cx', 'cl', 'obsx', 'bk', 'qx', 'cc', 'x'].includes(el.id)) sfx('cancel'); else sfx('click', 0.25);
 }, true);
+// retro typing sound, synthesized live (original, no sample files): a soft low-passed blip per key
+let typeLast = 0;
+const typeTick = kind => {
+  if (!sfxOn || !actx) return;
+  const now = performance.now(); if (now - typeLast < 22) return; typeLast = now;
+  if (actx.state === 'suspended') actx.resume();
+  const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain(), lp = actx.createBiquadFilter();
+  const base = kind === 'back' ? 520 : kind === 'space' ? 380 : kind === 'enter' ? 300 : 900;
+  const f0 = base * (0.93 + Math.random() * 0.14);
+  o.type = kind === 'char' ? 'square' : 'triangle';
+  o.frequency.setValueAtTime(f0 * 1.5, t); o.frequency.exponentialRampToValueAtTime(f0, t + 0.018);
+  lp.type = 'lowpass'; lp.frequency.value = kind === 'char' ? 2400 : 1600; lp.Q.value = 0.7;
+  const peak = kind === 'char' ? 0.045 : 0.07, len = kind === 'enter' ? 0.09 : 0.045;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+  o.connect(lp).connect(g).connect(actx.destination); o.start(t); o.stop(t + len + 0.02);
+};
+document.addEventListener('keydown', e => {
+  const el = e.target; if (e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
+  const typing = el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && /^(text|search|email|url|password|tel|number|)$/i.test(el.type || '')));
+  if (!typing) return;
+  if (e.key === 'Backspace' || e.key === 'Delete') typeTick('back');
+  else if (e.key === ' ') typeTick('space');
+  else if (e.key === 'Enter') typeTick('enter');
+  else if (e.key.length === 1) typeTick('char');
+}, true);
 // any error text that appears plays the error sound
 new MutationObserver(ms => { for (const m of ms) { const t = m.target.nodeType === 1 ? m.target : m.target.parentElement;
   if (t && t.classList && t.classList.contains('err') && t.textContent.trim()) { sfx('error'); break; } } })
