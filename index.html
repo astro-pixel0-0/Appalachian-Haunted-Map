@@ -779,7 +779,15 @@ document.querySelectorAll('#rail button[data-v]').forEach(b => b.onclick = () =>
 });
 
 // ---------- map ----------
-const MAP_AREA = L.latLngBounds([[31, -88], [46, -71]]);
+const MAP_AREA = L.latLngBounds([[30.5, -91], [44, -72.5]]);
+// Appalachian region outline (approximately the Appalachian Regional Commission area, NY to MS), [lat, lon]
+const APP_POLY = [[42.5, -79.8], [42.7, -77.0], [42.6, -75.4], [42.1, -74.6], [41.6, -75.1], [40.9, -75.6], [40.5, -76.4], [40.0, -77.4], [39.6, -77.9], [39.2, -78.4],
+  [38.4, -79.0], [37.6, -79.6], [36.9, -80.0], [36.5, -80.4], [35.9, -80.8], [35.3, -81.5], [34.8, -82.0], [34.2, -83.0], [33.6, -84.0], [33.0, -85.3], [32.4, -86.5],
+  [32.6, -87.6], [32.9, -88.4], [33.2, -89.4], [34.6, -89.4], [35.0, -88.2], [35.6, -87.6], [36.6, -87.0], [37.0, -86.3], [38.2, -85.3], [38.9, -83.7], [39.8, -82.8],
+  [40.5, -82.0], [41.2, -80.9], [42.2, -80.5]];
+const inAppalachia = (lat, lon) => { let inside = false; for (let i = 0, j = APP_POLY.length - 1; i < APP_POLY.length; j = i++) { const [yi, xi] = APP_POLY[i], [yj, xj] = APP_POLY[j];
+  if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) inside = !inside; } return inside; };
+const canPlaceAt = (lat, lon) => worldOpen || inAppalachia(lat, lon);
 const map = L.map('map', {minZoom: 5, maxBounds: MAP_AREA, maxBoundsViscosity: .8, worldCopyJump: true}).setView([37.5, -80.5], 7);
 // the whole world is open only for the admin; everyone else stays inside the Appalachia area
 let worldOpen = false;
@@ -822,6 +830,7 @@ setMode(startMode);
 $('#tico').innerHTML = sprite('ghost', 16);
 L.control.locate = null;
 const cluster = L.markerClusterGroup({maxClusterRadius: 45}).addTo(map);
+L.polygon(APP_POLY, {color: '#84977A', weight: 2, opacity: 0.7, dashArray: '6 6', fill: false, interactive: false}).addTo(map);
 
 const chip = ([k, v]) => `<button class="chip" data-c="${k}">${catIco(k, 16)}${esc(v[1])}</button>`;
 $('#chips').innerHTML = `<button class="chip on" data-c="">All</button>` + Object.entries(CATS).filter(([, v]) => !v[3]).map(chip).join('') + `<button class="chip sepl" data-c="abandoned">${sprite('house', 16)}All abandoned</button>` + Object.entries(CATS).filter(([, v]) => v[3]).map(chip).join('');
@@ -896,7 +905,7 @@ map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
   
   const q = $('#q'), res = $('#qres'); let pin = null, token = 0, last = {s: new Map(), p: [], c: null};
   const hide = () => { res.style.display = 'none'; };
-  const inAreaFixed = c => c.lat >= 31 && c.lat <= 46 && c.lon >= -88 && c.lon <= -71;
+  const inAreaFixed = c => inAppalachia(c.lat, c.lon);
   const inArea = c => worldOpen ? Math.abs(c.lat) <= 90 && Math.abs(c.lon) <= 180 : inAreaFixed(c);
   const drop = (ll, title, zoom) => {
     map.setView(ll, zoom); if (pin) pin.remove();
@@ -913,7 +922,7 @@ map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
     if (c) {
       last = {s: new Map(), p: [], c};
       res.innerHTML = inArea(c) ? `<div class="qh">Coordinates</div><div class="qi" data-t="c">📌 ${c.lat.toFixed(5)}, ${c.lon.toFixed(5)}</div>`
-        : '<div class="qi meta">These coordinates are outside the Appalachia map area (lat 31 to 46, lon −88 to −71).</div>';
+        : '<div class="qi meta">These coordinates are outside the Appalachian region (the dashed outline on the map).</div>';
       return;
     }
     res.innerHTML = '<div class="qi meta">Searching…</div>';
@@ -962,6 +971,7 @@ function resize(file) {
     img.onerror = rej; img.src = URL.createObjectURL(file); });
 }
 function addSheet(ll) {
+  if (!canPlaceAt(ll.lat, ll.lng)) { toast('Reports can only be placed inside the Appalachian region — the dashed outline on the map.'); return; }
   sheet(`<h3>New report</h3>
    <select id="cat">${catOptions()}</select><p class="meta" id="warn" style="display:none">⚠️ Abandoned places can be dangerous and are often private property. Never trespass, and don’t post addresses of occupied homes.</p>
    <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
@@ -974,6 +984,7 @@ function addSheet(ll) {
   $('#cx').onclick = closeSheet;
   $('#go').onclick = async () => {
     const title = $('#t').value.trim(); if (title.length < 3) { $('#e').textContent = 'Title is too short.'; return; }
+    if (!canPlaceAt(ll.lat, ll.lng)) { $('#e').textContent = 'This place is outside the Appalachian region.'; return; }
     $('#go').disabled = true;
     try {
       const ref = doc(collection(db, 'sightings'));
@@ -1654,6 +1665,7 @@ function goLiveSheet() {
     if (place === 'me') { try { const p = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: true, timeout: 15000})); ll = [p.coords.latitude, p.coords.longitude]; } catch { toast('Could not get your location — using the center of the map instead.'); } }
     let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: true}); }
     catch { toast('Camera or microphone access was denied.'); return; }
+    if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started inside the Appalachian region (the dashed outline on the map).'); return; }
     closeSheet(); liveHost(title, ll, stream, facing);
   };
 }
