@@ -130,6 +130,21 @@ input[type=checkbox]{width:auto;margin:0 8px 0 0}label.ck{display:flex;align-ite
 .chead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;padding-top:calc(6px + env(safe-area-inset-top));background:var(--blo);color:#fff;font-family:var(--px);letter-spacing:1px}
 #cbody{flex:1;display:flex;flex-direction:column;min-height:0}#cbody #ml{max-height:none;flex:1;padding:8px}.composer{padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--mid)}.att img{max-width:100%}
 /* profiles */
+#profile>.pwrap{max-width:1000px}
+.pwrap .pcard{margin:12px 0}
+.pcard .tbar span{font-size:12px}
+.phead{flex-wrap:wrap}.phead .fr{--n:10px}.phead .fr .av{width:112px;height:112px}
+.phead>.b{width:auto;margin:0 0 6px auto;padding:9px 16px}
+.badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.badge{font-family:var(--px);font-size:10px;letter-spacing:1px;padding:2px 6px;background:var(--mid);color:var(--sag);border:1px solid #3a4552}.badge.blood{background:var(--blo);color:#fff;border-color:var(--lo)}
+.pstats{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:10px}
+.stat{background:var(--mid);padding:8px 10px;display:flex;flex-direction:column}.stat b{font-family:var(--vt);font-weight:400;font-size:26px;line-height:1;color:var(--ink)}.stat span{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start}
+.panel{background:var(--gra)}.panel .pad{padding:12px}.panel .tbar span{font-size:12px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--mid);font-size:13px}.kv span{color:var(--mut)}.kv b{font-weight:500;overflow-wrap:anywhere;text-align:right}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.fcard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;background:var(--gra);color:var(--ink);font-size:12px;overflow:hidden}.fcard span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pwrap>.meta:last-child{margin-top:16px}
 a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)}a.prof:hover{color:#fff}
 .pcard{background:var(--gra);margin:0 0 12px;overflow:hidden}
 .pban{position:relative;height:150px;background:#1a2027;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -683,13 +698,28 @@ function verifySheet(sent) {
     if (user.emailVerified) { closeSheet(); profile(); } else $('#m').textContent = 'Not verified yet.'; };
 }
 onAuthStateChanged(auth, u => { user = u; profile(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
+const pPanel = (title, body, extra = '') => `<section class="panel win"${extra}><div class="tbar"><span>${title}</span></div><div class="pad">${body}</div></section>`;
 function profile() {
   const el = $('#profile'); pageBg(el, null);
-  if (!user) { el.innerHTML = `<h2>Profile</h2><button class="b" id="si">Sign in or create account</button><p class="meta">Browsing is open to everyone. A verified email is required to post.</p>${contact()}${links()}`; $('#si').onclick = () => authSheet(); return; }
-  el.innerHTML = `<div id="myp"></div><h3>Account</h3><p class="meta">Email (private — only you and the admin can see it): ${esc(user.email)}</p><p>${user.emailVerified ? '✅ Email verified' : '⚠️ Email not verified'}</p>
-   ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<button class="b s" id="so">Sign out</button><button class="b d" id="da">Delete account</button>${isAdmin() ? '<h3 style="margin-top:24px">Admin · reports</h3><div id="adm"><p class="meta">Loading…</p></div>' : ''}${contact()}${links()}`;
+  if (!user) {
+    el.innerHTML = `<div class="pwrap">${profileCard(null, 'Guest', {title: 'PROFILE'})}<div class="pgrid">
+      ${pPanel('SIGN IN', '<p>Browsing is open to everyone. A verified email is required to post reports, join groups and add friends.</p><button class="b" id="si">Sign in or create account</button>')}
+      ${pPanel('CONTACT', discordBtn() + '<button class="b s" id="fb-open">✉️ Send feedback</button>')}</div>${links()}</div>`;
+    $('#si').onclick = () => authSheet(); return;
+  }
+  const since = user.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : '—';
+  el.innerHTML = `<div class="pwrap"><div id="myp"></div><div class="pgrid">
+    ${pPanel('FRIENDS', '<div id="fpanel"><p class="meta">Loading…</p></div>', ' style="grid-row:span 2"')}
+    ${pPanel('ACCOUNT', `<div class="kv"><span>Email</span><b>${esc(user.email)}</b></div><p class="meta">🔒 Private — only you and the admin can see it.</p>
+      <div class="kv"><span>Status</span><b>${user.emailVerified ? '<span class="ok">✔ Verified</span>' : '<span class="err">Not verified</span>'}</b></div><div class="kv"><span>Member since</span><b>${esc(since)}</b></div>
+      ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<div class="row"><button class="b s" id="so">Sign out</button><button class="b d" id="da">Delete account</button></div>`)}
+    ${pPanel('CONTACT', discordBtn() + '<button class="b s" id="fb-open">✉️ Send feedback</button>')}
+    ${isAdmin() ? pPanel('ADMIN · REPORTS', '<div id="adm"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"') : ''}
+  </div>${links()}</div>`;
   if (!user.emailVerified) $('#vf').onclick = () => verifySheet();
-  syncPrivate(); if (user.emailVerified) myProfileSection(); else $('#myp').innerHTML = profileCard(null, user.displayName) + '<p class="meta">Verify your email to customise your profile and add friends.</p>';
+  syncPrivate();
+  if (user.emailVerified) myProfileSection();
+  else { $('#myp').innerHTML = profileCard(null, user.displayName, {self: true}); $('#fpanel').innerHTML = '<p class="meta">Verify your email to customise your profile and add friends.</p>'; }
   if (isAdmin()) loadReports();
   $('#so').onclick = () => signOut(auth);
   $('#da').onclick = () => { sheet(`<h3>Delete account?</h3><p>This removes your account, your profile, friends list and your map reports.</p><button class="b d" id="y">Delete</button><button class="b s" id="n">Cancel</button>`);
@@ -845,14 +875,19 @@ const avatarHtml = (p, sm) => {
   const img = p && typeof p.avatar === 'string' && JPEG.test(p.avatar) ? `<img class="av" alt="" src="${p.avatar}">` : `<div class="av">${sprite('ghost', sm ? 26 : 56)}</div>`;
   return `<span class="fr fr-${f}${sm ? ' sm' : ''}"><div>${img}</div></span>`;
 };
-const profileCard = (p, fallbackName) => {
+const profileCard = (p, fallbackName, opt = {}) => {
   const name = esc(p?.name || fallbackName || 'User');
   const pre = p && bgUrl(p.bg);
   const ban = p && typeof p.banner === 'string' && JPEG.test(p.banner) ? `<img alt="" src="${p.banner}">` : pre ? `<img alt="" src="${pre}" style="image-rendering:pixelated">` : sprite('ghost', 96);
   const lk = p && p.links && typeof p.links === 'object' ? NETS.map(([k, label]) => { const u = safeUrl(p.links[k]); return u ? `<a class="chip" href="${esc(u)}" target="_blank" rel="noopener nofollow ugc">${esc(label)}</a>` : ''; }).join('') : '';
-  return `<div class="pcard win"><div class="pban">${ban}</div><div class="phead">${avatarHtml(p)}<div class="pname"><h2>${name}</h2></div></div>
-    <div class="pbody">${p?.bio ? `<p class="pbio">${esc(p.bio)}</p>` : '<p class="meta">No description yet.</p>'}${lk ? `<div class="plinks">${lk}</div>` : ''}<div id="pextra"></div></div></div>`;
+  const badges = (opt.admin ? '<span class="badge blood">ADMIN</span>' : '') + (p ? '<span class="badge">✔ VERIFIED</span>' : '');
+  return `<div class="pcard win"><div class="tbar">${sprite('ghost', 14)}<span>${opt.title || 'PROFILE'}</span></div><div class="pban">${ban}</div>
+    <div class="phead">${avatarHtml(p)}<div class="pname"><h2>${name}</h2><div class="badges">${badges}</div></div>${opt.action || ''}</div>
+    <div class="pbody">${p?.bio ? `<p class="pbio">${esc(p.bio)}</p>` : `<p class="meta">${opt.self ? 'Add a few words about yourself in Edit profile.' : 'No description yet.'}</p>`}
+    ${lk ? `<div class="plinks">${lk}</div>` : ''}<div class="pstats" id="${opt.statsId || 'pstats'}">${opt.stats || ''}</div><div id="pextra"></div></div></div>`;
 };
+const statCell = (n, label) => `<div class="stat sunken"><b>${n}</b><span>${label}</span></div>`;
+const countReports = async uid => { try { return (await getDocs(query(collection(db, 'sightings'), where('authorID', '==', uid), limit(500)))).size; } catch { return '—'; } };
 // keep the admin-only email copy in sync (readable only by its owner and the admin)
 let privSynced = null;
 const syncPrivate = () => { if (!user || !user.email || privSynced === user.uid) return; privSynced = user.uid;
@@ -897,7 +932,8 @@ async function openProfile(uid) {
   sheet('<p class="meta">Loading profile…</p>');
   const p = await getProfile(uid, true);
   let fcount = 0; try { fcount = (await getDocs(collection(db, `users/${uid}/friends`))).size; } catch {}
-  sheet(profileCard(p) + `<p class="meta">${fcount} friend${fcount === 1 ? '' : 's'}</p><div id="fbtn"></div><div id="adm1"></div><button class="b s" id="cx">Close</button>`);
+  const rcount = await countReports(uid);
+  sheet(profileCard(p, 'User', {title: 'USER PROFILE', stats: statCell(rcount, 'Reports') + statCell(fcount, fcount === 1 ? 'Friend' : 'Friends')}) + `<div id="fbtn"></div><div id="adm1"></div><button class="b s" id="cx">Close</button>`);
   if (p) pageBg($('#sheetBody'), p.pbg);
   $('#cx').onclick = closeSheet;
   const draw = async () => {
@@ -931,9 +967,13 @@ async function myProfileSection() {
   const box = $('#myp'); if (!box || !user) return;
   const p = await getProfile(user.uid, true);
   pageBg($('#profile'), p?.pbg);
-  box.innerHTML = profileCard(p, user.displayName) + `<button class="b" id="ep">✏️ Edit profile</button><h3>Friends</h3>
+  box.innerHTML = profileCard(p, user.displayName, {self: true, admin: isAdmin(), title: 'MY PROFILE', statsId: 'mystats', action: '<button class="b" id="ep">✏️ Edit profile</button>'});
+  const fp = $('#fpanel'); if (!fp) return;
+  fp.innerHTML = `
     <div class="search sunken" style="max-width:none;margin:6px 0"><svg viewBox="0 0 8 8" width="16" height="16" fill="#8798AA" aria-hidden="true" shape-rendering="crispEdges"><path d="M1 0h4v1h-4zM0 1h1v1h-1zM5 1h1v1h-1zM0 2h1v1h-1zM5 2h1v1h-1zM0 3h1v1h-1zM5 3h1v1h-1zM1 4h4v1h-4zM5 5h1v1h-1zM6 6h1v1h-1zM7 7h1v1h-1z"/></svg><input id="fsq" maxlength="30" placeholder="Find people by nickname…" aria-label="Find people by nickname" autocomplete="off" enterkeyhint="search"></div>
     <div id="fsr"></div><div id="freq"></div><div id="flist"><p class="meta">Loading…</p></div>`;
+  (async () => { const [r, gs] = await Promise.all([countReports(user.uid), getDocs(collection(db, `users/${user.uid}/memberships`)).then(x => x.size).catch(() => '—')]);
+    const st = $('#mystats'); if (st) st.insertAdjacentHTML('afterbegin', statCell(r, 'Reports') + statCell(gs, 'Groups')); })();
   let fsT = 0, fsTok = 0;
   $('#fsq').oninput = () => { clearTimeout(fsT); fsT = setTimeout(async () => {
     const q = $('#fsq').value.trim().toLowerCase(), out = $('#fsr'), my = ++fsTok; if (!out) return;
@@ -956,7 +996,12 @@ async function myProfileSection() {
     if (rbox) rbox.onclick = async e => { const a = e.target.closest('[data-acc]'), d = e.target.closest('[data-dec]');
       try { if (a) { await acceptFriend(a.dataset.acc, a.dataset.n); sfx('success'); } if (d) await deleteDoc(doc(db, `requests/${user.uid}/in`, d.dataset.dec)); if (a || d) myProfileSection(); } catch { toast('Could not update friends.'); } };
     const fr = await getDocs(collection(db, `users/${user.uid}/friends`));
-    const fl = $('#flist'); if (fl) fl.innerHTML = fr.size ? fr.docs.map(d => `<div class="item">${plink(d.id, d.data().name)}</div>`).join('') : '<p class="meta">No friends yet. Open someone’s profile by tapping their name and press “Add friend”.</p>';
+    const st = $('#mystats'); if (st) st.insertAdjacentHTML('beforeend', statCell(fr.size, fr.size === 1 ? 'Friend' : 'Friends'));
+    const fl = $('#flist'); if (!fl) return;
+    if (!fr.size) { fl.innerHTML = '<p class="meta">No friends yet. Search above or tap someone’s name and press “Add friend”.</p>'; return; }
+    const profs = await Promise.all(fr.docs.slice(0, 60).map(d => getProfile(d.id)));
+    fl.innerHTML = '<p class="meta">Your friends</p><div class="fgrid">' + fr.docs.slice(0, 60).map((d, i) => `<button class="fcard raised" data-uid="${esc(d.id)}">${avatarHtml(profs[i], true)}<span>${esc(profs[i]?.name || d.data().name)}</span></button>`).join('') + '</div>';
+    fl.onclick = e => { const b = e.target.closest('[data-uid]'); if (b) openProfile(b.dataset.uid); };
   } catch { const fl = $('#flist'); if (fl) fl.innerHTML = '<p class="err">Could not load friends (publish the latest rules).</p>'; }
 }
 
