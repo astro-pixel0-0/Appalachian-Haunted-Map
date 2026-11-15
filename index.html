@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Appalachia Anomalies</title>
-<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json"><link rel="icon" href="favicon.ico?v=3" sizes="any"><link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=3"><link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#16221c"><meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
@@ -73,7 +73,13 @@ const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestor
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = t => t?.toDate ? t.toDate().toLocaleString() : '';
-const CATS = {cryptid:['🐾','Cryptid','#8d6e63'],ufo:['🛸','UFO / Lights','#26a69a'],paranormal:['👁️','Paranormal','#ab47bc'],haunted:['🌙','Haunted place','#5c6bc0'],strange:['❓','Strange event','#ffa726'],other:['📍','Other','#90a4ae']};
+const CATS = {cryptid:['🐾','Cryptid','#8d6e63'],ufo:['🛸','UFO / Lights','#26a69a'],paranormal:['👁️','Paranormal','#ab47bc'],haunted:['🌙','Haunted place','#5c6bc0'],strange:['❓','Strange event','#ffa726'],other:['📍','Other','#90a4ae'],
+  ab_house:['🏚️','Abandoned house / farm','#a1887f',1],ab_hospital:['🏥','Abandoned hospital / asylum','#ef5350',1],ab_school:['🏫','Abandoned school','#ffb74d',1],
+  ab_factory:['🏭','Abandoned factory / mill','#78909c',1],ab_mine:['⛏️','Abandoned mine / tunnel','#8d6e63',1],ab_church:['⛪','Abandoned church','#7e57c2',1],
+  ab_rail:['🚂','Abandoned railway / station','#26c6da',1],ab_town:['🏘️','Ghost town','#d4a017',1],ab_other:['🚧','Other abandoned place','#bdbdbd',1]};
+const opt = ([k, v]) => `<option value="${k}">${v[0]} ${v[1]}</option>`;
+const catOptions = () => `<optgroup label="Mysteries">${Object.entries(CATS).filter(([, v]) => !v[3]).map(opt).join('')}</optgroup><optgroup label="Abandoned places">${Object.entries(CATS).filter(([, v]) => v[3]).map(opt).join('')}</optgroup>`;
+const isAb = k => !!(CATS[k] && CATS[k][3]);
 const ls = (k, v) => v === undefined ? new Set(JSON.parse(localStorage.getItem(k) || '[]')) : localStorage.setItem(k, JSON.stringify([...v]));
 let blocked = ls('blocked'), hidden = ls('hidden'), user = null, data = [], filter = null, picking = false, timer;
 const seen = new Map(); // every report loaded this session (used by search)
@@ -103,13 +109,14 @@ L.control.layers({'Topo & trails': topo, 'Satellite': usgs('USGSImageryTopo', 16
 L.control.locate = null;
 const cluster = L.markerClusterGroup({maxClusterRadius: 45}).addTo(map);
 
-$('#chips').innerHTML = `<button class="chip on" data-c="">All</button>` + Object.entries(CATS).map(([k, v]) => `<button class="chip" data-c="${k}">${v[0]} ${v[1]}</button>`).join('');
+const chip = ([k, v]) => `<button class="chip" data-c="${k}">${v[0]} ${v[1]}</button>`;
+$('#chips').innerHTML = `<button class="chip on" data-c="">All</button>` + Object.entries(CATS).filter(([, v]) => !v[3]).map(chip).join('') + `<button class="chip" data-c="abandoned">🏚️ All abandoned</button>` + Object.entries(CATS).filter(([, v]) => v[3]).map(chip).join('');
 $('#chips').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; filter = c.dataset.c || null;
   document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c)); render(); };
 
 function render() {
   cluster.clearLayers();
-  data.filter(s => !filter || s.category === filter).forEach(s => {
+  data.filter(s => !filter || (filter === 'abandoned' ? isAb(s.category) : s.category === filter)).forEach(s => {
     const c = CATS[s.category] || CATS.other;
     L.marker([s.lat, s.lon], {icon: L.divIcon({className: '', html: `<div class="pin" style="background:${c[2]}">${c[0]}</div>`, iconSize: [30, 30]})})
       .on('click', () => showSighting(s)).addTo(cluster);
@@ -225,12 +232,13 @@ function resize(file) {
 }
 function addSheet(ll) {
   sheet(`<h3>New report</h3>
-   <select id="cat">${Object.entries(CATS).map(([k, v]) => `<option value="${k}">${v[0]} ${v[1]}</option>`).join('')}</select>
+   <select id="cat">${catOptions()}</select><p class="meta" id="warn" style="display:none">⚠️ Abandoned places can be dangerous and are often private property. Never trespass, and don’t post addresses of occupied homes.</p>
    <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
    <input id="f" type="file" accept="image/*"><div id="pv"></div>
    <p class="meta">${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</p><p class="err" id="e"></p>
    <button class="b" id="go">Post</button><button class="b s" id="cx">Cancel</button>`);
   let photo = null;
+  $('#cat').onchange = () => { $('#warn').style.display = isAb($('#cat').value) ? 'block' : 'none'; };
   $('#f').onchange = async e => { const f = e.target.files[0]; if (!f) return; photo = await resize(f); $('#pv').innerHTML = `<img class="photo" src="${photo}">`; };
   $('#cx').onclick = closeSheet;
   $('#go').onclick = async () => {
