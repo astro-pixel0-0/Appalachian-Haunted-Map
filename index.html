@@ -50,7 +50,7 @@ main{flex:1;position:relative;min-width:0;min-height:0}
 .view[data-title]{border:1px solid var(--lo);box-shadow:inset 1px 1px 0 var(--hi),inset -1px -1px 0 var(--lo)}
 .view[data-title]::before{content:attr(data-title);display:block;position:sticky;top:0;z-index:5;margin:0 -16px 12px;padding:6px 12px;background:var(--gra2);font-family:var(--px);font-size:13px;letter-spacing:1px;color:var(--fro)}
 .view:not(#mapv)>*{max-width:780px;margin-left:auto;margin-right:auto}
-.view:not(#mapv)>button,.view:not(#mapv)>a,.view:not(#mapv)>input{display:block}
+.view:not(#mapv)>button,.view:not(#mapv)>a:not(.discord),.view:not(#mapv)>input{display:block}
 #sheetBody>button.b{display:block}
 #mapv{padding:0;overflow:hidden;background:transparent}
 .mapwin{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--gra)}
@@ -155,6 +155,7 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 .bgs input{position:absolute;opacity:0;width:1px;height:1px}
 .bgt{display:flex;align-items:center;justify-content:center;aspect-ratio:3/1;background:#1a2027;border:1px solid #3a4552;overflow:hidden}
 .bgt img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.pbgs{grid-template-columns:repeat(auto-fill,minmax(72px,1fr))}.pbt{aspect-ratio:1/1;background-size:72px 72px;image-rendering:pixelated}
 .bgs input:checked+.bgt{outline:2px dashed var(--fro);outline-offset:2px}.bgs input:focus-visible+.bgt{outline:2px solid #fff;outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.fr-spectral{animation:none}}
 .frames{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0}.frames label{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;cursor:var(--cur-hot)}
@@ -400,7 +401,7 @@ new MutationObserver(ms => { for (const m of ms) { const t = m.target.nodeType =
 }
 
 // ---------- sheet ----------
-const sheet = (html, lock) => { $('#sheetBody').innerHTML = html; if (!$('#sheet').classList.contains('open')) sfx('open'); $('#sheet').classList.add('open'); $('#sheet').dataset.lock = lock ? '1' : ''; };
+const sheet = (html, lock) => { $('#sheetBody').innerHTML = html; $('#sheetBody').style.backgroundImage = ''; if (!$('#sheet').classList.contains('open')) sfx('open'); $('#sheet').classList.add('open'); $('#sheet').dataset.lock = lock ? '1' : ''; };
 const closeSheet = () => { if ($('#sheet').classList.contains('open')) sfx('close'); $('#sheet').classList.remove('open'); };
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet' && !e.currentTarget.dataset.lock) closeSheet(); });
 const toast = m => { sheet(`<p>${esc(m)}</p><button class="b" id="x">OK</button>`); setTimeout(() => sfx(/could not|invalid|fail|denied|too large|not supported|unavailable|expired/i.test(m) ? 'error' : 'success'), 60); $('#x').onclick = closeSheet; };
@@ -674,7 +675,7 @@ function verifySheet(sent) {
 }
 onAuthStateChanged(auth, u => { user = u; profile(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
 function profile() {
-  const el = $('#profile');
+  const el = $('#profile'); pageBg(el, null);
   if (!user) { el.innerHTML = `<h2>Profile</h2><button class="b" id="si">Sign in or create account</button><p class="meta">Browsing is open to everyone. A verified email is required to post.</p>${contact()}${links()}`; $('#si').onclick = () => authSheet(); return; }
   el.innerHTML = `<div id="myp"></div><h3>Account</h3><p class="meta">Email (private — only you and the admin can see it): ${esc(user.email)}</p><p>${user.emailVerified ? '✅ Email verified' : '⚠️ Email not verified'}</p>
    ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<button class="b s" id="so">Sign out</button><button class="b d" id="da">Delete account</button>${isAdmin() ? '<h3 style="margin-top:24px">Admin · reports</h3><div id="adm"><p class="meta">Loading…</p></div>' : ''}${contact()}${links()}`;
@@ -768,7 +769,59 @@ const bgUrl = id => {
   return bgCache[id] = c.toDataURL('image/png');
 };
 
+// ---------- tileable pixel page backgrounds for profiles (48x48 tiles, original art) ----------
+const PBGS = [
+  ['graphite', 'Graphite'], ['night', 'Starry Night'], ['fog', 'Fog'], ['forest', 'Pine Forest'], ['ghosts', 'Ghosts'], ['moths', 'Moths'],
+  ['eyes', 'Watching Eyes'], ['crosses', 'Graveyard'], ['bricks', 'Old Bricks'], ['planks', 'Cabin Planks'], ['circuit', 'Circuit'], ['crt', 'CRT Scanlines'],
+  ['noise', 'Static'], ['checker', 'Checker'], ['topo', 'Topo Lines'], ['bloodrain', 'Blood Rain'], ['moss', 'Moss'], ['fireflies', 'Fireflies'],
+  ['snow', 'Snowfall'], ['leaves', 'Autumn Leaves'], ['sigils', 'Sigils'], ['ufos', 'UFOs'], ['paws', 'Paw Prints'], ['quilt', 'Quilt'],
+  ['damask', 'Haunted Wallpaper'], ['rain', 'Rain'],
+];
+const pbgCache = {};
+const pbgUrl = id => {
+  if (!PBGS.some(([k]) => k === id)) return null;
+  if (pbgCache[id]) return pbgCache[id];
+  const T = 48, c = document.createElement('canvas'); c.width = T; c.height = T; const g = c.getContext('2d');
+  let seed = [...id].reduce((a, ch) => (a * 33 + ch.charCodeAt(0)) >>> 0, 11);
+  const R = () => { seed = (seed + 0x6D2B79F5) >>> 0; let t = seed; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; for (let dx = 0; dx < w; dx++) for (let dy = 0; dy < h; dy++) g.fillRect(((x + dx) % T + T) % T | 0, ((y + dy) % T + T) % T | 0, 1, 1); };
+  const fill = col => { g.fillStyle = col; g.fillRect(0, 0, T, T); };
+  const spr = (rows, x, y, col) => rows.forEach((r, yy) => [...r].forEach((ch, xx) => { if (ch === 'X') p(x + xx, y + yy, col); else if (ch === 'o') p(x + xx, y + yy, '#10141A'); }));
+  const BASE = '#1f262f', D = '#1a2027', L = '#2a323d', L2 = '#323b47';
+  const scatter = (n, fn) => { for (let i = 0; i < n; i++) fn(R() * T | 0, R() * T | 0, i); };
+  switch (id) {
+    case 'graphite': fill('#232A33'); break;
+    case 'night': fill('#141920'); scatter(14, (x, y) => p(x, y, R() < 0.3 ? '#4a5664' : '#323b47')); scatter(2, (x, y) => { p(x, y, '#5c6a7a'); p(x - 1, y, '#323b47'); p(x + 1, y, '#323b47'); p(x, y - 1, '#323b47'); p(x, y + 1, '#323b47'); }); break;
+    case 'fog': fill(D); for (let y = 0; y < T; y++) for (let x = 0; x < T; x++) { const v = Math.sin(y / T * Math.PI * 2 + Math.sin(x / T * Math.PI * 2) * 1.5); if ((v > 0.2 && (x + y * 2) % 4 === 0) || (v > 0.7 && (x + y) % 2 === 0)) p(x, y, L); } break;
+    case 'forest': fill('#18201d'); for (const [ox, oy] of [[6, 4], [30, 4], [18, 28], [42, 28]]) for (let i = 0; i < 12; i++) { const w = Math.floor(i / 2); if (i % 4 === 3) continue; p(ox - w, oy + i, '#22302a', w * 2 + 1, 1); } break;
+    case 'ghosts': fill(BASE); spr(['.XXX.', 'XXXXX', 'XoXoX', 'XXXXX', 'XXXXX', 'X.X.X'], 6, 6, L2); spr(['.XXX.', 'XXXXX', 'XoXoX', 'XXXXX', 'XXXXX', 'X.X.X'], 30, 30, L2); break;
+    case 'moths': fill('#1d1f26'); for (const [x, y] of [[8, 8], [32, 32]]) spr(['X.....X', 'XX.X.XX', 'XXXXXXX', '.XXXXX.', 'XX.X.XX', 'X..X..X'], x, y, '#353240'); p(11, 10, '#5a2a30'); p(35, 34, '#5a2a30'); break;
+    case 'eyes': fill('#16191f'); for (const [x, y] of [[8, 10], [32, 34]]) { p(x, y, '#5a2028', 2, 1); p(x + 5, y, '#5a2028', 2, 1); } for (const [x, y] of [[36, 12], [12, 36]]) { p(x, y, '#3a1a20'); p(x + 4, y, '#3a1a20'); } break;
+    case 'crosses': fill('#1b2026'); for (const [x, y] of [[8, 6], [32, 30]]) { p(x + 2, y, L2, 1, 9); p(x, y + 2, L2, 5, 1); } for (const [x, y] of [[32, 8], [8, 32]]) { p(x, y + 1, L, 5, 6); p(x + 1, y, L, 3, 1); } break;
+    case 'bricks': fill('#1c1f25'); for (let y = 0; y < T; y += 6) for (let x = (y / 6 % 2) * 6; x < T + 12; x += 12) { p(x, y, '#262a32', 11, 5); if (R() < 0.3) p(x + 2, y + 1, '#2c313a', 3, 1); } break;
+    case 'planks': fill('#1e1a17'); for (let x = 0; x < T; x += 8) { p(x, 0, '#14110f', 1, T); for (let y = 0; y < T; y += 3) if (R() < 0.35) p(x + 2 + (R() * 4 | 0), y, '#28221d', 2, 1); p(x + 4, (x * 7) % T, '#14110f', 1, 1); } break;
+    case 'circuit': fill('#141c18'); for (let i = 0; i < 6; i++) { let x = R() * T | 0, y = R() * T | 0; const len = 8 + (R() * 14 | 0), horiz = R() < 0.5; for (let k = 0; k < len; k++) p(horiz ? x + k : x, horiz ? y : y + k, '#24342b'); p(x, y, '#3a5244', 2, 2); } break;
+    case 'crt': fill('#1a2027'); for (let y = 0; y < T; y += 3) p(0, y, '#1f2730', T, 1); break;
+    case 'noise': for (let y = 0; y < T; y++) for (let x = 0; x < T; x++) p(x, y, ['#1a2027', '#1f262f', '#232A33', '#2a323d'][(R() * R() * 4) | 0]); break;
+    case 'checker': for (let y = 0; y < T; y++) for (let x = 0; x < T; x++) p(x, y, ((x >> 3) + (y >> 3)) % 2 ? '#1f262f' : '#232b35'); break;
+    case 'topo': fill('#1a1f24'); for (let k = 0; k < 4; k++) { const off = k * 12; for (let x = 0; x < T; x++) p(x, Math.round(off + 4 * Math.sin(x / T * Math.PI * 2 + k)), '#28323a'); } break;
+    case 'bloodrain': fill('#1a1316'); scatter(10, x => { const y = R() * T | 0; p(x, y, '#3a1a20', 1, 4); p(x, y + 4, '#4a2028'); }); break;
+    case 'moss': fill('#18201b'); scatter(70, (x, y) => p(x, y, R() < 0.5 ? '#202b23' : '#26332a', 1 + (R() * 2 | 0), 1)); break;
+    case 'fireflies': fill('#151b17'); scatter(5, (x, y) => { p(x, y, '#6a7a40'); p(x - 1, y, '#2a3322'); p(x + 1, y, '#2a3322'); p(x, y - 1, '#2a3322'); p(x, y + 1, '#2a3322'); }); break;
+    case 'snow': fill('#1e252e'); scatter(16, (x, y) => p(x, y, R() < 0.3 ? '#4a5664' : '#353f4b')); break;
+    case 'leaves': fill('#1e1916'); scatter(9, (x, y) => { const col = ['#3a2418', '#4a2e1a', '#3a3018'][(R() * 3) | 0]; p(x, y, col, 2, 1); p(x + 1, y + 1, col, 2, 1); p(x + 2, y + 2, col); }); break;
+    case 'sigils': fill('#191b22'); for (const [x, y] of [[8, 8], [32, 32]]) { p(x, y, '#2e2a3c', 7, 1); p(x + 3, y, '#2e2a3c', 1, 8); p(x, y + 7, '#2e2a3c', 7, 1); p(x + 1, y + 3, '#2e2a3c', 5, 1); } for (const [x, y] of [[34, 8], [10, 32]]) { p(x + 2, y, '#2a2636', 1, 1); p(x, y + 2, '#2a2636', 5, 1); p(x + 2, y + 4, '#2a2636'); } break;
+    case 'ufos': fill('#141920'); for (const [x, y] of [[6, 8], [30, 32]]) { p(x + 3, y, '#2e3845', 4, 1); p(x + 1, y + 1, '#2e3845', 8, 1); p(x, y + 2, '#38434f', 10, 1); p(x + 2, y + 3, '#2a3a2a', 6, 1); } scatter(6, (x, y) => p(x, y, '#2a323d')); break;
+    case 'paws': fill('#1d1f22'); for (const [x, y] of [[8, 6], [20, 18], [32, 30], [44, 42]]) { p(x, y + 2, '#2c2e33', 3, 2); p(x - 1, y, '#2c2e33'); p(x + 1, y - 1, '#2c2e33'); p(x + 3, y, '#2c2e33'); } break;
+    case 'quilt': fill('#1c2129'); for (let y = 0; y < T; y++) for (let x = 0; x < T; x++) { const a = (x + y) % 12, b = (x - y + 48) % 12; if (a === 0 || b === 0) p(x, y, '#262d37'); } break;
+    case 'damask': fill('#1b1e26'); for (const [cx, cy] of [[12, 12], [36, 36]]) { for (let y = -7; y <= 7; y++) { const w = Math.round(4 * Math.cos(y / 7 * 1.4)); if (w > 0) { p(cx - w, cy + y, '#262a36', 1, 1); p(cx + w, cy + y, '#262a36', 1, 1); } } p(cx, cy - 8, '#2c3140', 1, 17); p(cx - 2, cy, '#2c3140', 5, 1); } break;
+    case 'rain': fill('#1a2027'); scatter(14, x => { const y = R() * T | 0; p(x, y, '#2a3440', 1, 3); }); break;
+  }
+  return pbgCache[id] = c.toDataURL('image/png');
+};
+
 const JPEG = /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/;
+const pageBg = (el, id) => { const u = pbgUrl(id); el.style.backgroundImage = u ? `url(${u})` : ''; el.style.backgroundSize = u ? '144px 144px' : ''; el.style.imageRendering = u ? 'pixelated' : ''; };
 const safeUrl = u => { try { const x = new URL(String(u)); return x.protocol === 'https:' ? x.href : null; } catch { return null; } };
 const plink = (uid, name) => uid ? `<a href="#" class="prof" data-uid="${esc(uid)}">${esc(name || 'User')}</a>` : esc(name || 'User');
 document.addEventListener('click', e => { const a = e.target.closest('a.prof'); if (!a) return; e.preventDefault(); e.stopPropagation(); openProfile(a.dataset.uid); }, true);
@@ -836,6 +889,7 @@ async function openProfile(uid) {
   const p = await getProfile(uid, true);
   let fcount = 0; try { fcount = (await getDocs(collection(db, `users/${uid}/friends`))).size; } catch {}
   sheet(profileCard(p) + `<p class="meta">${fcount} friend${fcount === 1 ? '' : 's'}</p><div id="fbtn"></div><div id="adm1"></div><button class="b s" id="cx">Close</button>`);
+  if (p) pageBg($('#sheetBody'), p.pbg);
   $('#cx').onclick = closeSheet;
   const draw = async () => {
     const st = await friendState(uid), box = $('#fbtn'); if (!box) return;
@@ -867,6 +921,7 @@ async function openProfile(uid) {
 async function myProfileSection() {
   const box = $('#myp'); if (!box || !user) return;
   const p = await getProfile(user.uid, true);
+  pageBg($('#profile'), p?.pbg);
   box.innerHTML = profileCard(p, user.displayName) + `<button class="b" id="ep">✏️ Edit profile</button><h3>Friends</h3>
     <div class="search sunken" style="max-width:none;margin:6px 0"><svg viewBox="0 0 8 8" width="16" height="16" fill="#8798AA" aria-hidden="true" shape-rendering="crispEdges"><path d="M1 0h4v1h-4zM0 1h1v1h-1zM5 1h1v1h-1zM0 2h1v1h-1zM5 2h1v1h-1zM0 3h1v1h-1zM5 3h1v1h-1zM1 4h4v1h-4zM5 5h1v1h-1zM6 6h1v1h-1zM7 7h1v1h-1z"/></svg><input id="fsq" maxlength="30" placeholder="Find people by nickname…" aria-label="Find people by nickname" autocomplete="off" enterkeyhint="search"></div>
     <div id="fsr"></div><div id="freq"></div><div id="flist"><p class="meta">Loading…</p></div>`;
@@ -911,6 +966,7 @@ function editProfile(p0) {
    <span class="lbl">Avatar</span><div class="fl"><span id="avp"></span><div class="grow"><input type="file" id="pa" accept="image/*" aria-label="Choose avatar"><button class="b s" id="par" style="width:auto">Remove</button></div></div>
    <span class="lbl">Frame</span><div class="frames" id="frs">${FRAMES.map(([k, label]) => `<label><input type="radio" name="frame" value="${k}"${k === fr ? ' checked' : ''}><span class="fr fr-${k} sm"><div><div class="av">${sprite('ghost', 22)}</div></div></span>${esc(label)}</label>`).join('')}</div>
    <span class="lbl">Background</span><div class="bgs" id="bgs"><label><input type="radio" name="bg" value=""${!bgUrl(p.bg) ? ' checked' : ''}><span class="bgt none">${sprite('ghost', 20)}</span>None</label>${BGS.map(([k, label]) => `<label><input type="radio" name="bg" value="${k}"${k === p.bg ? ' checked' : ''}><span class="bgt"><img alt="" src="${bgUrl(k)}"></span>${esc(label)}</label>`).join('')}</div>
+   <span class="lbl">Page background</span><div class="bgs pbgs" id="pbgs">${PBGS.map(([k, label]) => `<label><input type="radio" name="pbg" value="${k}"${k === (p.pbg || 'graphite') ? ' checked' : ''}><span class="bgt pbt" style="background-image:url(${pbgUrl(k)})"></span>${esc(label)}</label>`).join('')}</div>
    <span class="lbl">Own banner image (replaces the background)</span><div id="bnp" class="pban sunken" style="height:90px"></div><input type="file" id="pbn" accept="image/*" aria-label="Choose banner"><button class="b s" id="pbr" style="width:auto">Remove own banner</button>
    <span class="lbl">Links (full https:// addresses)</span>
    ${NETS.map(([k, label]) => `<label class="lbl" for="l_${k}">${esc(label)}</label><input id="l_${k}" type="url" inputmode="url" maxlength="200" placeholder="https://" value="${esc((p.links && p.links[k]) || '')}">`).join('')}
@@ -921,7 +977,7 @@ function editProfile(p0) {
     $('#bnp').innerHTML = banner ? `<img alt="" src="${banner}">` : pb ? `<img alt="" src="${pb}" style="image-rendering:pixelated">` : sprite('ghost', 48);
   };
   paint();
-  $('#frs').onchange = paint; $('#bgs').onchange = paint;
+  $('#frs').onchange = paint; $('#bgs').onchange = paint; $('#pbgs').onchange = () => pageBg($('#sheetBody'), document.querySelector('#pbgs input:checked')?.value);
   $('#pa').onchange = async e => { const f = e.target.files[0]; if (f) { try { avatar = await cropJpeg(f, 192, 192, 0.85); paint(); } catch { $('#e').textContent = 'Could not read that image.'; } } };
   $('#pbn').onchange = async e => { const f = e.target.files[0]; if (f) { try { banner = await cropJpeg(f, 960, 320, 0.75); paint(); } catch { $('#e').textContent = 'Could not read that image.'; } } };
   $('#par').onclick = () => { avatar = ''; paint(); }; $('#pbr').onclick = () => { banner = ''; paint(); };
@@ -931,7 +987,7 @@ function editProfile(p0) {
     const links = {};
     for (const [k, label] of NETS) { const v = $('#l_' + k).value.trim(); if (!v) continue; const u = safeUrl(v);
       if (!u) { $('#e').textContent = `${label}: use a full https:// link.`; return; } links[k] = u.slice(0, 200); }
-    const data = {name, nameLower: name.toLowerCase(), bio: $('#pb').value.trim().slice(0, 300), frame: document.querySelector('#frs input:checked')?.value || 'none', bg: document.querySelector('#bgs input:checked')?.value || '', links, updatedAt: serverTimestamp()};
+    const data = {name, nameLower: name.toLowerCase(), bio: $('#pb').value.trim().slice(0, 300), frame: document.querySelector('#frs input:checked')?.value || 'none', bg: document.querySelector('#bgs input:checked')?.value || '', pbg: document.querySelector('#pbgs input:checked')?.value || 'graphite', links, updatedAt: serverTimestamp()};
     if (avatar) data.avatar = avatar; if (banner) data.banner = banner;
     $('#go').disabled = true;
     try {
