@@ -37,10 +37,18 @@ textarea{min-height:100px}button.b{background:var(--acc);color:#0f1813;font-weig
 #chatwin{display:none}body.chatmode #chatwin{display:flex;flex-direction:column;flex:1;min-height:0}body.chatmode main,body.chatmode nav{display:none}
 .chead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));background:#0f1813;border-bottom:1px solid #2c4034}
 #cbody{flex:1;display:flex;flex-direction:column;min-height:0}#cbody #ml{max-height:none;flex:1;padding:8px}.composer{padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}.att img{max-width:100%;border-radius:8px}
+.search{position:absolute;z-index:600;top:calc(8px + env(safe-area-inset-top));left:8px;right:8px;max-width:520px}
+.search input{margin:0;padding:10px 38px 10px 14px;border-radius:99px;background:rgba(15,24,19,.92)}
+.search #qx{position:absolute;right:6px;top:4px;width:32px;height:32px;border:0;background:none;color:var(--mut);font-size:16px}
+#qres{display:none;margin-top:6px;background:rgba(15,24,19,.97);border:1px solid #365042;border-radius:12px;max-height:50vh;overflow:auto}
+.qi{padding:10px 12px;border-bottom:1px solid #22332a;font-size:14px;cursor:pointer}.qi:last-child{border:0}.qh{padding:6px 12px;font-size:12px;color:var(--mut);text-transform:uppercase}
+.chips{top:calc(56px + env(safe-area-inset-top))}
+.leaflet-top.leaflet-right,.leaflet-top.leaflet-left{margin-top:96px}
 </style></head>
 <body><div id="app">
 <main>
  <section class="view on" id="mapv">
+  <div class="search"><input id="q" type="text" enterkeyhint="search" placeholder="Search places or reports…" autocomplete="off"><button id="qx" aria-label="Clear">✕</button><div id="qres"></div></div>
   <div class="chips" id="chips"></div><div id="map"></div><div id="hint"></div>
   <button class="fab" id="fab" aria-label="Report">＋</button>
  </section>
@@ -68,6 +76,7 @@ const fmt = t => t?.toDate ? t.toDate().toLocaleString() : '';
 const CATS = {cryptid:['🐾','Cryptid','#8d6e63'],ufo:['🛸','UFO / Lights','#26a69a'],paranormal:['👁️','Paranormal','#ab47bc'],haunted:['🌙','Haunted place','#5c6bc0'],strange:['❓','Strange event','#ffa726'],other:['📍','Other','#90a4ae']};
 const ls = (k, v) => v === undefined ? new Set(JSON.parse(localStorage.getItem(k) || '[]')) : localStorage.setItem(k, JSON.stringify([...v]));
 let blocked = ls('blocked'), hidden = ls('hidden'), user = null, data = [], filter = null, picking = false, timer;
+const seen = new Map(); // every report loaded this session (used by search)
 const ADMIN_EMAIL = 'danrabbit333@gmail.com';
 const isAdmin = () => !!user && user.emailVerified && (user.email || '').toLowerCase() === ADMIN_EMAIL;
 const okItem = (a, id) => !blocked.has(a) && !hidden.has(id);
@@ -111,6 +120,7 @@ async function loadSightings() {
   try {
     const snap = await getDocs(query(collection(db, 'sightings'), where('lat', '>', b.getSouth()), where('lat', '<', b.getNorth()), limit(300)));
     data = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(x => x.lon > b.getWest() && x.lon < b.getEast() && okItem(x.authorID, x.id));
+    data.forEach(x => seen.set(x.id, x));
     render();
   } catch (e) { console.error(e); }
 }
@@ -126,6 +136,53 @@ function canPost() {
 $('#fab').onclick = () => { if (!canPost()) return; picking = !picking; hint(picking ? 'Tap the map to choose the location' : ''); };
 map.on('click', e => { if (picking) { picking = false; hint(''); addSheet(e.latlng); } });
 map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
+
+// ---------- search ----------
+{
+  const q = $('#q'), res = $('#qres'); let pin = null, token = 0, last = {s: new Map(), p: []};
+  const hide = () => { res.style.display = 'none'; };
+  const doSearch = async () => {
+    const text = q.value.trim(); if (text.length < 2) { hide(); return; }
+    const my = ++token; res.style.display = 'block'; res.innerHTML = '<div class="qi meta">Searching…</div>';
+    const ql = text.toLowerCase();
+    const found = new Map([...seen.values()].filter(x => (x.title + ' ' + (x.details || '')).toLowerCase().includes(ql)).map(x => [x.id, x]));
+    const variants = [...new Set([text, text[0].toUpperCase() + text.slice(1), ql])];
+    const tasks = variants.map(async v => {
+      try {
+        const snap = await getDocs(query(collection(db, 'sightings'), where('title', '>=', v), where('title', '<=', v + '\uf8ff'), limit(10)));
+        snap.docs.forEach(d => { const x = {id: d.id, ...d.data()}; if (okItem(x.authorID, x.id)) { found.set(x.id, x); seen.set(x.id, x); } });
+      } catch {}
+    });
+    let places = [];
+    tasks.push((async () => {
+      try { const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=6&countrycodes=us&accept-language=en&viewbox=-88,46,-71,31&bounded=1&q=' + encodeURIComponent(text)); places = await r.json(); } catch {}
+    })());
+    await Promise.all(tasks); if (my !== token) return;
+    last = {s: found, p: places};
+    const reps = [...found.values()].slice(0, 8);
+    res.innerHTML = (reps.length ? '<div class="qh">Reports</div>' + reps.map(x => `<div class="qi" data-t="s" data-id="${esc(x.id)}">${(CATS[x.category] || CATS.other)[0]} ${esc(x.title)}</div>`).join('') : '')
+      + (places.length ? '<div class="qh">Places</div>' + places.map((x, i) => `<div class="qi" data-t="p" data-i="${i}">📍 ${esc(x.display_name)}</div>`).join('') : '')
+      || '<div class="qi meta">Nothing found. Try another name (places are searched within Appalachia).</div>';
+  };
+  q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); q.blur(); doSearch(); } });
+  $('#qx').onclick = () => { q.value = ''; token++; hide(); if (pin) { pin.remove(); pin = null; } };
+  map.on('click', hide);
+  res.onclick = e => {
+    const i = e.target.closest('.qi'); if (!i || !i.dataset.t) return; hide();
+    if (i.dataset.t === 's') {
+      const x = last.s.get(i.dataset.id); if (!x) return;
+      map.setView([x.lat, x.lon], 14); setTimeout(() => showSighting(x), 250);
+    } else {
+      const pl = last.p[+i.dataset.i]; if (!pl) return; const ll = [+pl.lat, +pl.lon];
+      map.setView(ll, 13); if (pin) pin.remove();
+      const box = document.createElement('div'); box.innerHTML = `<b>${esc(pl.display_name.split(',').slice(0, 2).join(','))}</b><br>`;
+      const btn = document.createElement('button'); btn.textContent = '＋ Report here';
+      btn.style.cssText = 'margin-top:6px;padding:6px 10px;border-radius:8px;border:0;background:#7fe3a8;color:#0f1813;font-weight:600';
+      btn.onclick = () => { if (canPost()) addSheet(L.latLng(ll)); }; box.appendChild(btn);
+      pin = L.marker(ll, {icon: L.divIcon({className: '', html: '<div class="pin" style="background:#e53935">🔎</div>', iconSize: [30, 30]})}).addTo(map).bindPopup(box).openPopup();
+    }
+  };
+}
 
 // ---------- sightings ----------
 function resize(file) {
