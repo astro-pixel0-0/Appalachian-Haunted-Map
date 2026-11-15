@@ -260,6 +260,55 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
   .mapwin .tbar span.ttl{display:none}.mapbox{margin:0}.status{display:none}
   .view{padding:0 10px 12px}.view[data-title]::before{margin:0 -10px 10px}
 }
+/* mini games: HAUNT */
+#games>.pwrap{max-width:1000px}
+.ghero{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+.glogo{position:relative;width:170px;height:130px;flex:none}.glogo .hcard{position:absolute;top:10px}
+.tilt1{left:0;transform:rotate(-14deg)}.tilt2{left:46px;transform:rotate(2deg);top:2px!important}.tilt3{left:92px;transform:rotate(16deg)}
+.hlogo{font-family:'Silkscreen',var(--px);font-size:40px;letter-spacing:4px;margin:0;color:var(--ink);text-shadow:3px 3px 0 var(--blo)}
+.hbtns{margin:12px 0 6px}.hbtns .b{flex:1 1 150px;width:auto}
+.hcard{--c:#b84a55;position:relative;flex:none;width:62px;height:92px;padding:0;margin:0;background:var(--c);border:2px solid #0a0d11;box-shadow:inset 0 0 0 3px rgba(255,255,255,.2),3px 3px 0 #0a0d11;color:#fff;font-family:'Silkscreen','VT323',monospace;display:inline-block;vertical-align:bottom;transition:transform .12s}
+.hcard .cv{position:absolute;inset:16px 7px;background:#10141A;display:flex;align-items:center;justify-content:center;gap:2px;font-size:24px;color:var(--c);clip-path:polygon(6px 0,calc(100% - 6px) 0,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0 calc(100% - 6px),0 6px)}
+.hcard.w .cv{flex-direction:column;color:#fff}.hcard .plus{font-size:15px;font-weight:400}
+.hcard .ck{position:absolute;font-size:11px;line-height:1;color:#fff;text-shadow:1px 1px 0 #0a0d11}.hcard .tl{left:5px;top:4px}.hcard .br{right:5px;bottom:4px;transform:rotate(180deg)}
+.hcard.big{width:84px;height:124px}.hcard.big .cv{inset:22px 10px;font-size:34px}.hcard.big .ck{font-size:14px}
+.hcard.back{background:#10141A;border-color:#3a4552;box-shadow:inset 0 0 0 3px #232A33,inset 0 0 0 5px #3a4552,3px 3px 0 #0a0d11}.hcard.back .cv{background:transparent}
+.wq{display:grid;grid-template-columns:1fr 1fr;border:2px solid #0a0d11}.wq i{display:block}
+.rulegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:10px 0}.rulegrid>div{display:flex;gap:10px;align-items:center;font-size:13px}
+.gtable{position:relative;display:flex;flex-direction:column;min-height:calc(100% - 50px);margin:12px 0;background:radial-gradient(circle at 50% 45%,#22312a 0,#17201c 60%,#121915 100%)}
+.gtable>.tbar{background:var(--blo);color:#fff}
+.gtop{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:12px}
+.seat{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(16,20,26,.75);border:1px solid #3a4552;min-width:170px}
+.seat.cur{border-color:var(--sag);box-shadow:0 0 0 2px var(--sag)}.seat.out{opacity:.45}
+.sinfo{display:flex;flex-direction:column;min-width:0}.sinfo b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}.sinfo .meta{margin:0}
+.botav{width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--mid)}
+.mini{display:flex;gap:2px;margin-top:3px}.mini i{width:7px;height:10px;background:#10141A;border:1px solid #5c6e78}
+.boo{color:#e0838b;font-family:var(--px);letter-spacing:1px;animation:blink 1s steps(2) infinite}
+.tbarx{display:block;height:4px;background:#10141A;margin-top:4px;width:120px}.tbarx i{display:block;height:100%;background:var(--sag);transition:width 1s linear}.tbarx i.low{background:#e0505b}
+.gmid{flex:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:24px;padding:16px}
+.pile{display:flex;flex-direction:column;align-items:center;gap:4px}
+.drawbtn{background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink)}.drawbtn:not(:disabled):hover .hcard{transform:translateY(-4px)}.drawbtn:disabled{opacity:.8}
+.hcard.drop{animation:drop .25s steps(4)}@keyframes drop{from{transform:translateY(-30px) rotate(-10deg);opacity:.3}}
+.ginfo{display:flex;flex-direction:column;gap:6px;min-width:180px}
+.curcol{display:flex;align-items:center;gap:8px;font-family:var(--px);letter-spacing:1px}.curcol span{width:22px;height:22px;background:var(--c);border:2px solid #0a0d11;box-shadow:2px 2px 0 #0a0d11}
+.dir{font-size:13px;color:var(--fro)}.glog{font-size:13px;color:var(--mut);max-width:260px}
+.gme{padding:10px 12px 12px;background:rgba(16,20,26,.6);border-top:1px solid #3a4552}
+.gme.myturn{box-shadow:inset 0 2px 0 var(--sag)}
+.mebar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between}.mebar .seat{border-color:transparent;background:transparent;min-width:0}
+.mebtns{display:flex;align-items:center;gap:10px}.yt{font-family:var(--px);letter-spacing:2px;color:var(--sag);animation:blink 1.2s steps(2) infinite}
+.hand{display:flex;gap:6px;overflow-x:auto;padding:16px 4px 8px;min-height:120px}
+.hand .hcard.ok{transform:translateY(-10px);box-shadow:inset 0 0 0 3px rgba(255,255,255,.35),0 0 0 2px #E4EAF0,3px 3px 0 #0a0d11}.hand .hcard.ok:hover{transform:translateY(-16px)}
+.hand .hcard.no{filter:brightness(.55) saturate(.7)}
+.gover{position:absolute;inset:30px 0 0;display:flex;align-items:center;justify-content:center;background:rgba(10,13,17,.65)}
+.govbox{background:var(--gra);min-width:280px;text-align:center}.govbox .pad{padding:18px}.govbox h2{margin:8px 0 2px}
+.colpick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.colbtn{height:70px;background:var(--c);color:#fff;font-family:var(--px);font-size:16px;letter-spacing:1px;text-shadow:2px 2px 0 #0a0d11}
+.seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:12px 0}
+.lseat{display:flex;align-items:center;gap:8px;padding:10px;background:var(--gra);min-height:62px}.lseat.empty{justify-content:center;color:var(--mut);font-size:12px;background:var(--mid)}
+.itoast{position:fixed;right:16px;bottom:16px;z-index:3000;width:300px;background:var(--gra)}.itoast .pad{padding:12px;font-size:14px}.itoast .row{margin-top:8px}
+@media (max-width:760px){.seat{min-width:0}.gmid{gap:12px}.hcard.big{width:70px;height:104px}.hcard.big .cv{inset:18px 8px;font-size:28px}.ginfo{min-width:0;align-items:center;text-align:center}.itoast{left:8px;right:8px;width:auto;bottom:80px}}
+@media (prefers-reduced-motion:reduce){.hcard.drop,.boo,.yt{animation:none}}
+
+.ghero .grow{flex:1;min-width:260px}.glogo{margin-left:10px}
 </style></head>
 <body><div id="app">
 <header id="top" class="raised">
@@ -274,6 +323,7 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
  <button class="on" data-v="mapv"><svg viewBox="0 0 8 8" width="22" height="22" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="M2 0h4v1h-4zM1 1h6v1h-6zM0 2h3v1h-3zM5 2h3v1h-3zM0 3h3v1h-3zM5 3h3v1h-3zM1 4h6v1h-6zM2 5h4v1h-4zM3 6h2v1h-2zM3 7h2v1h-2z"/></svg><span>Map</span></button>
  <button data-v="groups"><svg viewBox="0 0 8 8" width="22" height="22" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="M1 0h2v1h-2zM5 0h2v1h-2zM0 1h8v1h-8zM1 2h2v1h-2zM5 2h2v1h-2zM0 4h4v1h-4zM5 4h3v1h-3zM0 5h4v1h-4zM5 5h3v1h-3zM0 6h4v1h-4zM5 6h3v1h-3z"/></svg><span>Groups</span></button>
  <button data-v="forum"><svg viewBox="0 0 8 8" width="22" height="22" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="M0 0h8v1h-8zM0 1h1v1h-1zM7 1h1v1h-1zM0 2h1v1h-1zM2 2h4v1h-4zM7 2h1v1h-1zM0 3h1v1h-1zM7 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM7 4h1v1h-1zM0 5h8v1h-8zM1 6h2v1h-2zM0 7h1v1h-1z"/></svg><span>Forums</span></button>
+ <button data-v="games"><svg viewBox="0 0 8 8" width="22" height="22" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="M1 1h6v1h-6zM0 2h8v1h-8zM0 3h1v1h-1zM2 3h4v1h-4zM7 3h1v1h-1zM0 4h8v1h-8zM0 5h3v1h-3zM5 5h3v1h-3zM0 6h2v1h-2zM6 6h2v1h-2z"/></svg><span>Games</span></button>
  <button data-v="profile"><svg viewBox="0 0 8 8" width="22" height="22" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="M2 0h4v1h-4zM1 1h6v1h-6zM1 2h6v1h-6zM2 3h4v1h-4zM1 5h6v1h-6zM0 6h8v1h-8zM0 7h8v1h-8z"/></svg><span>Profile</span></button>
  <div class="sp"></div>
  <button id="fab" aria-label="New report"><svg viewBox="0 0 8 8" width="22" height="22" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="M3 0h2v1h-2zM3 1h2v1h-2zM3 2h2v1h-2zM0 3h8v1h-8zM0 4h8v1h-8zM3 5h2v1h-2zM3 6h2v1h-2zM3 7h2v1h-2z"/></svg><span>Report</span></button>
@@ -290,6 +340,7 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
  </section>
  <section class="view" id="groups" data-title="GROUPS.EXE"></section>
  <section class="view" id="forum" data-title="FORUMS.EXE"></section>
+ <section class="view" id="games" data-title="MINIGAMES.EXE"></section>
  <section class="view" id="profile" data-title="PROFILE.EXE"></section>
 </main>
 <aside id="obs" class="win" aria-label="Selected observation"><div class="tbar blood"><span id="obsT">OBSERVATION</span><button class="x raised" id="obsx" aria-label="Close"><svg viewBox="0 0 8 8" width="10" height="10" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="M0 0h2v1h-2zM6 0h2v1h-2zM1 1h2v1h-2zM5 1h2v1h-2zM2 2h4v1h-4zM3 3h2v1h-2zM2 4h4v1h-4zM1 5h2v1h-2zM5 5h2v1h-2zM0 6h2v1h-2zM6 6h2v1h-2z"/></svg></button></div><div id="obsBody"></div></aside>
@@ -307,7 +358,7 @@ import * as cfg from './config.js';
 const firebaseConfig = cfg.firebaseConfig;
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, updateProfile, deleteUser } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch, getCountFromServer, query, where, orderBy, limit, limitToLast, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch, getCountFromServer, runTransaction, updateDoc, query, where, orderBy, limit, limitToLast, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
 const $ = s => document.querySelector(s);
@@ -494,7 +545,7 @@ document.querySelectorAll('#rail button[data-v]').forEach(b => b.onclick = () =>
   document.querySelectorAll('#rail button[data-v]').forEach(x => x.classList.toggle('on', x === b));
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === b.dataset.v));
   if (b.dataset.v !== 'groups') stopChat();
-  if (b.dataset.v === 'mapv') map.invalidateSize(); if (b.dataset.v === 'groups') groupList(); if (b.dataset.v === 'forum') forumList(); if (b.dataset.v === 'profile') profile();
+  if (b.dataset.v === 'mapv') map.invalidateSize(); if (b.dataset.v === 'groups') groupList(); if (b.dataset.v === 'games') gamesHome(); if (b.dataset.v === 'forum') forumList(); if (b.dataset.v === 'profile') profile();
 });
 
 // ---------- map ----------
@@ -756,7 +807,7 @@ function verifySheet(sent) {
   $('#rf').onclick = async () => { await user.reload(); await user.getIdToken(true); user = auth.currentUser;
     if (user.emailVerified) { closeSheet(); profile(); } else $('#m').textContent = 'Not verified yet.'; };
 }
-onAuthStateChanged(auth, u => { user = u; profile(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
+onAuthStateChanged(auth, u => { user = u; profile(); watchInvites(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
 const pPanel = (title, body, extra = '') => `<section class="panel win"${extra}><div class="tbar"><span>${title}</span></div><div class="pad">${body}</div></section>`;
 function profile() {
   const el = $('#profile'); pageBg(el, null);
@@ -1221,6 +1272,403 @@ async function openThread(t) {
     $('#sd').disabled = false; };
 }
 
+// ---------- HAUNT card game: rules engine (pure, JSON state) ----------
+const HC = {r: ['Blood', '#b84a55'], g: ['Moss', '#7f9a6e'], b: ['Steel', '#5f86ad'], y: ['Bone', '#cdb36a']};
+const H = {
+  deck() { const d = []; for (const c of 'rgby') { d.push(c + '0'); for (const v of '123456789SRD') d.push(c + v, c + v); } for (let i = 0; i < 4; i++) d.push('wW', 'wF'); return d; },
+  shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
+  clone: s => JSON.parse(JSON.stringify(s)),
+  top: s => s.discard[s.discard.length - 1],
+  active: s => s.order.filter(p => !s.out.includes(p)),
+  cur: s => s.order[s.turn],
+  newGame(order, names, bots = {}) {
+    const deck = H.shuffle(H.deck()), hands = {};
+    order.forEach(p => { hands[p] = deck.splice(0, 7); });
+    let first; do { first = deck.shift(); if (first[0] === 'w' || isNaN(+first[1])) { deck.push(first); first = null; } } while (!first);
+    return {v: 1, order: [...order], names: {...names}, bots: {...bots}, hands, deck, discard: [first], color: first[0], turn: 0, dir: 1,
+      drawn: null, moves: 0, winner: null, out: [], log: 'Game started', last: null};
+  },
+  step(s, n = 1) { let t = s.turn; for (let k = 0; k < n; k++) { let guard = 0; do { t = (t + s.dir + s.order.length) % s.order.length; } while (s.out.includes(s.order[t]) && ++guard < 10); } return t; },
+  draw1(s) {
+    if (!s.deck.length) { const top = s.discard.pop(); s.deck = H.shuffle(s.discard); s.discard = [top]; }
+    return s.deck.length ? s.deck.shift() : null;
+  },
+  give(s, p, n) { for (let i = 0; i < n; i++) { const c = H.draw1(s); if (c) s.hands[p].push(c); } },
+  canPlay(s, card) {
+    if (s.drawn && card !== s.drawn) return false;
+    if (card[0] === 'w') return true;
+    const top = H.top(s);
+    return card[0] === s.color || (top[0] !== 'w' && card[1] === top[1]);
+  },
+  play(s0, p, card, color) {
+    const s = H.clone(s0); if (s.winner || H.cur(s) !== p) throw 'not your turn';
+    const i = s.hands[p].indexOf(card); if (i < 0 || !H.canPlay(s, card)) throw 'illegal card';
+    if (card[0] === 'w' && !'rgby'.includes(color)) throw 'pick a color';
+    s.hands[p].splice(i, 1); s.discard.push(card); s.color = card[0] === 'w' ? color : card[0]; s.drawn = null; s.moves++;
+    const name = s.names[p] || 'Player', v = card[1];
+    s.last = {p, card, color: s.color};
+    if (!s.hands[p].length) { s.winner = p; s.log = `${name} wins!`; return s; }
+    if (v === 'S') { const nx = s.order[H.step(s)]; s.turn = H.step(s, 2); s.log = `${name} skipped ${s.names[nx]}`; }
+    else if (v === 'R') { s.dir *= -1; s.turn = H.active(s).length === 2 ? s.turn : H.step(s); s.log = `${name} reversed the order`; }
+    else if (v === 'D' || v === 'F') { const k = v === 'D' ? 2 : 4, nx = s.order[H.step(s)]; H.give(s, nx, k); s.turn = H.step(s, 2); s.log = `${s.names[nx]} draws ${k}!`; }
+    else { s.turn = H.step(s); s.log = card[0] === 'w' ? `${name} changed color to ${HC[s.color][0]}` : `${name} played`; }
+    if (s.hands[p].length === 1) s.log += ' — BOO! Last card!';
+    return s;
+  },
+  drawTurn(s0, p) {
+    const s = H.clone(s0); if (s.winner || H.cur(s) !== p) throw 'not your turn'; if (s.drawn) throw 'already drew';
+    const c = H.draw1(s); s.moves++;
+    if (!c) { s.turn = H.step(s); s.log = `${s.names[p]} could not draw`; return s; }
+    s.hands[p].push(c);
+    if (H.canPlay({...s, drawn: null}, c)) { s.drawn = c; s.log = `${s.names[p]} drew a card`; } else { s.turn = H.step(s); s.log = `${s.names[p]} drew and passed`; }
+    return s;
+  },
+  pass(s0, p) { const s = H.clone(s0); if (s.winner || H.cur(s) !== p || !s.drawn) throw 'cannot pass'; s.drawn = null; s.turn = H.step(s); s.moves++; s.log = `${s.names[p]} passed`; return s; },
+  timeout(s0) { const p = H.cur(s0); let s = s0.drawn ? H.pass(s0, p) : H.drawTurn(s0, p); if (s.drawn && H.cur(s) === p) s = H.pass(s, p); s.log = `${s0.names[p]} ran out of time`; return s; },
+  leave(s0, p) {
+    const s = H.clone(s0); if (s.out.includes(p) || !s.order.includes(p)) return s;
+    const wasTurn = H.cur(s) === p && !s.winner; s.out.push(p); s.deck.push(...s.hands[p]); s.hands[p] = []; s.moves++;
+    s.log = `${s.names[p]} left the table`;
+    const act = H.active(s);
+    if (act.length < 2) { s.winner = act[0] || null; if (s.winner) s.log += ` — ${s.names[s.winner]} wins!`; return s; }
+    if (wasTurn) { s.drawn = null; s.turn = H.step(s); }
+    return s;
+  },
+  // ---- bots ----
+  bestColor(hand) { const n = {r: 0, g: 0, b: 0, y: 0}; hand.forEach(c => { if (c[0] !== 'w') n[c[0]] += c[1] > '9' ? 2 : 1; }); return Object.keys(n).sort((a, b) => n[b] - n[a])[0]; },
+  botMove(s, p, level = 'normal') {
+    const hand = s.hands[p], ok = hand.filter(c => H.canPlay(s, c));
+    const pickColor = () => level === 'easy' ? 'rgby'[Math.random() * 4 | 0] : H.bestColor(hand.filter(c => c[0] !== 'w'));
+    if (!ok.length) return s.drawn ? {a: 'pass'} : {a: 'draw'};
+    if (s.drawn && level === 'easy' && Math.random() < 0.3) return {a: 'pass'};
+    let card;
+    if (level === 'easy') card = ok[Math.random() * ok.length | 0];
+    else {
+      const nx = s.order[H.step(s)], threat = s.hands[nx].length <= 2;
+      const score = c => { let sc = 0; const v = c[1];
+        if (c[0] === 'w') sc -= (v === 'F' ? 30 : 20) - (threat && level === 'hard' ? 40 : 0);
+        if ('SRD'.includes(v)) sc += threat ? 25 : (level === 'hard' ? 2 : 6);
+        if (!isNaN(+v)) sc += +v;
+        if (c[0] === s.color) sc += 3;
+        sc += hand.filter(x => x[0] === c[0]).length;
+        if (level === 'hard') { const rest = hand.filter(x => x !== c), col = c[0] === 'w' ? H.bestColor(rest) : c[0];
+          sc += 2 * rest.filter(x => x[0] === 'w' || x[0] === col || x[1] === c[1]).length; if (s.hands[nx].length <= 1 && 'SDF'.includes(v)) sc += 60; }
+        return sc; };
+      card = [...ok].sort((a, b) => score(b) - score(a))[0];
+    }
+    return {a: 'play', card, color: card[0] === 'w' ? pickColor() : undefined};
+  },
+  apply(s, p, mv) { return mv.a === 'play' ? H.play(s, p, mv.card, mv.color) : mv.a === 'draw' ? H.drawTurn(s, p) : H.pass(s, p); },
+};
+// ---------- MINI GAMES: HAUNT (UNO-style card game) — table UI, bots, online rooms ----------
+const HPX = {
+  skip: 'M2 0h4v1h-4zM1 1h1v1h-1zM5 1h2v1h-2zM0 2h1v1h-1zM4 2h1v1h-1zM7 2h1v1h-1zM0 3h1v1h-1zM3 3h1v1h-1zM7 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM7 4h1v1h-1zM0 5h2v1h-2zM6 5h1v1h-1zM1 6h5v1h-5z',
+  rev: 'M2 0h1v1h-1zM1 1h6v1h-6zM2 2h1v1h-1zM6 2h1v1h-1zM6 3h1v1h-1zM1 4h1v1h-1zM1 5h1v1h-1zM5 5h1v1h-1zM1 6h6v1h-6zM5 7h1v1h-1z',
+};
+const BOTNAMES = ['Wraith', 'Banshee', 'Poltergeist'];
+const hsvg = (k, sz) => `<svg viewBox="0 0 8 8" width="${sz}" height="${sz}" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="${HPX[k]}"/></svg>`;
+const wildQuad = sz => `<span class="wq" style="width:${sz}px;height:${sz}px"><i style="background:${HC.r[1]}"></i><i style="background:${HC.b[1]}"></i><i style="background:${HC.y[1]}"></i><i style="background:${HC.g[1]}"></i></span>`;
+const cardLabel = c => { const v = c[1]; return c[0] === 'w' ? (v === 'F' ? 'Wild +4' : 'Wild') : `${HC[c[0]][0]} ${v === 'S' ? 'Skip' : v === 'R' ? 'Reverse' : v === 'D' ? '+2' : v}`; };
+const cardFace = (c, big) => { const v = c[1];
+  if (c[0] === 'w') return v === 'F' ? `${wildQuad(big ? 26 : 22)}<b class="plus">+4</b>` : wildQuad(big ? 30 : 26);
+  return v === 'S' ? hsvg('skip', big ? 30 : 24) : v === 'R' ? hsvg('rev', big ? 30 : 24) : v === 'D' ? '+2' : v; };
+const cardCorner = c => c[0] === 'w' ? (c[1] === 'F' ? '+4' : 'W') : c[1] === 'S' ? '⦸' : c[1] === 'R' ? '⇄' : c[1] === 'D' ? '+2' : c[1];
+const cardHtml = (c, cls = '', attrs = '') => c === 'back'
+  ? `<span class="hcard back ${cls}" ${attrs}><span class="cv">${sprite('ghost', 22)}</span></span>`
+  : `<button class="hcard ${c[0] === 'w' ? 'w' : ''} ${cls}" style="--c:${c[0] === 'w' ? '#232A33' : HC[c[0]][1]}" data-card="${c}" aria-label="${cardLabel(c)}" ${attrs}><span class="ck tl">${cardCorner(c)}</span><span class="cv">${cardFace(c, cls.includes('big'))}</span><span class="ck br">${cardCorner(c)}</span></button>`;
+
+const G = {mode: null, s: null, me: null, rid: null, room: null, unsub: null, tick: null, botT: null, lastMv: -1, lastAt: 0, lastTurnMine: false};
+const gEl = () => $('#games');
+const isBotId = p => String(p).startsWith('bot:');
+const stopOnline = () => { if (G.unsub) { G.unsub(); G.unsub = null; } clearInterval(G.tick); G.tick = null; };
+const resetGame = () => { stopOnline(); clearTimeout(G.botT); Object.assign(G, {mode: null, s: null, rid: null, room: null, lastMv: -1}); };
+
+function gamesHome() {
+  if (G.mode && G.s && !G.s.winner) { renderTable(); return; }
+  if (G.mode === 'lobby' && G.rid) { renderLobby(); return; }
+  const el = gEl();
+  el.innerHTML = `<div class="pwrap"><div class="pcard win"><div class="tbar">${sprite('ghost', 14)}<span>MINI GAMES</span></div>
+    <div class="pad ghero"><div class="glogo">${cardHtml('wF', 'big tilt1')}${cardHtml('r7', 'big tilt2')}${cardHtml('back', 'big tilt3')}</div>
+      <div class="grow"><h2 class="hlogo">HAUNT</h2><p class="meta">A spooky shedding card game for 2–4 players. Match the colour or the symbol, curse your neighbours with Skips and +2s, and be the first to empty your hand. Down to one card? The table hears a <b>BOO!</b></p>
+      <div class="row hbtns"><button class="b" id="hbot">🤖 Play vs bots</button><button class="b s" id="hqm">⚡ Quick match</button><button class="b s" id="hfr">👥 Play with friends</button></div>
+      <button class="lnk" id="hcode">Join by room code</button> · <button class="lnk" id="hrules">How to play</button></div></div></div>
+    <div class="pgrid"><section class="panel win"><div class="tbar"><span>INVITES</span></div><div class="pad" id="hinv"><p class="meta">${user ? 'No invites right now.' : 'Sign in to play online with friends.'}</p></div></section>
+    <section class="panel win"><div class="tbar"><span>MORE GAMES</span></div><div class="pad"><p class="meta">More mini games are on the way. Ideas? Send feedback from your profile.</p></div></section></div></div>`;
+  $('#hbot').onclick = botSetup; $('#hqm').onclick = quickMatch; $('#hfr').onclick = () => createRoom(false); $('#hrules').onclick = rulesSheet;
+  $('#hcode').onclick = () => { sheet(`<h3>Join a table</h3><input id="hc" placeholder="Room code or invite link"><button class="b" id="go">Join</button><button class="b s" id="cx">Cancel</button>`);
+    $('#cx').onclick = closeSheet; $('#go').onclick = () => { const v = $('#hc').value.split('#haunt=').pop().trim().replace(/[^A-Za-z0-9]/g, ''); closeSheet(); if (v) joinRoom(v); }; };
+  drawInvites();
+}
+function rulesSheet() {
+  sheet(`<h3>How to play HAUNT</h3><p>Everyone starts with 7 cards. On your turn play a card that matches the <b>colour</b> or the <b>number/symbol</b> of the top card. Can’t play? Draw one — if it fits you may play it, otherwise your turn ends.</p>
+   <div class="rulegrid"><div>${cardHtml('gS')}<span><b>Skip</b> — the next player loses a turn.</span></div><div>${cardHtml('bR')}<span><b>Reverse</b> — play changes direction (acts as Skip with 2 players).</span></div>
+   <div>${cardHtml('yD')}<span><b>+2</b> — next player draws 2 and loses a turn.</span></div><div>${cardHtml('wW')}<span><b>Wild</b> — play on anything and choose the colour.</span></div>
+   <div>${cardHtml('wF')}<span><b>Wild +4</b> — choose the colour; next player draws 4 and loses a turn.</span></div></div>
+   <p class="meta">First to get rid of all cards wins. Online turns have a 30-second timer.</p><button class="b s" id="cx">Got it</button>`);
+  $('#cx').onclick = closeSheet;
+}
+
+// ---------- vs bots (local) ----------
+function botSetup() {
+  sheet(`<h3>Play vs bots</h3><label class="lbl" for="bn">Opponents</label><select id="bn"><option value="1">1 bot</option><option value="2">2 bots</option><option value="3" selected>3 bots</option></select>
+   <label class="lbl" for="bl">Difficulty</label><select id="bl"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select>
+   <button class="b" id="go">Deal the cards</button><button class="b s" id="cx">Cancel</button>`);
+  $('#cx').onclick = closeSheet;
+  $('#go').onclick = () => { const n = +$('#bn').value, lv = $('#bl').value; closeSheet(); startLocal(n, lv); };
+}
+function startLocal(n, lv) {
+  resetGame();
+  const me = user ? user.uid : 'me', order = [me], names = {[me]: user ? (user.displayName || 'You') : 'You'}, bots = {};
+  for (let i = 0; i < n; i++) { const id = 'bot:' + (i + 1); order.push(id); names[id] = BOTNAMES[i] + ' (bot)'; bots[id] = lv; }
+  Object.assign(G, {mode: 'local', me, s: H.newGame(order, names, bots), lvl: lv, nb: n});
+  sfx('success'); renderTable(); runBots();
+}
+function runBots() {
+  clearTimeout(G.botT);
+  if (G.mode !== 'local' || !G.s || G.s.winner) return;
+  const p = H.cur(G.s); if (!isBotId(p)) return;
+  G.botT = setTimeout(() => {
+    if (G.mode !== 'local' || !G.s || G.s.winner || H.cur(G.s) !== p) return;
+    const mv = H.botMove(G.s, p, G.s.bots[p]); G.s = H.apply(G.s, p, mv);
+    sfx(mv.a === 'play' ? 'click' : 'select', 0.25); renderTable(); runBots();
+  }, G.s.drawn ? 500 : 800 + Math.random() * 500);
+}
+
+// ---------- table ----------
+let hPrevTop = null;
+function seatHtml(p, s, extra = '') {
+  const isCur = H.cur(s) === p && !s.winner, out = s.out.includes(p), n = s.hands[p].length;
+  const av = isBotId(p) ? `<span class="botav sunken">${sprite(['shadow', 'ghost', 'eye'][(+p.slice(4) - 1) % 3], 26)}</span>` : `<span class="hav" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>`;
+  return `<div class="seat${isCur ? ' cur' : ''}${out ? ' out' : ''}">${av}<div class="sinfo"><b>${esc(s.names[p] || 'Player')}</b><span class="meta">${out ? 'left' : `${n} card${n === 1 ? '' : 's'}`}${n === 1 && !out ? ' · <span class="boo">BOO!</span>' : ''}</span>
+    <span class="mini">${'<i></i>'.repeat(Math.min(n, 12))}</span>${extra}</div></div>`;
+}
+function renderTable() {
+  const s = G.s, el = gEl(); if (!s || !el) return;
+  if (!el.classList.contains('on')) return;
+  const me = G.me, myTurn = H.cur(s) === me && !s.winner, hand = s.hands[me] || [];
+  const meIdx = s.order.indexOf(me), others = [...s.order.slice(meIdx + 1), ...s.order.slice(0, meIdx)];
+  const top = H.top(s), dropped = top !== hPrevTop; hPrevTop = top;
+  const timer = G.mode === 'online' && G.room?.deadline && !s.winner ? `<span class="tbarx"><i id="tbar"></i></span>` : '';
+  const sorted = [...hand].sort((a, b) => ('rgbyw'.indexOf(a[0]) - 'rgbyw'.indexOf(b[0])) || a.localeCompare(b));
+  el.innerHTML = `<div class="gtable win"><div class="tbar">${sprite('ghost', 14)}<span>HAUNT · ${G.mode === 'local' ? `vs bots (${esc(G.lvl)})` : 'online table'}</span><button class="lnk" id="hleave" style="margin-left:auto;color:#fff">Leave table</button></div>
+    <div class="gtop">${others.map(p => seatHtml(p, s, H.cur(s) === p ? timer : '')).join('')}</div>
+    <div class="gmid">
+      <div class="pile"><button class="drawbtn" id="hdraw" ${myTurn && !s.drawn ? '' : 'disabled'} aria-label="Draw a card">${cardHtml('back', 'big')}<span class="meta">${s.deck.length} left</span></button></div>
+      <div class="pile">${cardHtml(top, 'big' + (dropped ? ' drop' : ''), 'tabindex="-1" aria-label="Top card: ' + cardLabel(top) + '"')}</div>
+      <div class="ginfo"><div class="curcol" style="--c:${HC[s.color][1]}"><span></span>${HC[s.color][0]}</div><div class="dir">${s.dir === 1 ? '↻ clockwise' : '↺ counter-clockwise'}</div><div class="glog">${esc(s.log || '')}</div></div>
+    </div>
+    <div class="gme${myTurn ? ' myturn' : ''}"><div class="mebar">${seatHtml(me, s, myTurn ? timer : '')}
+      <div class="mebtns">${myTurn ? (s.drawn ? '<span class="meta">You drew a playable card — play it or pass.</span><button class="b s" id="hpass" style="width:auto">Pass</button>' : '<span class="yt">YOUR TURN</span>') : `<span class="meta">Waiting for ${esc(s.names[H.cur(s)] || '')}…</span>`}</div></div>
+      <div class="hand" id="hhand">${sorted.map(c => cardHtml(c, myTurn && H.canPlay(s, c) ? 'ok' : (myTurn ? 'no' : ''))).join('')}</div></div>
+    ${s.winner ? `<div class="gover"><div class="win govbox"><div class="tbar blood"><span>GAME OVER</span></div><div class="pad">${sprite(s.winner === me ? 'ghost' : 'shadow', 64)}
+      <h2>${s.winner === me ? 'You win!' : `${esc(s.names[s.winner])} wins`}</h2><p class="meta">${s.winner === me ? 'The spirits bow to you.' : 'Better luck next haunting.'}</p>
+      <div class="row">${G.mode === 'local' ? '<button class="b" id="hagain">Play again</button>' : ''}<button class="b s" id="hback">Back to games</button></div></div></div></div>` : ''}
+  </div>`;
+  if (myTurn && !G.lastTurnMine) sfx('msg', 0.35);
+  if (s.winner && !G.overPlayed) { G.overPlayed = true; sfx(s.winner === me ? 'success' : 'error'); }
+  G.lastTurnMine = myTurn;
+  // avatars for humans
+  s.order.filter(p => !isBotId(p) && p !== 'me').forEach(async p => { if (profCache.has(p)) return; const pr = await getProfile(p); document.querySelectorAll(`.hav[data-av="${CSS.escape(p)}"]`).forEach(n => n.innerHTML = avatarHtml(pr, true)); });
+  $('#hhand').onclick = e => { const b = e.target.closest('.hcard.ok'); if (!b) return; playCard(b.dataset.card); };
+  $('#hdraw').onclick = () => doMove({a: 'draw'});
+  if ($('#hpass')) $('#hpass').onclick = () => doMove({a: 'pass'});
+  $('#hleave').onclick = leaveTable;
+  if ($('#hagain')) $('#hagain').onclick = () => startLocal(G.nb, G.lvl);
+  if ($('#hback')) $('#hback').onclick = async () => { if (G.mode === 'online') await leaveOnline(true); resetGame(); gamesHome(); };
+  paintTimer();
+}
+function playCard(card) {
+  if (card[0] === 'w') {
+    sheet(`<h3>Choose a colour</h3><div class="colpick">${'rgby'.split('').map(c => `<button class="colbtn raised" data-c="${c}" style="--c:${HC[c][1]}">${HC[c][0]}</button>`).join('')}</div><button class="b s" id="cx">Cancel</button>`);
+    $('#cx').onclick = closeSheet;
+    document.querySelector('.colpick').onclick = e => { const b = e.target.closest('[data-c]'); if (!b) return; closeSheet(); doMove({a: 'play', card, color: b.dataset.c}); };
+  } else doMove({a: 'play', card});
+}
+async function doMove(mv) {
+  if (!G.s) return;
+  if (G.mode === 'local') {
+    try { G.s = H.apply(G.s, G.me, mv); } catch { sfx('error'); return; }
+    G.overPlayed = false; sfx(mv.a === 'play' ? 'click' : 'select', 0.3); renderTable(); runBots();
+  } else await onlineMove(G.me, mv);
+}
+function leaveTable() {
+  if (G.s && !G.s.winner) {
+    sheet(`<h3>Leave the table?</h3><p>${G.mode === 'online' ? 'Your cards go back to the deck and the game continues without you.' : 'This game will be lost.'}</p><button class="b d" id="y">Leave</button><button class="b s" id="cx">Stay</button>`);
+    $('#cx').onclick = closeSheet;
+    $('#y').onclick = async () => { closeSheet(); if (G.mode === 'online') await leaveOnline(); resetGame(); gamesHome(); };
+  } else { if (G.mode === 'online') leaveOnline(true); resetGame(); gamesHome(); }
+}
+
+// ---------- online rooms (Firestore: haunt/{room}) ----------
+const roomRef = id => doc(db, 'haunt', id);
+const seatsOf = r => r.seats || [];
+async function createRoom(pub = false) {
+  if (!canPost()) return;
+  const ref = doc(collection(db, 'haunt')), me = user.uid;
+  try {
+    await setDoc(ref, {host: me, public: !!pub, status: 'lobby', players: [me], seats: [me], names: {[me]: myName()}, bots: {}, createdAt: serverTimestamp(), at: Date.now()});
+    openRoom(ref.id);
+  } catch { toast('Could not create a table. Publish the latest Firestore rules.'); }
+}
+async function joinRoom(id) {
+  if (!canPost()) return;
+  try {
+    await runTransaction(db, async tx => {
+      const sn = await tx.get(roomRef(id)); if (!sn.exists()) throw 'gone';
+      const r = sn.data(); if (r.players.includes(user.uid)) return;
+      if (r.status !== 'lobby') throw 'started'; if (seatsOf(r).length >= 4) throw 'full';
+      tx.update(roomRef(id), {players: [...r.players, user.uid], seats: [...seatsOf(r), user.uid], [`names.${user.uid}`]: myName()});
+    });
+    openRoom(id);
+  } catch (e) { toast(e === 'full' ? 'That table is full.' : e === 'started' ? 'That game has already started.' : 'Table not found or no longer available.'); }
+}
+async function quickMatch() {
+  if (!canPost()) return;
+  gEl().innerHTML = `<div class="pwrap"><div class="empty win">${sprite('eye', 48)}<p>Searching for a table…</p></div></div>`;
+  try {
+    const snap = await getDocs(query(collection(db, 'haunt'), where('status', '==', 'lobby'), where('public', '==', true), limit(20)));
+    const open = snap.docs.filter(d => { const r = d.data(); return seatsOf(r).length < 4 && Date.now() - (r.at || 0) < 180000 && !r.players.includes(user.uid); });
+    for (const d of open) { try { await runTransaction(db, async tx => { const sn = await tx.get(d.ref), r = sn.data();
+        if (!sn.exists() || r.status !== 'lobby' || seatsOf(r).length >= 4) throw 'x';
+        tx.update(d.ref, {players: [...r.players, user.uid], seats: [...seatsOf(r), user.uid], [`names.${user.uid}`]: myName()}); });
+      openRoom(d.id); return; } catch {} }
+    await createRoom(true);
+  } catch { toast('Matchmaking failed. Publish the latest Firestore rules.'); gamesHome(); }
+}
+function openRoom(id) {
+  stopOnline(); G.starting = false; G.busy = false; G.rid = id; G.mode = 'lobby'; G.me = user.uid; G.lastMv = -1; G.overPlayed = false;
+  history.replaceState(null, '', location.pathname);
+  G.unsub = onSnapshot(roomRef(id), sn => {
+    if (!sn.exists()) { resetGame(); if (gEl().classList.contains('on')) { toast('The table was closed.'); gamesHome(); } return; }
+    const r = sn.data(); G.room = r;
+    if (r.status === 'lobby') { G.mode = 'lobby'; G.s = null; renderLobby(); maybeAutoStart(); return; }
+    let s; try { s = JSON.parse(r.st); } catch { return; }
+    if (s.moves !== G.lastMv) { G.lastMv = s.moves; G.lastAt = Date.now(); if (G.s && s.last && s.last !== G.s.last && s.last.p !== G.me) sfx('click', 0.25); }
+    G.s = s; G.mode = 'online'; renderTable();
+  }, () => { toast('Lost connection to the table.'); });
+  G.tick = setInterval(onlineTick, 1000);
+}
+function renderLobby() {
+  const r = G.room, el = gEl(); if (!r || !el.classList.contains('on')) return;
+  const host = r.host === user.uid, seats = seatsOf(r), link = `${base()}#haunt=${G.rid}`;
+  const wait = r.public ? Math.max(0, 30 - Math.floor((Date.now() - (r.at || Date.now())) / 1000)) : null;
+  el.innerHTML = `<div class="pwrap"><div class="pcard win"><div class="tbar">${sprite('ghost', 14)}<span>HAUNT · ${r.public ? 'QUICK MATCH' : 'PRIVATE TABLE'}</span></div><div class="pad">
+    <h2 style="margin:0 0 6px">${r.public ? 'Waiting for players' : 'Your table'}</h2>
+    <p class="meta">${r.public ? (seats.length >= 2 ? `Starting in <b id="hcd">${wait}</b>s or when the table is full.` : 'Looking for more players… you can also fill the table with bots.') : 'Invite friends, add bots, then start when ready (2–4 seats).'}</p>
+    <div class="seats">${[0, 1, 2, 3].map(i => { const p = seats[i]; if (!p) return '<div class="lseat empty sunken">empty seat</div>';
+      return `<div class="lseat raised">${isBotId(p) ? `<span class="botav sunken">${sprite('shadow', 22)}</span>` : `<span class="hav" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>`}<b>${esc(r.names[p] || 'Player')}</b>${p === r.host ? '<span class="badge">HOST</span>' : ''}${host && isBotId(p) ? `<button class="lnk red" data-rb="${esc(p)}">remove</button>` : ''}</div>`; }).join('')}</div>
+    <div class="row hbtns">${host ? `<button class="b" id="hstart" ${seats.length >= 2 ? '' : 'disabled'}>▶ Start game</button>${seats.length < 4 ? '<button class="b s" id="haddbot">🤖 Add bot</button>' : ''}` : '<span class="meta">The host will start the game.</span>'}<button class="b d" id="hlv">Leave</button></div>
+    ${!r.public ? `<label class="lbl" for="hlink">Invite link (room code ${esc(G.rid)})</label><div class="fl"><input id="hlink" readonly value="${esc(link)}" class="grow"><button class="b s" id="hcopy" style="width:auto">Copy</button></div>` : ''}
+    </div></div>${!r.public ? '<section class="panel win"><div class="tbar"><span>INVITE FRIENDS</span></div><div class="pad" id="hfriends"><p class="meta">Loading friends…</p></div></section>' : ''}</div>`;
+  seats.filter(p => !isBotId(p)).forEach(async p => { const pr = await getProfile(p); document.querySelectorAll(`.hav[data-av="${CSS.escape(p)}"]`).forEach(n => n.innerHTML = avatarHtml(pr, true)); });
+  $('#hlv').onclick = async () => { await leaveOnline(true); resetGame(); gamesHome(); };
+  if ($('#hstart')) $('#hstart').onclick = startOnline;
+  if ($('#haddbot')) $('#haddbot').onclick = async () => { const used = seats.filter(isBotId).length, id = 'bot:' + (used + 1 + Math.floor(Math.random() * 1000));
+    const nm = BOTNAMES[used % 3] + ' (bot)'; try { await updateDoc(roomRef(G.rid), {seats: [...seats, id], [`bots.${id}`]: 'normal', [`names.${id}`]: nm}); } catch { toast('Could not add a bot.'); } };
+  el.querySelector('.seats').onclick = async e => { const b = e.target.closest('[data-rb]'); if (!b) return; const id = b.dataset.rb;
+    try { await updateDoc(roomRef(G.rid), {seats: seats.filter(x => x !== id)}); } catch {} };
+  if ($('#hcopy')) $('#hcopy').onclick = async () => { $('#hlink').select(); try { await navigator.clipboard.writeText(link); $('#hcopy').textContent = 'Copied!'; } catch {} };
+  if ($('#hfriends')) loadInviteFriends();
+}
+async function loadInviteFriends() {
+  const box = $('#hfriends'); if (!box) return;
+  try {
+    const fr = await getDocs(collection(db, `users/${user.uid}/friends`));
+    if (!fr.size) { box.innerHTML = '<p class="meta">No friends yet — share the invite link, or add friends from their profiles.</p>'; return; }
+    const profs = await Promise.all(fr.docs.map(d => getProfile(d.id)));
+    box.innerHTML = '<div class="fgrid">' + fr.docs.map((d, i) => `<div class="fcard raised">${avatarHtml(profs[i], true)}<span>${esc(profs[i]?.name || d.data().name)}</span><button class="b s" style="width:auto;padding:4px 10px;margin:0" data-inv="${esc(d.id)}">Invite</button></div>`).join('') + '</div>';
+    box.onclick = async e => { const b = e.target.closest('[data-inv]'); if (!b) return;
+      try { await setDoc(doc(db, `hinv/${b.dataset.inv}/in`, G.rid), {fromUid: user.uid, from: myName(), at: serverTimestamp()}); b.textContent = 'Sent ✓'; b.disabled = true; sfx('success'); }
+      catch { toast('Could not send the invite.'); } };
+  } catch { box.innerHTML = '<p class="err">Could not load friends.</p>'; }
+}
+async function startOnline() {
+  const r = G.room; if (!r || r.host !== user.uid || seatsOf(r).length < 2) return;
+  const seats = H.shuffle([...seatsOf(r)]), names = {}; seats.forEach(p => names[p] = r.names[p] || 'Player');
+  const bots = {}; seats.filter(isBotId).forEach(p => bots[p] = (r.bots && r.bots[p]) || 'normal');
+  const s = H.newGame(seats, names, bots);
+  if (G.starting) return; G.starting = true;
+  try { await runTransaction(db, async tx => { const sn = await tx.get(roomRef(G.rid)); if (!sn.exists() || sn.data().status !== 'lobby') throw 'x';
+      tx.update(roomRef(G.rid), {status: 'playing', st: JSON.stringify(s), mv: 0, deadline: Date.now() + 30000}); }); }
+  catch (e) { if (e !== 'x') toast('Could not start.'); }
+  G.starting = false;
+}
+function maybeAutoStart() {
+  const r = G.room; if (!r || r.host !== user.uid || r.status !== 'lobby' || !r.public) return;
+  const n = seatsOf(r).length; if (n >= 4 || (n >= 2 && Date.now() - (r.at || 0) > 30000)) startOnline();
+}
+async function onlineMove(p, mvOrFn, expectMoves) {
+  if (G.busy) return; G.busy = true;
+  try {
+    await runTransaction(db, async tx => {
+      const sn = await tx.get(roomRef(G.rid)); if (!sn.exists()) throw 'gone';
+      const r = sn.data(), s = JSON.parse(r.st);
+      if (expectMoves !== undefined && s.moves !== expectMoves) throw 'stale';
+      const ns = typeof mvOrFn === 'function' ? mvOrFn(s) : H.apply(s, p, mvOrFn);
+      tx.update(roomRef(G.rid), {st: JSON.stringify(ns), mv: ns.moves, deadline: Date.now() + 30000, status: ns.winner ? 'done' : 'playing'});
+    });
+    if (p === G.me && typeof mvOrFn !== 'function') sfx(mvOrFn.a === 'play' ? 'click' : 'select', 0.3);
+  } catch (e) { if (e !== 'stale' && p === G.me) sfx('error'); }
+  G.busy = false;
+}
+// every client keeps the table moving: bots, timeouts, auto-start
+function onlineTick() {
+  const r = G.room; if (!r) return;
+  if (r.status === 'lobby') { maybeAutoStart(); const cd = $('#hcd'); if (cd) cd.textContent = Math.max(0, 30 - Math.floor((Date.now() - (r.at || Date.now())) / 1000)); return; }
+  const s = G.s; if (!s || s.winner || G.mode !== 'online') return;
+  paintTimer();
+  const p = H.cur(s), host = r.host === G.me, idle = Date.now() - G.lastAt;
+  if (isBotId(p) && idle > (host ? 900 : 6000)) onlineMove(p, st => H.apply(st, p, H.botMove(st, p, st.bots[p])), s.moves);
+  else if (!isBotId(p) && Date.now() > (r.deadline || 0) + (p === G.me ? 0 : host ? 2000 : 8000)) onlineMove(p, st => H.timeout(st), s.moves);
+}
+function paintTimer() { const b = $('#tbar'); if (!b || !G.room?.deadline) return; const left = Math.max(0, G.room.deadline - Date.now()); b.style.width = (left / 300) + '%'; b.classList.toggle('low', left < 8000); }
+async function leaveOnline(quiet) {
+  const id = G.rid, r = G.room; if (!id || !user) return;
+  stopOnline();
+  try {
+    if (!r || r.status === 'lobby') {
+      if (r && r.host === user.uid) await deleteDoc(roomRef(id));
+      else await runTransaction(db, async tx => { const sn = await tx.get(roomRef(id)); if (!sn.exists()) return; const d = sn.data();
+        tx.update(roomRef(id), {players: d.players.filter(x => x !== user.uid), seats: seatsOf(d).filter(x => x !== user.uid)}); });
+    } else if (r.status === 'playing') {
+      await runTransaction(db, async tx => { const sn = await tx.get(roomRef(id)); if (!sn.exists()) return; const d = sn.data(), s = H.leave(JSON.parse(d.st), user.uid);
+        const left = H.active(s).filter(p => !isBotId(p));
+        tx.update(roomRef(id), {st: JSON.stringify(s), mv: s.moves, status: s.winner || !left.length ? 'done' : 'playing', deadline: Date.now() + 30000}); });
+    }
+  } catch {}
+}
+
+// ---------- invites ----------
+let hInvites = [], hInvUnsub = null, hInvSeen = new Set();
+function watchInvites() {
+  if (hInvUnsub) { hInvUnsub(); hInvUnsub = null; }
+  if (!user || !user.emailVerified) { hInvites = []; return; }
+  hInvUnsub = onSnapshot(collection(db, `hinv/${user.uid}/in`), snap => {
+    hInvites = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(i => !blocked.has(i.fromUid));
+    hInvites.forEach(i => { if (!hInvSeen.has(i.id)) { hInvSeen.add(i.id); if (snap.metadata.hasPendingWrites === false) inviteToast(i); } });
+    drawInvites();
+  }, () => {});
+}
+function inviteToast(i) {
+  if (G.rid === i.id) return;
+  const t = document.createElement('div'); t.className = 'itoast win';
+  t.innerHTML = `<div class="tbar blood"><span>INVITE</span></div><div class="pad"><b>${esc(i.from || 'A friend')}</b> invited you to a game of HAUNT.<div class="row"><button class="b" data-j>Join</button><button class="b s" data-x>Later</button></div></div>`;
+  document.body.appendChild(t); sfx('msg', 0.4);
+  t.querySelector('[data-j]').onclick = () => { t.remove(); acceptInvite(i.id); };
+  t.querySelector('[data-x]').onclick = () => t.remove();
+  setTimeout(() => t.remove(), 20000);
+}
+function drawInvites() {
+  const box = $('#hinv'); if (!box || !user) return;
+  box.innerHTML = hInvites.length ? hInvites.map(i => `<div class="item fl"><span class="grow"><b>${esc(i.from || 'A friend')}</b> invited you to HAUNT</span><button class="b" style="width:auto" data-ja="${esc(i.id)}">Join</button><button class="b s" style="width:auto" data-jd="${esc(i.id)}">✕</button></div>`).join('') : '<p class="meta">No invites right now.</p>';
+  box.onclick = async e => { const a = e.target.closest('[data-ja]'), d = e.target.closest('[data-jd]');
+    if (a) acceptInvite(a.dataset.ja); if (d) { await deleteDoc(doc(db, `hinv/${user.uid}/in`, d.dataset.jd)).catch(() => {}); } };
+}
+async function acceptInvite(rid) {
+  deleteDoc(doc(db, `hinv/${user.uid}/in`, rid)).catch(() => {});
+  showView('games'); joinRoom(rid);
+}
+
 // ---------- Discord / feedback ----------
 const DISCORD = 'https://discord.gg/MUftwFDjW', FEEDBACK_TO = 'danrabbit333@gmail.com';
 const discordBtn = () => `<a class="discord" href="${DISCORD}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg><span><b>Join our Discord</b><br>Come in, chat and find new friends!</span></a>`;
@@ -1559,6 +2007,7 @@ function route() {
   const h = location.hash;
   if (h.startsWith('#chat=')) chatWindow(h.slice(6).replace(/[^A-Za-z0-9]/g, ''));
   else if (h.startsWith('#join=')) joinByCode(h);
+  else if (h.startsWith('#haunt=')) { const id = h.slice(7).replace(/[^A-Za-z0-9]/g, ''); history.replaceState(null, '', location.pathname); showView('games'); if (id) joinRoom(id); }
 }
 
 // ---------- admin ----------
