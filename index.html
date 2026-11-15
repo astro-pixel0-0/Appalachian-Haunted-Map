@@ -365,7 +365,46 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 .saloon .gme{margin:0 14px 12px;padding:10px 12px 12px;background:linear-gradient(rgba(36,21,12,.92),rgba(20,12,7,.95));border:2px solid #0a0d11;border-top:0;box-shadow:inset 0 0 0 2px #4e321d}
 .saloon .gme.myturn{box-shadow:inset 0 0 0 2px #e0b65a}
 .saloon .mebar .seat{box-shadow:none;background:transparent;border:0;min-width:0;padding:0}
-.mebtns .b{width:auto;margin:0;padding:7px 12px}@media (hover:none){.kbd{display:none}}.saloon .yt{color:#ffd75e}
+.mebtns .b{width:auto;margin:0;padding:7px 12px}@media (hover:none){.kbd{display:none}}
+#games.on:has(>.gtable){display:flex;flex-direction:column;padding:0}#games:has(>.gtable)::before{margin:0}
+#games>.gtable{max-width:none;width:100%;flex:1;margin:0;min-height:640px;border:0}
+.scene{flex:1;display:grid;grid-template-columns:minmax(150px,230px) minmax(0,1fr) auto;grid-template-rows:auto minmax(240px,1fr) auto;grid-template-areas:"dl top top" "dl tbl rt" "dl me me";padding:8px 28px 14px 8px;column-gap:6px;position:relative}
+.scene>.dealer{grid-area:dl;align-self:center;background:none!important;border:0;padding:0}
+.scene>.opps.top{grid-area:top;display:flex;justify-content:space-evenly;align-items:flex-end;margin-bottom:-40px;position:relative;z-index:1;padding:0 6%}
+.scene>.opps.side{grid-area:rt;display:flex;align-items:center;margin-left:4px;position:relative;z-index:3}
+.pfig{width:150px;height:182px}.scene .dname{order:5;margin-top:4px}
+.scene>.board{grid-area:tbl;margin:0;position:relative;z-index:2;min-height:250px}
+.scene>.gme{grid-area:me;margin:0 0 0;position:relative;z-index:3}
+.opp{display:flex;flex-direction:column;align-items:center;gap:2px;position:relative;transition:opacity .3s}.opp.out{opacity:.35}
+.plate{display:flex;flex-direction:column;align-items:center;padding:3px 10px 4px;background:linear-gradient(#6b4426,#3b2416);border:2px solid #0a0d11;box-shadow:inset 0 1px 0 #a87a4a,2px 2px 0 rgba(10,6,4,.6);color:#efe2bf;min-width:120px;max-width:200px}
+.plate b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}.plate span{font-size:11px;color:#d8c49a}.plate i{font-style:normal;font-family:'Silkscreen',monospace;color:#fff}.plate .boo{font-style:normal}
+.opp.cur .plate{background:linear-gradient(#e0b65a,#a87a2a);color:#24150c;box-shadow:0 0 0 2px #e0b65a,0 0 16px rgba(224,182,90,.6)}.opp.cur .plate span,.opp.cur .plate i{color:#24150c}
+.figwrap{position:relative;line-height:0;filter:drop-shadow(0 6px 6px rgba(0,0,0,.45))}
+.figwrap .hav.mini{position:absolute;left:-8px;bottom:34px;transform:scale(.7);transform-origin:bottom left;line-height:normal}
+.pfig *{transform-box:view-box}
+.pf-body{transform-origin:14px 34px;animation:pbreath 3.4s steps(3) infinite;animation-delay:var(--dl,0s)}@keyframes pbreath{50%{transform:scaleY(1.025)}}
+.pf-head{transform-origin:14px 16px;animation:phead 4.6s steps(4) infinite;animation-delay:var(--dl,0s)}@keyframes phead{0%,100%{transform:none}30%{transform:rotate(-3deg)}60%{transform:translateY(.5px) rotate(2deg)}}
+.pf-blink{opacity:0;animation:pblink 4.2s steps(1) infinite;animation-delay:var(--dl,0s)}@keyframes pblink{0%,93%{opacity:0}94%,97%{opacity:1}98%{opacity:0}}
+.pf-hold{transform-origin:14px 30px;animation:phold 3.4s steps(3) infinite;animation-delay:var(--dl,0s)}@keyframes phold{50%{transform:translateY(.5px)}}
+.pf-cards{transform-origin:14px 31px}
+.opp.cur .pf-head{animation:pthink 1.6s steps(3) infinite alternate}@keyframes pthink{from{transform:rotate(-6deg)}to{transform:rotate(3deg) translateY(.5px)}}
+.opp.cur .pf-cards{animation:pshuffle 1.2s steps(3) infinite}@keyframes pshuffle{33%{transform:rotate(-4deg)}66%{transform:rotate(4deg)}}
+.opp.rx-play .pf-hold{animation:pplay .5s steps(3)}@keyframes pplay{40%{transform:translateY(-4px) scale(1.06)}}
+.opp.rx-draw .pf-head{animation:pnod .5s steps(2) 2}@keyframes pnod{50%{transform:rotate(-8deg)}}
+.opp.rx-hit .figwrap{animation:phit .1s steps(2) 6}@keyframes phit{50%{transform:translateX(-4px)}100%{transform:translateX(4px)}}
+.opp.rx-hit .pf-head{animation:pnod .25s steps(2) 4}
+.opp.rx-win .figwrap{animation:pwin .45s steps(3) 5}@keyframes pwin{50%{transform:translateY(-16px)}}
+.opp.rx-lose .figwrap{animation:plose 1s steps(4) forwards}@keyframes plose{to{transform:translateY(8px)}}.opp.rx-lose .pf-head{animation:none;transform:rotate(-8deg) translateY(1px)}
+.opp.rx-boo .figwrap{animation:pwin .3s steps(2) 3}
+.pbub{position:absolute;left:62%;top:-4px;z-index:3;white-space:nowrap;padding:3px 7px;background:#efe8dc;color:#10141A;font:16px/1 'VT323',monospace;border:2px solid #0a0d11;box-shadow:2px 2px 0 #0a0d11;animation:pbub 2.6s steps(1) forwards}
+.pbub::after{content:'';position:absolute;left:-7px;bottom:2px;border:5px solid transparent;border-right:6px solid #0a0d11;border-left:0}
+.pbub.think{animation:pthinkb 1s steps(2) infinite}@keyframes pthinkb{50%{transform:translateY(-3px)}}@keyframes pbub{0%,90%{opacity:1}100%{opacity:0}}
+.opps.side .pbub{left:auto;right:62%}.opps.side .pbub::after{left:auto;right:-7px;border-right:0;border-left:6px solid #0a0d11}
+.scene .fwart{width:180px;height:243px}
+@media (prefers-reduced-motion:reduce){.pfig *,.figwrap,.pbub{animation:none!important}}
+@media (max-width:999px){.pfig{width:120px;height:146px}.scene>.opps.top{margin-bottom:-32px}.scene{grid-template-columns:minmax(120px,170px) minmax(0,1fr);grid-template-areas:"dl top" "dl tbl" "me me";padding:6px 8px 10px}.scene .fwart{width:140px;height:189px}}
+@media (max-width:760px){#games>.gtable{min-height:0}.scene{grid-template-columns:minmax(0,1fr);grid-template-areas:"dl" "top" "tbl" "me";padding:0 6px 8px}.scene>.dealer{align-self:stretch;margin:0 -6px}.scene .fwart{width:66px;height:89px}
+  .scene>.opps.top{margin-bottom:-18px;padding:0;gap:2px}.plate{min-width:0;max-width:118px;padding:2px 5px}.plate b{font-size:11px;max-width:108px}.plate span{font-size:10px}.scene .pfig{width:76px;height:92px}.scene .dname{display:none}.pbub{font-size:13px;left:50%}}.saloon .yt{color:#ffd75e}
 .hand{justify-content:safe center;gap:0;padding-top:20px}.hand .hcard{width:70px;height:104px}.hand .hcard .cv{inset:18px 8px;font-size:28px}.hand .hcard .ck{font-size:12px}
 .hand .hcard+.hcard{margin-left:var(--ov,8px)}.hand .hcard:hover,.hand .hcard.sel{z-index:2}.hand .hcard.ok:hover{transform:translateY(-22px)}
 .fwhover{animation:fhov 3.2s ease-in-out infinite}@keyframes fhov{50%{transform:translateY(-8px)}}
@@ -1625,10 +1664,41 @@ const PPL = (() => {
     const first = fem ? P(F) : P(M), last = P(L);
     const nick = acc === 'patch' ? 'One-Eye' : acc === 'glasses' && r() < 0.6 ? 'Doc' : smoke && r() < 0.5 ? 'Smokey' : star ? 'Sheriff' : hc === '#8a3a1e' && r() < 0.6 ? 'Red' : hat === 'miner' ? 'Digger' : r() < 0.3 ? P(NICK) : '';
     const name = nick ? (r() < 0.5 ? `${nick} ${last}` : `${first} "${nick}"`) : `${first} ${last}`;
-    const o = {rects, name, fem};
+    const o = {rects, name, fem, g, look: {sk, sks, shirt, vest, susp, fem}};
     cache.set(seed, o); return o;
   }
-  return {make, svg: (seed, size = 46) => `<svg class="ppl" viewBox="0 0 20 22" width="${size}" height="${Math.round(size * 1.1)}" shape-rendering="crispEdges" aria-hidden="true">${make(seed).rects}</svg>`};
+  const fcache = new Map();
+  // seated figure (28x34): portrait + torso + arms holding a fan of cards; parts split for animation
+  function figure(seed) {
+    if (fcache.has(seed)) return fcache.get(seed);
+    const P = make(seed), {sk, sks, shirt, vest, susp, fem} = P.look;
+    const W = 28, Hh = 34, ox = 4, g = Array.from({length: Hh}, () => Array(W).fill(null));
+    const R = (x, y, w, h, c) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (j >= 0 && j < Hh && i >= 0 && i < W) g[j][i] = c; };
+    const shade = 'rgba(0,0,0,.22)';
+    // torso down to the waist
+    R(6, 18, 16, 12, shirt); R(7, 30, 14, 4, shirt);
+    if (vest) { R(6, 18, 5, 12, vest); R(17, 18, 5, 12, vest); R(7, 30, 4, 2, vest); R(17, 30, 4, 2, vest); R(11, 22, 1, 8, vest); R(16, 22, 1, 8, vest); [23, 26, 29].forEach(y => { R(11, y, 1, 1, '#d8b25a'); R(16, y, 1, 1, '#d8b25a'); }); }
+    if (susp) { R(10, 18, 1, 13, '#2a1a10'); R(17, 18, 1, 13, '#2a1a10'); }
+    if (fem) { R(9, 22, 10, 1, 'rgba(255,255,255,.18)'); for (let y = 23; y < 31; y += 2) R(13, y, 2, 1, 'rgba(0,0,0,.3)'); }
+    else { R(7, 31, 14, 1, '#2a1a10'); R(13, 31, 2, 1, '#d8b25a'); }
+    R(19, 20, 3, 12, shade);
+    // arms: upper arm along the body, forearm bending in to the hands
+    R(3, 19, 3, 8, shirt); R(22, 19, 3, 8, shirt); R(4, 26, 6, 3, shirt); R(18, 26, 6, 3, shirt); R(3, 19, 1, 8, shade); R(22, 26, 2, 3, shade);
+    // portrait on top
+    P.g.forEach((row, y) => row.forEach((c, x) => { if (c) g[y][x + ox] = c; }));
+    const out = g.map(r => [...r]);
+    for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) if (!g[y][x] && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => g[y + b]?.[x + a] && !String(g[y + b][x + a]).startsWith('rgba'))) out[y][x] = '#0a0d11';
+    const part = test => { let r = ''; out.forEach((row, y) => { let x = 0; while (x < W) { const c = row[x]; if (!c || !test(y)) { x++; continue; } const s0 = x; while (x < W && row[x] === c) x++; r += `<rect x="${s0}" y="${y}" width="${x - s0}" height="1" fill="${c}"/>`; } }); return r; };
+    const o = {head: part(y => y <= 16), body: part(y => y > 16), sk, sks, blink: `<rect x="${ox + 7}" y="10" width="2" height="1" fill="${sk}"/><rect x="${ox + 11}" y="10" width="2" height="1" fill="${sk}"/>`};
+    fcache.set(seed, o); return o;
+  }
+  const hand = (x, sk) => `<rect x="${x - 1}" y="24" width="5" height="5" fill="#0a0d11"/><rect x="${x}" y="25" width="3" height="3" fill="${sk}"/><rect x="${x}" y="27" width="3" height="1" fill="rgba(0,0,0,.2)"/>`;
+  function figSvg(seed, n, size = 112) {
+    const f = figure(seed), k = Math.max(0, Math.min(n, 7)), cards = Array.from({length: k}, (_, i) => { const a = k < 2 ? 0 : -28 + 56 * i / (k - 1);
+      return `<g transform="rotate(${a.toFixed(1)} 14 31)"><rect x="11.5" y="19" width="5" height="8" fill="#0a0d11"/><rect x="12" y="19.5" width="4" height="7" fill="#232A33"/><rect x="12.5" y="20" width="3" height="6" fill="none" stroke="#8a6a3a" stroke-width=".5"/></g>`; }).join('');
+    return `<svg class="pfig" viewBox="0 0 28 34" width="${size}" height="${Math.round(size * 34 / 28)}" shape-rendering="crispEdges" aria-hidden="true"><g class="pf-body">${f.body}</g><g class="pf-head">${f.head}<g class="pf-blink">${f.blink}</g></g><g class="pf-hold"><g class="pf-cards">${cards}</g>${hand(9, f.sk)}${hand(16, f.sk)}</g></svg>`;
+  }
+  return {make, figSvg, svg: (seed, size = 46) => `<svg class="ppl" viewBox="0 0 20 22" width="${size}" height="${Math.round(size * 1.1)}" shape-rendering="crispEdges" aria-hidden="true">${make(seed).rects}</svg>`};
 })();
 const newBotSeed = () => 1 + Math.floor(Math.random() * 2e9);
 const botSeed = p => +String(p).slice(4) || 1;
@@ -1672,6 +1742,32 @@ function saloonBg() {
 function woodTex() { return SAL.wood || (SAL.wood = salCanvas(64, 32, (g, R, rnd) => { R(0, 0, 64, 32, '#5a3820'); for (let y = 0; y < 32; y++) { if (rnd() < 0.5) R(0, y, 64, 1, rnd() < 0.5 ? '#633f24' : '#51321c'); } for (let k = 0; k < 40; k++) R(rnd() * 64, rnd() * 32, 4 + rnd() * 14, 1, rnd() < 0.5 ? '#3f2614' : '#714a2a'); for (let k = 0; k < 3; k++) { const x = rnd() * 60, y = rnd() * 30; R(x, y, 4, 2, '#3a2312'); R(x + 1, y, 2, 1, '#2a180e'); } })); }
 function feltTex() { return SAL.felt || (SAL.felt = salCanvas(48, 48, (g, R, rnd) => { R(0, 0, 48, 48, '#2a4a33'); for (let k = 0; k < 420; k++) R(rnd() * 48, rnd() * 48, 1, 1, ['#2f523a', '#264430', '#2c4d36', '#23402c'][rnd() * 4 | 0]); })); }
 
+const hashStr = t => { let h = 2166136261; for (const ch of String(t)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) || 1; };
+const figSeed = p => isBotId(p) ? botSeed(p) : hashStr(p);
+const BUB = {play: ['Hah.', 'There.', 'Beat that.', 'Mm-hm.', 'Your move.', 'Easy.'], hit: ['Dagnabbit!', 'Well, shoot.', 'Ugh!', 'You varmint!', 'Aw, shucks!'], draw: ['Hmm.', 'C’mon…', 'Nothin’.', '…'], win: ['Yeehaw!', 'Pay up!', 'Ha-HA!'], lose: ['Next time…', 'Hmph.', 'Rigged!']};
+const rpick = a => a[Math.random() * a.length | 0];
+function seatReactions(prev, s) {
+  const r = {}; if (!prev || prev === s) return r;
+  if (s.winner && !prev.winner) { s.order.forEach(p => r[p] = p === s.winner ? {c: 'rx-win', say: rpick(BUB.win)} : {c: 'rx-lose', say: Math.random() < 0.6 ? rpick(BUB.lose) : ''}); return r; }
+  if ((s.booed || 0) > (prev.booed || 0) && prev.boo) r[prev.boo.p] = {c: 'rx-boo', say: 'BOO!'};
+  if (s.last && JSON.stringify(s.last) !== JSON.stringify(prev.last)) {
+    const v = s.last.card[1], n = s.last.n || 1;
+    r[s.last.p] = {c: 'rx-play', say: n > 1 ? `${n} of a kind!` : v === 'D' ? 'Take two!' : v === 'F' ? 'Draw four, partner.' : v === 'S' ? 'Skip ya!' : v === 'R' ? 'Turn around!' : v === 'W' ? `${HC[s.color][0]} it is.` : Math.random() < 0.45 ? rpick(BUB.play) : ''};
+  }
+  s.order.forEach(p => { if (r[p]) return; const d = (s.hands[p]?.length || 0) - (prev.hands[p]?.length || 0);
+    if (d >= 2) r[p] = {c: 'rx-hit', say: rpick(BUB.hit)}; else if (d === 1) r[p] = {c: 'rx-draw', say: Math.random() < 0.4 ? rpick(BUB.draw) : ''}; });
+  return r;
+}
+function oppHtml(p, s, extra, rx) {
+  const isCur = H.cur(s) === p && !s.winner, out = s.out.includes(p), n = s.hands[p].length, isNext = !s.winner && !isCur && s.order[H.step(s)] === p, booP = s.boo && s.boo.p === p;
+  const say = rx?.say || (booP ? 'One left…' : isCur ? '…' : '');
+  const sd = figSeed(p), dl = -(sd % 3000) / 1000;
+  return `<div class="opp${isCur ? ' cur' : ''}${out ? ' out' : ''} ${rx?.c || ''}" data-seat="${esc(p)}" style="--dl:${dl}s">
+    <div class="plate"><b>${esc(s.names[p] || 'Player')}</b><span>${out ? 'left' : isCur ? 'playing' : isNext ? 'next up' : 'waiting'}${n === 1 && !out ? (booP ? ' · <em class="boo">BOO?</em>' : ' · last card') : ''} · <i>${n}</i></span>${extra}</div>
+    <div class="figwrap">${say ? `<span class="pbub${isCur && !rx ? ' think' : ''}">${esc(say)}</span>` : ''}${PPL.figSvg(sd, out ? 0 : n)}${!isBotId(p) ? `<span class="hav mini" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>` : ''}</div></div>`;
+}
+let lastWide = null;
+addEventListener('resize', () => { const w = innerWidth >= 1000; if (lastWide !== null && w !== lastWide && G.s && gEl()?.classList.contains('on')) { G.prevS = G.s; renderTable(); } lastWide = w; });
 // ---------- table ----------
 let hPrevTop = null;
 function seatHtml(p, s, extra = '', me = false) {
@@ -1709,9 +1805,10 @@ function renderTable() {
   const banner = s.winner ? '' : myTurn ? (s.drawn ? 'You drew a playable card — play it or pass' : sel.length ? `Stack of ${sel.length} ready — drag it onto the pile or press Play` : 'Your turn — play a glowing card, stack twins, or draw')
     : `${esc(curName)} is thinking…`;
   const nPlayable = myTurn ? hand.filter(c => H.canPlay(s, c)).length : 0;
+  const rx = seatReactions(prev, s), wide = innerWidth >= 1000; lastWide = wide;
+  const sideO = wide && others.length === 3 ? [others[2]] : [], topO = others.filter(p => !sideO.includes(p));
   el.innerHTML = `<div class="gtable saloon win" style="--sal:url(${saloonBg()});--wood:url(${woodTex()});--felt:url(${feltTex()})"><div class="tbar">${sprite('ghost', 14)}<span>HAUNT · ${G.mode === 'local' ? `saloon table · ${esc(G.lvl)}` : 'online saloon'}</span><button class="lnk" id="hhelp" style="margin-left:auto;color:#fff">Rules</button><button class="lnk" id="hleave" style="color:#fff;margin-left:12px">Leave table</button></div>
-    <div class="gbody"><aside class="dealer" aria-label="Dealer"><div class="dname">DEALER <span>· Flatwoods Monster</span></div><div class="fwhover"><div class="fwart a-${FW_ANIM[G.fw?.emo] || 'bob'}" id="fwart">${fwInner(G.fw?.emo || 'idle')}</div></div><div class="fwshadow"></div><div class="fwsay${G.fw?.say ? ' show' : ''}" id="fwsay" aria-live="polite">${esc(G.fw?.say || '')}</div></aside><div class="gmain">
-    <div class="gtop">${others.map(p => seatHtml(p, s, H.cur(s) === p ? timer : '')).join('')}</div>
+    <div class="gbody"><div class="scene"><aside class="dealer" aria-label="Dealer"><div class="dname">DEALER <span>· Flatwoods Monster</span></div><div class="fwhover"><div class="fwart a-${FW_ANIM[G.fw?.emo] || 'bob'}" id="fwart">${fwInner(G.fw?.emo || 'idle')}</div></div><div class="fwshadow"></div><div class="fwsay${G.fw?.say ? ' show' : ''}" id="fwsay" aria-live="polite">${esc(G.fw?.say || '')}</div></aside><div class="opps top">${topO.map(p => oppHtml(p, s, H.cur(s) === p ? timer : '', rx[p])).join('')}</div>${sideO.length ? `<div class="opps side">${sideO.map(p => oppHtml(p, s, H.cur(s) === p ? timer : '', rx[p])).join('')}</div>` : ''}
     <div class="board"><div class="felt">
       ${banner ? `<div class="turnban${myTurn ? ' me' : ''}" role="status">${banner}</div>` : ''}
       <div class="gmid">
