@@ -675,7 +675,17 @@ const profileCard = (p, fallbackName) => {
 // keep the admin-only email copy in sync (readable only by its owner and the admin)
 let privSynced = null;
 const syncPrivate = () => { if (!user || !user.email || privSynced === user.uid) return; privSynced = user.uid;
-  setDoc(doc(db, 'private', user.uid), {email: user.email}).catch(() => { privSynced = null; }); };
+  setDoc(doc(db, 'private', user.uid), {email: user.email}).catch(() => { privSynced = null; });
+  if (user.emailVerified) ensureProfile(); };
+// every verified user gets a public profile doc so others can find them by nickname
+const ensureProfile = async () => {
+  try {
+    const p = await getProfile(user.uid, true), name = (p?.name || user.displayName || 'User').slice(0, 30);
+    if (p && p.nameLower === name.toLowerCase()) return;
+    await setDoc(doc(db, 'users', user.uid), {name, nameLower: name.toLowerCase(), updatedAt: serverTimestamp()}, {merge: true});
+    profCache.delete(user.uid);
+  } catch {}
+};
 
 async function friendState(uid) {
   if (!user || uid === user.uid) return 'self';
@@ -738,7 +748,24 @@ async function openProfile(uid) {
 async function myProfileSection() {
   const box = $('#myp'); if (!box || !user) return;
   const p = await getProfile(user.uid, true);
-  box.innerHTML = profileCard(p, user.displayName) + '<button class="b" id="ep">✏️ Edit profile</button><h3>Friends</h3><div id="freq"></div><div id="flist"><p class="meta">Loading…</p></div>';
+  box.innerHTML = profileCard(p, user.displayName) + `<button class="b" id="ep">✏️ Edit profile</button><h3>Friends</h3>
+    <div class="search sunken" style="max-width:none;margin:6px 0"><svg viewBox="0 0 8 8" width="16" height="16" fill="#8798AA" aria-hidden="true" shape-rendering="crispEdges"><path d="M1 0h4v1h-4zM0 1h1v1h-1zM5 1h1v1h-1zM0 2h1v1h-1zM5 2h1v1h-1zM0 3h1v1h-1zM5 3h1v1h-1zM1 4h4v1h-4zM5 5h1v1h-1zM6 6h1v1h-1zM7 7h1v1h-1z"/></svg><input id="fsq" maxlength="30" placeholder="Find people by nickname…" aria-label="Find people by nickname" autocomplete="off" enterkeyhint="search"></div>
+    <div id="fsr"></div><div id="freq"></div><div id="flist"><p class="meta">Loading…</p></div>`;
+  let fsT = 0, fsTok = 0;
+  $('#fsq').oninput = () => { clearTimeout(fsT); fsT = setTimeout(async () => {
+    const q = $('#fsq').value.trim().toLowerCase(), out = $('#fsr'), my = ++fsTok; if (!out) return;
+    if (q.length < 2) { out.innerHTML = ''; return; }
+    out.innerHTML = '<p class="meta">Searching…</p>';
+    try {
+      const snap = await getDocs(query(collection(db, 'users'), where('nameLower', '>=', q), where('nameLower', '<=', q + '\uf8ff'), limit(12)));
+      if (my !== fsTok) return;
+      const list = snap.docs.filter(d => d.id !== user.uid && !blocked.has(d.id));
+      list.forEach(d => profCache.set(d.id, d.data()));
+      out.innerHTML = list.length ? list.map(d => `<div class="item fl" data-uid="${esc(d.id)}" style="cursor:var(--cur-hot)">${avatarHtml(d.data(), true)}<span class="grow">${esc(d.data().name)}</span><span class="meta">View ›</span></div>`).join('')
+        : '<p class="meta">Nobody found. People appear here after they sign in with a verified email.</p>';
+    } catch { if (my === fsTok) out.innerHTML = '<p class="err">Search failed (publish the latest rules).</p>'; }
+  }, 350); };
+  $('#fsr').onclick = e => { const it = e.target.closest('[data-uid]'); if (it) openProfile(it.dataset.uid); };
   $('#ep').onclick = () => { if (canPost()) editProfile(p); };
   try {
     const rq = await getDocs(collection(db, `requests/${user.uid}/in`));
@@ -783,7 +810,7 @@ function editProfile(p0) {
     const links = {};
     for (const [k, label] of NETS) { const v = $('#l_' + k).value.trim(); if (!v) continue; const u = safeUrl(v);
       if (!u) { $('#e').textContent = `${label}: use a full https:// link.`; return; } links[k] = u.slice(0, 200); }
-    const data = {name, bio: $('#pb').value.trim().slice(0, 300), frame: document.querySelector('#frs input:checked')?.value || 'none', links, updatedAt: serverTimestamp()};
+    const data = {name, nameLower: name.toLowerCase(), bio: $('#pb').value.trim().slice(0, 300), frame: document.querySelector('#frs input:checked')?.value || 'none', links, updatedAt: serverTimestamp()};
     if (avatar) data.avatar = avatar; if (banner) data.banner = banner;
     $('#go').disabled = true;
     try {
