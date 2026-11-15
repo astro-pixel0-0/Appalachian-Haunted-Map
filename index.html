@@ -168,6 +168,42 @@ input[type=checkbox]{width:auto;margin:0 8px 0 0}label.ck{display:flex;align-ite
 .lnk{background:none;border:0;padding:4px 0;color:var(--mut);font-size:12px;text-decoration:underline dotted}.lnk:hover{color:var(--ink)}.lnk.red{color:var(--red)}
 .empty.win{background:var(--gra);padding:28px}
 #pl{margin-bottom:12px}
+#groups>.pwrap{max-width:1000px}.sech{font-family:var(--px);font-weight:500;letter-spacing:1px;font-size:14px;color:var(--fro);margin:18px 0 8px}
+.gcard{display:flex;align-items:center;gap:12px;width:100%;padding:12px;background:var(--gra);color:var(--ink);text-align:left}.gcard:hover{background:var(--gra2)}
+.gico{flex:none;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--mid)}
+.tmeta svg,.kv svg{vertical-align:-1px}.badge svg{vertical-align:0}
+.ttl2{margin:0 0 8px;font-family:'IBM Plex Sans',sans-serif;font-weight:600;letter-spacing:0;font-size:22px;overflow-wrap:anywhere}
+.gacts{margin:12px 0 6px}.gacts .b{flex:1 1 160px;width:auto}
+.fcard{position:relative}.fcard .badge{font-size:9px}
+/* chat window */
+body.chatmode #chatwin{background:var(--mid)}
+.chead{gap:10px;justify-content:flex-start;padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top));background:var(--gra);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;letter-spacing:0;border-bottom:2px solid var(--blo);box-shadow:inset 0 1px 0 var(--hi)}
+.cico{flex:none;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--mid);border:1px solid #3a4552}
+.ctitle{display:flex;flex-direction:column;min-width:0;flex:1}.ctitle b{font-family:var(--px);font-weight:500;letter-spacing:1px;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ctitle small{color:var(--mut);font-size:12px}
+.chbtns{display:flex;gap:6px}.cbtn{width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;background:var(--gra);color:var(--fro);border:0;flex:none}
+.mlwrap{position:relative;flex:1;min-height:0;display:flex}
+#cbody #ml{flex:1;max-height:none;padding:12px 12px 6px;margin:0;gap:2px;background:var(--mid);overflow:auto}
+.daysep{display:flex;align-items:center;gap:10px;margin:12px 0 8px;color:var(--mut);font-family:var(--px);font-size:11px;letter-spacing:1px}.daysep::before,.daysep::after{content:'';flex:1;height:1px;background:#2c3540}
+.mrow{display:flex;align-items:flex-end;gap:8px;max-width:min(78%,640px);margin-top:8px}.mrow.cont{margin-top:2px}.mrow.me{align-self:flex-end;flex-direction:row-reverse}
+.mav{flex:none;width:50px;display:flex;justify-content:center}.mav .fr.sm .av{width:36px;height:36px}
+.bubble{position:relative;padding:7px 10px 5px;background:var(--gra);border:1px solid #3a4552;box-shadow:inset 1px 1px 0 #3a4552;min-width:80px;max-width:100%}
+.mrow.me .bubble{background:#2a3a30;border-color:#4f5e4b;box-shadow:inset 1px 1px 0 #4f5e4b}
+.mname{font-size:12px;font-weight:600;margin-bottom:2px}.mname a.prof{color:var(--sag);border:0}
+.mtext{white-space:pre-wrap;word-break:break-word;line-height:1.45}
+.mfoot{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:3px;font-size:11px;color:var(--mut)}.mfoot .t{font-family:var(--vt);font-size:14px}
+.macts{display:flex;gap:8px;opacity:0;transition:opacity .15s}.mrow:hover .macts,.mrow:focus-within .macts{opacity:1}.macts u{color:var(--red);cursor:var(--cur-hot);font-size:11px}
+@media (hover:none){.macts{opacity:.8}}
+.att img{display:block;max-width:min(320px,100%);margin:2px 0;border:1px solid #3a4552}.att audio{min-width:220px}
+.filechip{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;margin:2px 0;background:var(--mid);color:var(--ink);border:1px solid #3a4552;text-align:left}.filechip span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.filechip small{color:var(--mut)}
+.cempty{margin:auto;text-align:center;color:var(--mut);line-height:1.6}
+.jump{position:absolute;left:50%;transform:translateX(-50%);bottom:10px;display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--blo);color:#fff;font-size:12px}
+.composer{background:var(--gra);border-top:1px solid #3a4552;padding:8px 10px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+.cbar{display:flex;align-items:flex-end;gap:4px;padding:4px;background:var(--mid)}
+.cbar textarea{flex:1;min-height:36px;max-height:140px;margin:0;padding:8px 6px;border:0;box-shadow:none;background:transparent;resize:none;line-height:1.4}
+.cbar .cbtn{width:38px;height:38px;background:transparent;color:var(--fro)}.cbar .cbtn:hover{color:#fff}.cbar .cbtn.send{background:var(--sag);color:var(--mid)}.cbar .cbtn.rec{background:var(--blo);color:#fff}
+.chint{margin:6px 2px 0;font-size:11px}
+.recbar{align-items:center;gap:8px;margin-bottom:6px;font-size:13px}.recdot{width:10px;height:10px;background:#e0505b;animation:blink 1s steps(2) infinite}@keyframes blink{50%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){.recdot{animation:none}}
 a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)}a.prof:hover{color:#fff}
 .pcard{background:var(--gra);margin:0 0 12px;overflow:hidden}
 .pban{position:relative;height:150px;background:#1a2027;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -1220,23 +1256,46 @@ const attCache = new Map();
 function stopChat() { if (unsubChat) { unsubChat(); unsubChat = null; } }
 const showView = v => document.querySelector(`#rail button[data-v=${v}]`).click();
 const base = () => location.origin + location.pathname;
-const groupCard = g => `<div class="item" data-id="${esc(g.id)}"><b>${g.private ? '🔒 ' : ''}${esc(g.name)}</b><div class="meta">📍 ${esc(g.place || '')}${g.when ? ' · 🗓 ' + esc(g.when) : ''}</div><div class="meta">by ${esc(g.authorName)}</div></div>`;
+const PXI = {
+  clip: 'M3 0h3v1h-3zM2 1h1v5h-1zM6 1h1v5h-1zM4 2h1v4h-1zM3 6h1v1h-1zM5 6h1v1h-1zM4 7h1v1h-1z',
+  mic: 'M3 0h2v1h-2zM2 1h4v4h-4zM1 3h1v2h-1zM6 3h1v2h-1zM2 5h1v1h-1zM5 5h1v1h-1zM3 6h2v1h-2zM2 7h4v1h-4z',
+  stop: 'M1 1h6v6h-6z',
+  send: 'M0 0h2v1h-2zM0 1h4v1h-4zM0 2h6v1h-6zM0 3h8v2h-8zM0 5h6v1h-6zM0 6h4v1h-4zM0 7h2v1h-2z',
+  users: 'M1 0h2v1h-2zM5 0h2v1h-2zM0 1h4v2h-4zM4 1h4v2h-4zM1 3h2v1h-2zM5 3h2v1h-2zM0 5h4v3h-4zM4 5h4v3h-4z',
+  x: 'M0 0h2v1h-2zM6 0h2v1h-2zM1 1h2v1h-2zM5 1h2v1h-2zM2 2h4v1h-4zM3 3h2v1h-2zM2 4h4v1h-4zM1 5h2v1h-2zM5 5h2v1h-2zM0 6h2v1h-2zM6 6h2v1h-2z',
+  down: 'M3 0h2v4h-2zM0 3h8v1h-8zM1 4h6v1h-6zM2 5h4v1h-4zM3 6h2v1h-2z',
+  lock: 'M2 0h4v1h-4zM1 1h1v3h-1zM6 1h1v3h-1zM0 4h8v4h-8z',
+  pin: 'M2 0h4v1h-4zM1 1h6v3h-6zM2 4h4v1h-4zM3 5h2v3h-2z',
+  cal: 'M1 0h1v1h-1zM6 0h1v1h-1zM0 1h8v2h-8zM0 3h1v5h-1zM7 3h1v5h-1zM1 7h6v1h-6zM2 4h2v2h-2z',
+};
+const pxi = (k, sz = 14) => `<svg viewBox="0 0 8 8" width="${sz}" height="${sz}" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="${PXI[k]}"/></svg>`;
+const dayKey = ts => { const d = ts?.toDate ? ts.toDate() : new Date(); return d.toDateString(); };
+const dayLabel = ts => { const d = ts?.toDate ? ts.toDate() : new Date(), t = new Date(); const y = new Date(); y.setDate(t.getDate() - 1);
+  return d.toDateString() === t.toDateString() ? 'Today' : d.toDateString() === y.toDateString() ? 'Yesterday' : d.toLocaleDateString(undefined, {weekday: 'short', day: 'numeric', month: 'short'}); };
+const hhmm = ts => ts?.toDate ? ts.toDate().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '…';
+const groupCard = g => `<button class="gcard raised" data-id="${esc(g.id)}"><span class="gico sunken">${sprite(g.private ? 'shadow' : 'ghost', 30)}</span>
+  <span class="tmain"><b>${esc(g.name)}</b><span class="tmeta">${g.private ? `<span class="badge blood">${pxi('lock', 9)} PRIVATE</span>` : '<span class="badge">PUBLIC</span>'}${g.place ? `<span>${pxi('pin', 10)} ${esc(g.place)}</span>` : ''}${g.when ? `<span>${pxi('cal', 10)} ${esc(g.when)}</span>` : ''}</span>
+  <span class="tmeta">by ${esc(g.authorName || 'User')}</span></span><span class="tcount sunken"><b data-mc="${esc(g.id)}">·</b><small>members</small></span></button>`;
+const fillMemberCounts = list => list.slice(0, 60).forEach(async g => { try { const c = await getCountFromServer(collection(db, `groups/${g.id}/members`));
+  document.querySelectorAll(`[data-mc="${CSS.escape(g.id)}"]`).forEach(b => b.textContent = c.data().count); } catch {} });
 const byNew = (a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
 const toDataURL = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
 
 async function groupList() {
   stopChat();
   const el = $('#groups');
-  el.innerHTML = `<h2>Groups</h2><p class="meta">Find people to visit a place together.</p>${discordBtn()}
-   <button class="b" id="ng">＋ New group</button><button class="b s" id="jc">🔑 Join with invite link / code</button>
-   <div id="mg"></div><h3>Public groups</h3><div id="gl"><p class="meta">Loading…</p></div>
-   ${isAdmin() ? '<h3>Admin: all groups (incl. private)</h3><div id="ag"><p class="meta">Loading…</p></div>' : ''}`;
+  el.innerHTML = `<div class="pwrap"><div class="pcard win"><div class="tbar">${sprite('ghost', 14)}<span>EXPEDITION BOARD</span></div>
+    <div class="pad fhead"><div class="grow"><h2 style="margin:0">Groups &amp; Chats</h2><p class="meta">Find people to visit a place together, plan the trip and chat in real time.</p></div>
+    <div class="row" style="flex:0 1 auto"><button class="b" id="ng" style="width:auto">＋ New group</button><button class="b s" id="jc" style="width:auto">🔑 Join by invite</button></div></div></div>
+    <div id="mg"></div><h3 class="sech">Public groups</h3><div id="gl" class="tlist"><p class="meta">Loading…</p></div>
+    ${isAdmin() ? '<h3 class="sech">Admin · all groups (incl. private)</h3><div id="ag" class="tlist"><p class="meta">Loading…</p></div>' : ''}
+    <div style="margin-top:16px">${discordBtn()}</div></div>`;
   $('#ng').onclick = () => { if (canPost()) newGroupSheet(); };
   $('#jc').onclick = () => {
     sheet(`<h3>Join a private group</h3><input id="jv" placeholder="Paste invite link or code"><button class="b" id="go">Join</button><button class="b s" id="cx">Cancel</button>`);
     $('#cx').onclick = closeSheet; $('#go').onclick = () => { const v = $('#jv').value; closeSheet(); joinByCode(v); };
   };
-  const bind = (sel, list) => { const n = $(sel); if (n) n.onclick = e => { const i = e.target.closest('.item'); if (i) openGroup(list.find(g => g.id === i.dataset.id)); }; };
+  const bind = (sel, list) => { const n = $(sel); if (n) n.onclick = e => { const i = e.target.closest('.gcard'); if (i) openGroup(list.find(g => g.id === i.dataset.id)); }; fillMemberCounts(list); };
   let mineIds = new Set();
   if (user) {
     try {
@@ -1245,7 +1304,7 @@ async function groupList() {
         try { const gs = await getDoc(doc(db, 'groups', d.id)); if (gs.exists()) return {id: gs.id, ...gs.data()}; } catch {}
         deleteDoc(d.ref).catch(() => {}); return null; }))).filter(Boolean).sort(byNew);
       const box = $('#mg'); if (!box) return;
-      box.innerHTML = mine.length ? '<h3>My groups</h3>' + mine.map(groupCard).join('') : ''; bind('#mg', mine);
+      box.innerHTML = mine.length ? '<h3 class="sech">My groups</h3><div class="tlist">' + mine.map(groupCard).join('') + '</div>' : ''; bind('#mg', mine);
       mineIds = new Set(mine.map(g => g.id));
     } catch {}
   }
@@ -1253,7 +1312,7 @@ async function groupList() {
     const snap = await getDocs(query(collection(db, 'groups'), where('private', '==', false), limit(100)));
     groups = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(g => okItem(g.authorID, g.id) && !mineIds.has(g.id)).sort(byNew);
     const gl = $('#gl'); if (!gl) return;
-    gl.innerHTML = groups.length ? groups.map(groupCard).join('') : '<p class="meta">No public groups yet. Create the first one!</p>'; bind('#gl', groups);
+    gl.innerHTML = groups.length ? groups.map(groupCard).join('') : `<div class="empty win">${sprite('ghost', 48)}<p>No public groups yet. Create the first one!</p></div>`; bind('#gl', groups);
   } catch { const gl = $('#gl'); if (gl) gl.innerHTML = '<p class="err">Could not load groups.</p>'; }
   if (isAdmin()) {
     try {
@@ -1318,17 +1377,21 @@ async function openGroup(g) {
     member = !!user && ms.docs.some(d => d.id === user.uid);
   } catch {}
   const shown = members.filter(m => !blocked.has(m.id));
-  el.innerHTML = `<button class="b s" id="bk">← Back</button><h2>${g.private ? '🔒 ' : ''}${esc(g.name)}</h2>
-   <p class="meta">📍 ${esc(g.place || '')}${g.when ? ' · 🗓 ' + esc(g.when) : ''}</p><p style="white-space:pre-wrap">${esc(g.description)}</p>
-   <p class="meta">Created by ${plink(g.authorID, g.authorName)}</p>
-   <h3>Members (${shown.length})</h3><div id="mem">${shown.map(m => `<div class="item" style="display:flex;justify-content:space-between;align-items:center"><span>${plink(m.id, m.name)}${m.id === g.authorID ? ' 👑' : ''}</span>${(owner || adm) && m.id !== g.authorID ? `<u data-kick="${esc(m.id)}" style="color:var(--red);cursor:pointer">remove</u>` : ''}</div>`).join('') || '<p class="meta">—</p>'}</div>
-   ${member || adm ? '<button class="b" id="oc">💬 Open chat in a new window</button>' : ''}
+  const mprof = await Promise.all(shown.map(m => getProfile(m.id)));
+  el.innerHTML = `<div class="pwrap"><button class="b s" id="bk" style="width:auto;display:inline-block">← All groups</button>
+   <div class="pcard win"><div class="tbar">${sprite(g.private ? 'shadow' : 'ghost', 14)}<span>GROUP</span>${g.private ? `<span class="badge blood" style="margin-left:auto">${pxi('lock', 9)} PRIVATE</span>` : '<span class="badge" style="margin-left:auto">PUBLIC</span>'}</div>
+   <div class="pad"><h2 class="ttl2">${esc(g.name)}</h2>
+   <div class="kv"><span>${pxi('pin', 11)} Place</span><b>${esc(g.place || '—')}</b></div><div class="kv"><span>${pxi('cal', 11)} When</span><b>${esc(g.when || '—')}</b></div><div class="kv"><span>Organizer</span><b>${plink(g.authorID, g.authorName)}</b></div>
+   ${g.description ? `<p class="pbody2">${esc(g.description)}</p>` : ''}
+   <div class="row gacts">
+   ${member || adm ? `<button class="b" id="oc">💬 Open group chat</button>` : ''}
+   ${!member && !adm ? '<button class="b" id="jn">＋ Join group</button>' : ''}
    ${g.private && (member || adm) ? '<button class="b s" id="iv">🔗 Invite link</button>' : ''}
    ${typeof g.lat === 'number' ? '<button class="b s" id="sm">Show on map</button>' : ''}
-   ${!member && !adm ? '<button class="b" id="jn">Join group</button>' : ''}
-   ${member && !owner ? '<button class="b s" id="lv">Leave group</button>' : ''}
-   ${owner || adm ? '<button class="b d" id="dg">Delete group</button>' : '<button class="b d" id="rg">Report group</button>'}
-   ${g.private ? '<p class="meta">Private group. Chats may be reviewed by moderators to enforce the rules.</p>' : ''}`;
+   </div>
+   <div class="acts">${member && !owner ? '<button class="lnk" id="lv">Leave group</button>' : ''}${owner || adm ? '<button class="lnk red" id="dg">Delete group</button>' : '<button class="lnk" id="rg">Report group</button>'}</div>
+   ${g.private ? '<p class="meta">🔒 Private group. Chats may be reviewed by moderators to enforce the rules.</p>' : ''}</div></div>
+   <section class="panel win"><div class="tbar"><span>MEMBERS · ${shown.length}</span></div><div class="pad"><div class="fgrid" id="mem">${shown.map((m, i) => `<div class="fcard raised"><a href="#" class="prof" data-uid="${esc(m.id)}" style="border:0;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:100%">${avatarHtml(mprof[i], true)}<span>${esc(mprof[i]?.name || m.name)}</span></a>${m.id === g.authorID ? '<span class="badge">ORGANIZER</span>' : ''}${(owner || adm) && m.id !== g.authorID ? `<button class="lnk red" data-kick="${esc(m.id)}">remove</button>` : ''}</div>`).join('') || '<p class="meta">—</p>'}</div></div></section></div>`;
   $('#bk').onclick = groupList;
   $('#mem').onclick = async e => { const k = e.target.closest('[data-kick]'); if (!k) return;
     try { await deleteDoc(doc(db, `groups/${g.id}/members`, k.dataset.kick)); openGroup(g); } catch { toast('Could not remove.'); } };
@@ -1346,7 +1409,8 @@ async function openGroup(g) {
 async function showMembers(g) {
   try {
     const ms = await getDocs(collection(db, `groups/${g.id}/members`)), list = ms.docs.map(d => ({id: d.id, ...d.data()}));
-    sheet(`<h3>Members (${list.length})</h3>${list.map(m => `<div class="item">${plink(m.id, m.name)}${m.id === g.authorID ? ' 👑' : ''}</div>`).join('')}<button class="b s" id="cx">Close</button>`);
+    const pr = await Promise.all(list.map(m => getProfile(m.id)));
+    sheet(`<h3>Members · ${list.length}</h3><div class="fgrid">${list.map((m, i) => `<div class="fcard raised"><a href="#" class="prof" data-uid="${esc(m.id)}" style="border:0;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:100%">${avatarHtml(pr[i], true)}<span>${esc(pr[i]?.name || m.name)}</span></a>${m.id === g.authorID ? '<span class="badge">ORGANIZER</span>' : ''}</div>`).join('')}</div><button class="b s" id="cx">Close</button>`);
     $('#cx').onclick = closeSheet;
   } catch { toast('Could not load members.'); }
 }
@@ -1365,7 +1429,9 @@ async function chatWindow(gid) {
     member = (await getDoc(doc(db, `groups/${gid}/members`, user.uid))).exists();
   } catch { root.innerHTML = '<p style="padding:20px">Chat not found, or you are not a member of this group.</p>'; return; }
   if (!member && !isAdmin()) { root.innerHTML = '<p style="padding:20px">You are not a member of this group.</p>'; return; }
-  root.innerHTML = `<div class="chead"><b>${g.private ? '🔒 ' : ''}${esc(g.name)}</b><span style="display:flex;gap:6px"><button class="b s" id="cm" style="width:auto;margin:0">👥 Members</button><button class="b s" id="cc" style="width:auto;margin:0">✕</button></span></div><div id="cbody"></div>`;
+  let mcount = '·'; try { mcount = (await getCountFromServer(collection(db, `groups/${gid}/members`))).data().count; } catch {}
+  root.innerHTML = `<div class="chead"><span class="cico">${sprite(g.private ? 'shadow' : 'ghost', 28)}</span><div class="ctitle"><b>${esc(g.name)}</b><small>${mcount} members${g.place ? ' · ' + esc(g.place) : ''}${!member ? ' · admin view' : ''}</small></div>
+    <span class="chbtns"><button class="cbtn raised" id="cm" aria-label="Members" title="Members">${pxi('users', 16)}</button><button class="cbtn raised" id="cc" aria-label="Close chat" title="Close">${pxi('x', 14)}</button></span></div><div id="cbody"></div>`;
   $('#cm').onclick = () => showMembers(g);
   $('#cc').onclick = () => { window.close(); setTimeout(() => { stopChat(); history.replaceState(null, '', location.pathname); location.reload(); }, 200); };
   mountChat($('#cbody'), g, !member);
@@ -1386,32 +1452,40 @@ async function fillAtt(gid, n) {
 }
 
 function mountChat(box, g, readonly) {
-  box.innerHTML = '<div id="ml"></div>' + (readonly ? '<p class="meta" style="padding:8px">Admin view (read-only).</p>' :
-    `<div class="composer"><div id="rec" class="meta" style="display:none;margin-bottom:6px"></div>
-     <div class="row2"><button class="b s" id="at" style="width:auto" aria-label="Attach">📎</button><button class="b s" id="mic" style="width:auto" aria-label="Voice">🎤</button><input id="mi" maxlength="1000" placeholder="Message…"><button class="b" id="ms" style="width:auto">Send</button></div>
-     <input type="file" id="fi" hidden><p class="meta" style="margin:4px 0 0">Files up to 650 KB · voice up to 60 s · moderators may review chats</p></div>`);
-  const ml = $('#ml'); let rec = null, tick = null, first = true;
+  box.innerHTML = '<div class="mlwrap"><div id="ml"></div><button class="jump raised" id="jump" hidden>' + pxi('down', 12) + ' New messages</button></div>' + (readonly ? '<p class="meta" style="padding:8px 12px">Admin view (read-only).</p>' :
+    `<div class="composer"><div id="rec" class="recbar" style="display:none"></div>
+     <div class="cbar sunken"><button class="cbtn" id="at" aria-label="Attach photo or file" title="Attach">${pxi('clip', 16)}</button><textarea id="mi" rows="1" maxlength="1000" placeholder="Message… (Enter to send, Shift+Enter for a new line)"></textarea><button class="cbtn" id="mic" aria-label="Record voice message" title="Voice message">${pxi('mic', 16)}</button><button class="cbtn send" id="ms" aria-label="Send" title="Send">${pxi('send', 16)}</button></div>
+     <input type="file" id="fi" hidden><p class="meta chint">Files up to 650 KB · voice up to 60 s · moderators may review chats</p></div>`);
+  const ml = $('#ml'), jump = $('#jump'); let rec = null, tick = null, first = true, lastA = null, lastT = 0, lastDay = '';
+  jump.onclick = () => { ml.scrollTop = ml.scrollHeight; jump.hidden = true; };
+  ml.addEventListener('scroll', () => { if (ml.scrollHeight - ml.scrollTop - ml.clientHeight < 60) jump.hidden = true; });
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); fillAtt(g.id, e.target); } }), {root: ml});
   const add = m => {
-    const me = user && user.uid === m.authorID, a = m.att, d = document.createElement('div');
-    d.className = 'msg' + (me ? ' me' : ''); d.id = 'm_' + m.id; if (a) d.dataset.att = '1';
-    let body = m.text ? esc(m.text) : '';
+    const me = user && user.uid === m.authorID, a = m.att, dk = dayKey(m.createdAt), tms = m.createdAt?.toMillis ? m.createdAt.toMillis() : Date.now();
+    if (dk !== lastDay) { const sep = document.createElement('div'); sep.className = 'daysep'; sep.innerHTML = `<span>${dayLabel(m.createdAt)}</span>`; ml.appendChild(sep); lastDay = dk; lastA = null; }
+    const cont = lastA === m.authorID && tms - lastT < 5 * 60000; lastA = m.authorID; lastT = tms;
+    const d = document.createElement('div');
+    d.className = 'mrow' + (me ? ' me' : '') + (cont ? ' cont' : ''); d.id = 'm_' + m.id; if (a) d.dataset.att = '1';
+    let body = m.text ? `<div class="mtext">${esc(m.text)}</div>` : '';
     if (a) body += a.kind === 'file'
-      ? `<button class="b s dl" data-mid="${esc(m.id)}" data-name="${esc(a.name)}" style="margin:4px 0">📄 ${esc(a.name)} · ${Math.max(1, Math.round((a.size || 0) / 1024))} KB</button>`
+      ? `<button class="dl filechip" data-mid="${esc(m.id)}" data-name="${esc(a.name)}">📄 <span>${esc(a.name)}</span><small>${Math.max(1, Math.round((a.size || 0) / 1024))} KB</small></button>`
       : `<div class="att" data-mid="${esc(m.id)}" data-kind="${esc(a.kind)}">⏳ ${a.kind === 'audio' ? 'Voice message…' : 'Photo…'}</div>`;
-    d.innerHTML = `<small><b>${plink(m.authorID, m.authorName)}</b> · <span class="t">${fmt(m.createdAt)}</span></small>${body}<small>${me || isAdmin() ? `<u data-a="del" data-id="${esc(m.id)}">delete</u> ` : ''}${me ? '' : `<u data-a="rep" data-id="${esc(m.id)}">report</u>`}</small>`;
+    const acts = `${me || isAdmin() ? `<u data-a="del" data-id="${esc(m.id)}">delete</u>` : ''}${me ? '' : `<u data-a="rep" data-id="${esc(m.id)}">report</u>`}`;
+    d.innerHTML = `${me ? '' : `<span class="mav" data-av="${esc(m.authorID)}">${cont ? '' : avatarHtml(profCache.get(m.authorID), true)}</span>`}
+      <div class="bubble">${me || cont ? '' : `<div class="mname">${plink(m.authorID, m.authorName)}</div>`}${body}<div class="mfoot"><span class="t">${hhmm(m.createdAt)}</span><span class="macts">${acts}</span></div></div>`;
     ml.appendChild(d); const at = d.querySelector('.att'); if (at) io.observe(at);
+    if (!me && !cont && !profCache.has(m.authorID)) getProfile(m.authorID).then(pr => document.querySelectorAll(`#m_${CSS.escape(m.id)} .mav`).forEach(n => n.innerHTML = avatarHtml(pr, true)));
   };
   const unsub = onSnapshot(query(collection(db, `groups/${g.id}/messages`), orderBy('createdAt'), limitToLast(100)), snap => {
     const near = first || ml.scrollHeight - ml.scrollTop - ml.clientHeight < 140;
     snap.docChanges().forEach(ch => {
       const m = {id: ch.doc.id, ...ch.doc.data()};
-      if (ch.type === 'added') { if (okItem(m.authorID, m.id) && !document.getElementById('m_' + m.id)) { add(m); if (!first && (!user || m.authorID !== user.uid)) sfx('msg', 0.4); } }
+      if (ch.type === 'added') { if (okItem(m.authorID, m.id) && !document.getElementById('m_' + m.id)) { add(m); if (!first && (!user || m.authorID !== user.uid)) { sfx('msg', 0.4); if (!near) jump.hidden = false; } } }
       else if (ch.type === 'removed') document.getElementById('m_' + m.id)?.remove();
-      else { const t = document.querySelector(`#m_${m.id} .t`); if (t) t.textContent = fmt(m.createdAt); }
+      else { const t = document.querySelector(`#m_${m.id} .t`); if (t) t.textContent = hhmm(m.createdAt); }
     });
-    if (first && !snap.docs.length) ml.innerHTML = '<p class="meta">No messages yet. Say hi!</p>';
-    else if (snap.docs.length) ml.querySelector(':scope > p.meta')?.remove();
+    if (first && !snap.docs.length) ml.innerHTML = `<div class="cempty">${sprite('ghost', 56)}<p>No messages yet.<br>Say hi to the group!</p></div>`;
+    else if (snap.docs.length) ml.querySelector(':scope > .cempty')?.remove();
     first = false; if (near) ml.scrollTop = ml.scrollHeight;
   }, () => { ml.innerHTML = '<p class="err">Chat unavailable.</p>'; });
   unsubChat = () => { unsub(); io.disconnect(); clearInterval(tick); if (rec) rec.cancel(); };
@@ -1439,10 +1513,13 @@ function mountChat(box, g, readonly) {
   };
   const send = async () => {
     const t = $('#mi').value.trim(); if (!t) return;
-    try { await addDoc(collection(db, `groups/${g.id}/messages`), {text: t.slice(0, 1000), ...who(), createdAt: serverTimestamp()}); $('#mi').value = ''; sfx('click', 0.3); }
-    catch { toast('Could not send message.'); }
+    const keep = $('#mi').value; $('#mi').value = ''; grow();
+    try { await addDoc(collection(db, `groups/${g.id}/messages`), {text: t.slice(0, 1000), ...who(), createdAt: serverTimestamp()}); sfx('click', 0.3); ml.scrollTop = ml.scrollHeight; }
+    catch { $('#mi').value = keep; grow(); toast('Could not send message.'); }
   };
-  $('#ms').onclick = send; $('#mi').onkeydown = e => { if (e.key === 'Enter') send(); };
+  const grow = () => { const ta = $('#mi'); if (!ta) return; ta.style.height = 'auto'; ta.style.height = Math.min(140, ta.scrollHeight) + 'px'; };
+  $('#mi').addEventListener('input', grow);
+  $('#ms').onclick = send; $('#mi').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); } };
   $('#at').onclick = () => $('#fi').click();
   $('#fi').onchange = async e => {
     const f = e.target.files[0]; e.target.value = ''; if (!f) return;
@@ -1461,7 +1538,7 @@ function mountChat(box, g, readonly) {
     mr.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
     mr.onstop = async () => {
       stream.getTracks().forEach(t => t.stop()); clearInterval(tick); rec = null;
-      const mic = $('#mic'), r = $('#rec'); if (mic) mic.textContent = '🎤'; if (r) r.style.display = 'none';
+      const mic = $('#mic'), r = $('#rec'); if (mic) { mic.innerHTML = pxi('mic', 16); mic.classList.remove('rec'); } if (r) r.style.display = 'none';
       if (cancelled || !chunks.length) return;
       const blob = new Blob(chunks, {type: mr.mimeType || mt || 'audio/webm'});
       if (blob.size > 650 * 1024) { toast('Voice message is too long.'); return; }
@@ -1469,8 +1546,8 @@ function mountChat(box, g, readonly) {
     };
     mr.start();
     rec = {stop: () => { if (mr.state !== 'inactive') mr.stop(); }, cancel: () => { cancelled = true; rec && rec.stop(); }};
-    $('#mic').textContent = '⏹'; const r = $('#rec'); r.style.display = 'block';
-    r.innerHTML = '🔴 <span id="rt">0:00</span> · <u id="rc" style="cursor:pointer">cancel</u>';
+    $('#mic').innerHTML = pxi('stop', 14); $('#mic').classList.add('rec'); const r = $('#rec'); r.style.display = 'flex';
+    r.innerHTML = '<span class="recdot"></span> Recording <span id="rt">0:00</span> <span class="meta">· tap ■ to send</span> <u id="rc" style="margin-left:auto">cancel</u>';
     $('#rc').onclick = () => rec && rec.cancel();
     tick = setInterval(() => { const sec = Math.floor((Date.now() - t0) / 1000), rt = $('#rt');
       if (rt) rt.textContent = Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); if (sec >= 60) rec && rec.stop(); }, 500);
