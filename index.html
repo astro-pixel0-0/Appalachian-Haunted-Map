@@ -742,6 +742,22 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
   .macts{opacity:1}
 }
 @media (max-width:380px){#wx small,#wx svg{display:none}.mtools button{width:52px;height:52px}}
+
+/* live window: draggable */
+#livewin .tbar{cursor:move;user-select:none}#livewin.dragging{opacity:.92}
+#livewin .lctl .b.on{box-shadow:inset 0 -3px 0 #84977A}
+@media (max-width:700px){
+  #chatpop{inset:0;width:100%;height:100%;outline:0}
+  #chatpop.min{inset:auto 10px calc(76px + env(safe-area-inset-bottom)) auto;width:min(300px,calc(100vw - 20px));height:auto}
+}
+@media (max-width:640px){
+  #livewin{inset:auto 8px calc(76px + env(safe-area-inset-bottom)) 8px;width:auto;max-height:78dvh}
+  #livewin .lchat{height:110px;flex:none}
+  #livewin .lctl{flex-wrap:wrap}#livewin .lctl .b{flex:1 1 45%;min-height:40px}
+}
+
+/* live window needs its own background (it floats over the map) */
+#livewin{background:var(--gra)}#livewin .lbody{background:var(--gra)}#livewin .lchat{background:var(--mid)}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -1468,7 +1484,7 @@ function privacyDoc() { infoModal(sprite('lock', 16) + ' PRIVACY POLICY', `<p cl
    <li><b>Profile (optional):</b> avatar, banner, “about me”, links, profile style and who may see your details.</li>
    <li><b>What you post:</b> reports with their map location, photos, forum threads and replies, group and stream chat messages, friend lists and requests, game invites, and reports you send about other users.</li>
    <li><b>Online status:</b> when you were last active on the site, shown according to your privacy setting.</li>
-   <li><b>Location (only if you turn it on):</b> when you use “Me” (the location button), your device's location is shown to you; while it's on it is saved so that only you and the site administrator can see it, and it is deleted after 24 hours. You can also choose to share it with <b>your friends</b>; if you tick “Hide my exact location”, they see only an area of about 1 km. Turning it off removes it for everyone. When you go live, other members see only an approximate area (1–2 km off); the exact spot is visible only to the site administrator, for emergencies, and is deleted when the stream ends. Report markers are placed exactly where you put them, so don't mark your own home.</li>
+   <li><b>Location (only if you turn it on):</b> when you use “Me” (the location button), your device's location is shown to you; while it's on it is saved so that only you and the site administrator can see it, and it is deleted after 24 hours. You can also choose to share it with <b>your friends</b>; if you tick “Hide my exact location”, they see only an area of about 1 km. Turning it off removes it for everyone. When you go live, other members see only an approximate area (1–2 km off); the exact spot and the route you move along during the stream are visible only to the site administrator, for emergencies, and are deleted 24 hours after the stream ends. Report markers are placed exactly where you put them, so don't mark your own home.</li>
    <li><b>Settings on your device:</b> things like sound on/off, map options and hidden posts are kept in your browser's local storage. We don't use advertising or tracking cookies.</li></ul>
   <h4>Why we use it</h4><p>Only to run the site: show your posts and profile, let you chat and play with others, keep the community safe (moderation, bans, abuse reports) and answer your messages.</p>
   <h4>Who can see it</h4><ul>
@@ -1585,7 +1601,9 @@ function profile() {
     $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
       catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
-const links = () => legalLinks() + `<p class="meta" style="margin-top:24px">Map: USGS The National Map, © OpenStreetMap contributors. Interface sounds by Atelier Magicae. Card sounds by JDSherbert (jdsherbert.itch.io). Typing sound: original. Community reports are unverified. <a href="#" id="tm" onclick="return false">Rules</a></p>`;
+const BUILD = '2026-11-16 · build 5';
+console.log('Appalachia Anomalies', BUILD);
+const links = () => legalLinks() + `<p class="meta" style="margin-top:24px">Version ${BUILD}. Map: USGS The National Map, © OpenStreetMap contributors. Interface sounds by Atelier Magicae. Card sounds by JDSherbert (jdsherbert.itch.io). Typing sound: original. Community reports are unverified. <a href="#" id="tm" onclick="return false">Rules</a></p>`;
 document.addEventListener('click', e => { if (e.target.id === 'tm') terms(false); });
 
 
@@ -2302,22 +2320,38 @@ const liveLayer = L.layerGroup().addTo(map);
 let liveUnsub = null;
 function liveWatch() {
   if (liveUnsub || !user || !user.emailVerified) return;
-  liveUnsub = onSnapshot(query(collection(db, 'streams'), where('live', '==', true)), snap => {
+  liveUnsub = onSnapshot(query(collection(db, 'streams'), where('live', '==', true)), snap => { liveSnap = snap; liveRender(); }, () => {});
+}
+let liveSnap = null;
+function liveRender() {
+  const snap = liveSnap; if (!snap || !user) return;
     liveLayer.clearLayers();
     snap.forEach(d => { const s = d.data(), hb = s.hb?.toDate ? s.hb.toDate().getTime() : Date.now(); if (Date.now() - hb > LIVE_TTL) return;
       if (blocked.has(s.owner) || (s.aud === 'friends' && s.owner !== user.uid && !myFriends.has(s.owner) && !isAdmin())) return;
       L.marker([s.lat, s.lng], {icon: L.divIcon({className: '', html: `<div class="livemk"><span>LIVE</span></div>`, iconSize: [46, 22]}), zIndexOffset: 900, title: s.title})
         .bindTooltip(`${esc(s.title)} — ${esc(s.name)}<br><small>approximate area${s.aud === 'friends' ? ' · friends only' : ''}</small>`).on('click', () => liveOpen(d.id)).addTo(liveLayer);
       if (isAdmin()) getDoc(doc(db, 'exact', d.id)).then(e => { if (!e.exists()) return; const v = e.data();
+        if (Array.isArray(v.path) && v.path.length > 1) L.polyline(v.path.map(p => [p.lat, p.lng]), {color: '#ff2a2a', weight: 4, opacity: .85}).addTo(liveLayer);
         L.circleMarker([v.lat, v.lng], {radius: 6, color: '#ff2a2a', weight: 2, fillOpacity: .6}).bindTooltip(`${sprite('shield', 12)} exact spot (admin) — ${esc(s.name)}`).addTo(liveLayer); }).catch(() => {}); });
-  }, () => {});
 }
-function liveUnwatch() { if (liveUnsub) { liveUnsub(); liveUnsub = null; } liveLayer.clearLayers(); }
+setInterval(() => { if (liveSnap && !document.hidden) liveRender(); }, 30000);
+function liveUnwatch() { if (liveUnsub) { liveUnsub(); liveUnsub = null; } liveSnap = null; liveLayer.clearLayers(); }
 const waitIce = pc => new Promise(res => { if (pc.iceGatheringState === 'complete') return res(); const t = setTimeout(res, 3500); pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete') { clearTimeout(t); res(); } }); });
 let LIVE = null; // {sid, role, stream, pcs, unsubs, hbT, pc}
 function liveWin(html) {
   let w = $('#livewin'); if (!w) { w = document.createElement('div'); w.id = 'livewin'; w.className = 'win'; document.body.appendChild(w); }
-  w.innerHTML = html; w.classList.add('open'); return w;
+  w.innerHTML = html; w.classList.add('open'); Object.assign(w.style, {left: '', top: '', right: '', bottom: '', width: ''});
+  const h = w.querySelector('.tbar'); if (h) dragWin(h, w); return w;
+}
+function dragWin(h, w) {
+  let st = null;
+  h.style.touchAction = 'none';
+  h.addEventListener('pointerdown', e => { if (e.target.closest('button,input,a')) return;
+    const r = w.getBoundingClientRect(); st = {dx: e.clientX - r.left, dy: e.clientY - r.top}; w.style.width = r.width + 'px'; h.setPointerCapture(e.pointerId); w.classList.add('dragging'); });
+  h.addEventListener('pointermove', e => { if (!st) return;
+    const x = Math.max(0, Math.min(innerWidth - w.offsetWidth, e.clientX - st.dx)), y = Math.max(0, Math.min(innerHeight - 48, e.clientY - st.dy));
+    Object.assign(w.style, {left: x + 'px', top: y + 'px', right: 'auto', bottom: 'auto'}); });
+  const end = () => { st = null; w.classList.remove('dragging'); }; h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
 }
 function liveCloseUI() { const w = $('#livewin'); if (w) { w.classList.remove('open'); w.innerHTML = ''; } }
 function liveChat(sid, box) {
@@ -2332,10 +2366,11 @@ function liveChat(sid, box) {
     try { await addDoc(collection(db, `streams/${sid}/chat`), {uid: user.uid, name: myName(), text, at: serverTimestamp()}); } catch { toast('Could not send the message.'); } };
   return un;
 }
-const liveShell = (title, sub, role) => `<div class="tbar blood"><span class="lrec">● LIVE</span><span class="ttl">${esc(title)}</span><button class="x raised" id="lvx" aria-label="Close">✕</button></div>
+const liveShell = (title, sub, role) => `<div class="tbar blood" title="Drag to move"><span class="lrec">● LIVE</span><span class="ttl">${esc(title)}</span><button class="x raised" id="lvx" aria-label="Close">✕</button></div>
   <div class="lbody"><div class="lvid sunken"><video id="lvv" playsinline autoplay ${role === 'host' ? 'muted' : ''}></video><div class="lstat" id="lvs">${esc(sub)}</div>
   <div class="lbadge" id="lvn">${sprite('eye', 14)} 0</div></div>
-  ${role === 'host' ? '<div class="row lctl"><button class="b s" id="lvmic">' + sprite('mic', 16) + ' Mic on</button><button class="b s" id="lvflip">' + sprite('flip', 16) + ' Camera</button><button class="b danger" id="lvend">■ End stream</button></div>' : ''}
+  ${role === 'host' ? '<div class="row lctl"><button class="b s" id="lvmic">' + sprite('mic', 16) + ' Mic on</button><button class="b s on" id="lvns" title="Noise suppression">' + sprite('mic', 16) + ' Noise: on</button><button class="b s" id="lvflip">' + sprite('flip', 16) + ' Camera</button><button class="b danger" id="lvend">■ End stream</button></div>' : ''}
+  ${role === 'viewer' && isAdmin() ? '<div class="row lctl"><button class="b danger" id="lvkill">' + sprite('noentry', 16) + ' End this stream (admin)</button></div>' : ''}
   <div class="lchatbox"><div class="lchat sunken"></div><form class="lform"><input class="sunken" maxlength="300" placeholder="Write in the stream chat…" aria-label="Chat message"><button class="b">Send</button></form></div></div>`;
 function goLiveSheet() {
   if (!canCreate('live streams')) return;
@@ -2346,7 +2381,7 @@ function goLiveSheet() {
     <label>Place on the map<select class="sunken" id="lvp"><option value="me">My current location</option><option value="map">Center of the map view</option></select></label>
     <label>Camera<select class="sunken" id="lvc"><option value="environment">Back camera</option><option value="user">Front camera</option></select></label>
     <label>Who can watch<select class="sunken" id="lva"><option value="friends">Only my friends</option><option value="all">Everyone signed in</option></select></label>
-    <p class="meta">${sprite('shield', 14)} For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot. Only the site administrator can see the exact spot (for emergencies).</p>
+    <p class="meta">${sprite('shield', 14)} For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot. Only the site administrator can see the exact spot and the route you move along during the stream (for emergencies); they are deleted 24 hours after the stream ends.</p>
     <div class="row"><button class="b" id="lvgo">Start streaming</button><button class="b s" id="cx">Cancel</button></div>`);
   $('#cx').onclick = closeSheet;
   $('#lvgo').onclick = async () => {
@@ -2354,18 +2389,32 @@ function goLiveSheet() {
     $('#lvgo').disabled = true;
     let ll = map.getCenter(); ll = [ll.lat, ll.lng];
     if (place === 'me') { try { const p = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: true, timeout: 15000})); ll = [p.coords.latitude, p.coords.longitude]; } catch { toast('Could not get your location — using the center of the map instead.'); } }
-    let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: true}); }
+    let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: {noiseSuppression: true, echoCancellation: true, autoGainControl: true}}); }
     catch { toast('Camera or microphone access was denied.'); return; }
     if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the red dashed border on the map).'); return; }
     const exact = ll; for (let k = 0; k < 8; k++) { const j = jitter(ll[0], ll[1], 1000, 2000); if (canPlaceAt(j[0], j[1])) { ll = j; break; } }
-    closeSheet(); liveHost(title, ll, stream, facing, aud, exact);
+    closeSheet(); liveHost(title, ll, stream, facing, aud, exact, place === 'me');
   };
 }
-async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null) {
+async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null, track = false) {
   let ref; try { ref = await addDoc(collection(db, 'streams'), {owner: user.uid, name: myName(), title, lat: ll[0], lng: ll[1], aud, live: true, startedAt: serverTimestamp(), hb: serverTimestamp()}); }
   catch { stream.getTracks().forEach(t => t.stop()); toast('Could not start the stream (check the database rules).'); return; }
-  if (exact) setDoc(doc(db, 'exact', ref.id), {kind: 'stream', owner: user.uid, lat: exact[0], lng: exact[1]}).catch(() => {});
-  const sid = ref.id; LIVE = {sid, role: 'host', stream, pcs: new Map(), unsubs: [], facing};
+  const sid = ref.id; LIVE = {sid, role: 'host', stream, pcs: new Map(), unsubs: [], facing, ns: true, path: exact ? [{lat: exact[0], lng: exact[1], t: Date.now()}] : []};
+  if (exact) setDoc(doc(db, 'exact', sid), {kind: 'stream', owner: user.uid, lat: exact[0], lng: exact[1], path: LIVE.path}).catch(() => {});
+  // route for the admin: where the streamer moves while live (exact, admin-only)
+  if (exact && track && navigator.geolocation) {
+    let lastW = Date.now();
+    LIVE.geo = navigator.geolocation.watchPosition(pos => { if (!LIVE || LIVE.sid !== sid) return;
+      const pt = {lat: +pos.coords.latitude.toFixed(6), lng: +pos.coords.longitude.toFixed(6), t: Date.now()}, prev = LIVE.path[LIVE.path.length - 1];
+      if (prev && map.distance([prev.lat, prev.lng], [pt.lat, pt.lng]) < 25 && pt.t - prev.t < 120000) return;
+      LIVE.path.push(pt); if (LIVE.path.length > 500) LIVE.path.splice(1, 1);
+      if (Date.now() - lastW < 20000) return; lastW = Date.now();
+      updateDoc(doc(db, 'exact', sid), {lat: pt.lat, lng: pt.lng, path: LIVE.path}).catch(() => {});
+    }, () => {}, {enableHighAccuracy: true, maximumAge: 10000, timeout: 30000});
+  }
+  // the admin can end the stream for good
+  LIVE.unsubs.push(onSnapshot(doc(db, 'streams', sid), d => { const v = d.data();
+    if (v && v.killed && LIVE && LIVE.sid === sid) { liveEnd(); sheet(`<h3>${sprite('noentry', 18)} Stream ended</h3><p>Your live stream was ended by the site administrator.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; } }, () => {}));
   const w = liveWin(liveShell(title, 'You are live', 'host'));
   const v = $('#lvv'); v.srcObject = stream;
   LIVE.unsubs.push(liveChat(sid, w));
@@ -2373,6 +2422,7 @@ async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null
   // answer every viewer that asks to watch
   LIVE.unsubs.push(onSnapshot(collection(db, `streams/${sid}/peers`), snap => {
     $('#lvn') && ($('#lvn').innerHTML = `${sprite('eye', 14)} ${snap.size}`);
+    if (LIVE && LIVE.viewers !== snap.size) { LIVE.viewers = snap.size; updateDoc(doc(db, 'streams', sid), {viewers: snap.size}).catch(() => {}); }
     snap.docChanges().forEach(async ch => {
       const vid = ch.doc.id, d = ch.doc.data();
       if (ch.type === 'removed') { LIVE?.pcs.get(vid)?.close(); LIVE?.pcs.delete(vid); return; }
@@ -2387,6 +2437,13 @@ async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null
   }, () => {}));
   $('#lvx').onclick = $('#lvend').onclick = () => liveEnd();
   $('#lvmic').onclick = () => { const a = LIVE.stream.getAudioTracks()[0]; if (!a) return; a.enabled = !a.enabled; $('#lvmic').innerHTML = sprite('mic', 16) + (a.enabled ? ' Mic on' : ' Mic off'); };
+  $('#lvns').onclick = async () => {
+    const a = LIVE.stream.getAudioTracks()[0]; if (!a) return; const on = !LIVE.ns;
+    try { await a.applyConstraints({noiseSuppression: on, echoCancellation: on, autoGainControl: on}); } catch {}
+    const real = a.getSettings ? a.getSettings().noiseSuppression : undefined;
+    if (real !== undefined && real !== on) { toast('This browser cannot switch noise suppression during a stream.'); return; }
+    LIVE.ns = on; $('#lvns').classList.toggle('on', on); $('#lvns').innerHTML = sprite('mic', 16) + ' Noise: ' + (on ? 'on' : 'off');
+  };
   $('#lvflip').onclick = async () => {
     const facing = LIVE.facing === 'user' ? 'environment' : 'user';
     try { const ns = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing}}); const nt = ns.getVideoTracks()[0], ot = LIVE.stream.getVideoTracks()[0];
@@ -2401,14 +2458,23 @@ async function liveEnd() {
   L0.unsubs.forEach(u => u()); clearInterval(L0.hbT);
   if (L0.role === 'host') {
     L0.pcs.forEach(pc => pc.close()); L0.stream.getTracks().forEach(t => t.stop());
+    if (L0.geo != null) navigator.geolocation.clearWatch(L0.geo);
     try { await updateDoc(doc(db, 'streams', L0.sid), {live: false, endedAt: serverTimestamp()}); } catch {}
-    deleteDoc(doc(db, 'exact', L0.sid)).catch(() => {});
+    updateDoc(doc(db, 'exact', L0.sid), {ended: true, endedAt: serverTimestamp(), ...(L0.path?.length ? {path: L0.path} : {})}).catch(() => {});
   } else {
     L0.pc?.close(); try { await deleteDoc(doc(db, `streams/${L0.sid}/peers`, user.uid)); } catch {}
   }
   liveCloseUI();
 }
 addEventListener('pagehide', () => { if (LIVE?.role === 'host') updateDoc(doc(db, 'streams', LIVE.sid), {live: false}).catch(() => {}); else if (LIVE) deleteDoc(doc(db, `streams/${LIVE.sid}/peers`, user.uid)).catch(() => {}); });
+function adminKillStream(sid, name) {
+  if (!isAdmin()) return;
+  sheet(`<h3>${sprite('noentry', 18)} End ${esc(name || 'this')}'s stream?</h3><p>The stream stops for everyone and can't be restarted. The streamer will see that it was ended by the site administrator.</p>
+    <div class="row"><button class="b danger" id="kok">End stream</button><button class="b s" id="cx">Cancel</button></div>`);
+  $('#cx').onclick = closeSheet;
+  $('#kok').onclick = async () => { try { await updateDoc(doc(db, 'streams', sid), {live: false, killed: true, endedAt: serverTimestamp()}); closeSheet(); toast('Stream ended.'); admLog('stream', '', name, sid); if (LIVE?.sid === sid) liveEnd(); if ($('#adml')) loadAdmLocs(); }
+    catch { toast('Could not end the stream (publish the latest database rules).'); } };
+}
 async function liveOpen(sid) {
   if (!canPost()) return;
   if (LIVE) { if (LIVE.sid === sid) return; await liveEnd(); }
@@ -2418,7 +2484,10 @@ async function liveOpen(sid) {
   const w = liveWin(liveShell(s.title, `Connecting to ${s.name}…`, 'viewer'));
   $('#lvx').onclick = () => liveEnd();
   LIVE.unsubs.push(liveChat(sid, w));
-  LIVE.unsubs.push(onSnapshot(doc(db, 'streams', sid), d => { if (!d.exists() || !d.data().live) { const st = $('#lvs'); if (st) { st.textContent = 'The stream has ended.'; st.classList.add('show'); } } }, () => {}));
+  LIVE.unsubs.push(onSnapshot(doc(db, 'streams', sid), d => { const v = d.data();
+    if (v && typeof v.viewers === 'number') { const n = $('#lvn'); if (n) n.innerHTML = `${sprite('eye', 14)} ${v.viewers}`; }
+    if (!d.exists() || !v.live) { const st = $('#lvs'); if (st) { st.textContent = v?.killed ? 'The stream was ended by the site administrator.' : 'The stream has ended.'; st.classList.add('show'); } } }, () => {}));
+  if ($('#lvkill')) $('#lvkill').onclick = () => adminKillStream(sid, s.name);
   const pc = new RTCPeerConnection(ICE); LIVE.pc = pc;
   pc.addTransceiver('video', {direction: 'recvonly'}); pc.addTransceiver('audio', {direction: 'recvonly'});
   const ms = new MediaStream(); pc.ontrack = e => { ms.addTrack(e.track); const v = $('#lvv'); if (v && v.srcObject !== ms) v.srcObject = ms; const st = $('#lvs'); if (st) st.textContent = ''; };
@@ -2436,7 +2505,7 @@ async function liveOpen(sid) {
 $('#locBtn').onclick = locToggle; $('#liveBtn').onclick = goLiveSheet;
 $('#admLocBtn').onclick = () => { try { localStorage.setItem('admLoc', admLocOn() ? '0' : '1'); } catch {} admLocSync(); };
 let locRestored = false;
-function liveAuthChanged() { (async () => { if (user && user.emailVerified) { try { const p = await getProfile(user.uid, true); myVis = ['all', 'friends', 'nobody'].includes(p?.vis) ? p.vis : 'all'; } catch {} } await Promise.all([syncBlocks(), syncFriends()]); heartbeat(); friendLocWatch(); if (locWatch !== null && locLast) friendLocSave(locLast.ll); })(); admLocSync(); if (user && user.emailVerified) liveWatch(); else liveUnwatch(); if (!locRestored) { locRestored = true; locRestore(); } }
+function liveAuthChanged() { (async () => { if (user && user.emailVerified) { try { const p = await getProfile(user.uid, true); myVis = ['all', 'friends', 'nobody'].includes(p?.vis) ? p.vis : 'all'; } catch {} } await Promise.all([syncBlocks(), syncFriends()]); liveRender(); heartbeat(); friendLocWatch(); if (locWatch !== null && locLast) friendLocSave(locLast.ll); })(); admLocSync(); if (user && user.emailVerified) liveWatch(); else liveUnwatch(); if (!locRestored) { locRestored = true; locRestore(); } }
 
 // ---------- HAUNT card game: rules engine (pure, JSON state) ----------
 const HC = {r: ['Blood', '#b84a55'], g: ['Moss', '#7f9a6e'], b: ['Steel', '#5f86ad'], y: ['Bone', '#cdb36a']};
@@ -3782,6 +3851,15 @@ function admShow(lat, lng, label) {
   showView('mapv'); setTimeout(() => { map.invalidateSize(); map.setView([lat, lng], 16);
     L.circleMarker([lat, lng], {radius: 8, color: '#ff2a2a', weight: 3, fillOpacity: .5}).addTo(map).bindTooltip(label).openTooltip(); }, 80);
 }
+function admShowRoute(pts, name) {
+  showView('mapv'); setTimeout(() => { map.invalidateSize(); const ll = pts.map(p => [p.lat, p.lng]);
+    const g = L.layerGroup().addTo(map);
+    if (ll.length > 1) { L.polyline(ll, {color: '#10141A', weight: 8, opacity: .55}).addTo(g); L.polyline(ll, {color: '#ff2a2a', weight: 4}).addTo(g); }
+    L.circleMarker(ll[0], {radius: 7, color: '#fff', weight: 2, fillColor: '#ff2a2a', fillOpacity: 1}).bindTooltip('start').addTo(g);
+    L.circleMarker(ll[ll.length - 1], {radius: 9, color: '#ff2a2a', weight: 3, fillOpacity: .4}).bindTooltip(`${sprite('shield', 12)} ${esc(name || '')} — last position${pts[pts.length - 1].t ? ', ' + seenAgo(pts[pts.length - 1].t) : ''}`).addTo(g).openTooltip();
+    if (ll.length > 1) map.fitBounds(L.latLngBounds(ll).pad(0.3)); else map.setView(ll[0], 16);
+    setTimeout(() => map.removeLayer(g), 10 * 60000); }, 80);
+}
 let admLocTab = 'me';
 async function loadAdmLocs() {
   const box = $('#adml'); if (!box) return;
@@ -3795,6 +3873,11 @@ async function loadAdmLocs() {
     if (d.act === 'prof') openProfile(d.uid);
     if (d.act === 'show') { admLog(d.kind, d.uid, d.name, d.ref); admShow(+d.lat, +d.lng, `${sprite('shield', 12)} ${d.name} — ${d.kind === 'me' ? 'shared location' : d.kind === 'stream' ? 'stream, exact' : 'report, exact'}`); }
     if (d.act === 'del') { try { await deleteDoc(doc(db, d.col, d.id)); u.closest('.item').remove(); } catch { toast('Could not delete.'); } }
+    if (d.act === 'route') { let pts = $('#admlb')?._paths?.[d.id];
+      if (!pts) { try { const e2 = await getDoc(doc(db, 'exact', d.id)); pts = e2.exists() ? (e2.data().path || [{lat: e2.data().lat, lng: e2.data().lng}]) : null; } catch {} }
+      if (!pts || !pts.length) { toast('This route is no longer available (routes are deleted 24 hours after the stream).'); return; }
+      admLog('stream', '', d.name, d.id); admShowRoute(pts, d.name); }
+    if (d.act === 'kill') adminKillStream(d.id, d.name);
   };
   const b = $('#admlb'), H = 3600000, ago = ms => seenAgo(ms);
   const row = (o) => `<div class="item"><b>${esc(o.name)}</b> <span class="meta">${esc(o.meta)}</span><br>
@@ -3818,18 +3901,21 @@ async function loadAdmLocs() {
         const src = await getDoc(doc(db, kind === 'stream' ? 'streams' : 'sightings', d.id)).catch(() => null);
         if (!src || !src.exists()) { deleteDoc(d.ref).catch(() => {}); return; }                       // orphan: report deleted
         const sv = src.data();
-        if (kind === 'stream') { const hb = sv.hb?.toDate ? sv.hb.toDate().getTime() : 0;
-          if (!sv.live || Date.now() - hb > 24 * H) { deleteDoc(d.ref).catch(() => {}); return; }        // stream is over
-          raw.push({v, d, title: sv.title, t: hb, extra: Date.now() - hb > LIVE_TTL ? 'not responding' : 'live now'}); }
+        if (kind === 'stream') { const hb = sv.hb?.toDate ? sv.hb.toDate().getTime() : 0, en = sv.endedAt?.toDate ? sv.endedAt.toDate().getTime() : hb, on = sv.live && Date.now() - hb < LIVE_TTL;
+          if (!on && Date.now() - en > 24 * H) { deleteDoc(d.ref).catch(() => {}); return; }        // route is kept 24 h after the stream ends
+          raw.push({v, d, title: sv.title, t: on ? hb : en, live: on, extra: on ? 'live now' : (sv.killed ? 'ended by admin ' : 'ended ') + ago(en)}); }
         else raw.push({v, d, title: sv.title, t: sv.createdAt?.toDate ? sv.createdAt.toDate().getTime() : 0, extra: ''}); }));
       const nm = await names(raw.map(r => r.v.owner));
       const rows = raw.sort((a, c) => c.t - a.t).map(r => ({kind, col: 'exact', id: r.d.id, uid: r.v.owner, name: nm[r.v.owner], lat: r.v.lat, lng: r.v.lng, ref: r.d.id,
         meta: `“${(r.title || '').slice(0, 50)}” · ${r.t ? (kind === 'stream' ? 'last signal ' : 'posted ') + ago(r.t) : ''}${r.extra ? ' · ' + r.extra : ''}`}));
-      b.innerHTML = rows.length ? rows.map(row).join('') : `<p class="meta">${kind === 'stream' ? 'No live streams right now.' : 'No reports with a hidden spot.'}</p>`;
+      rows.forEach((o, i) => { const r = raw.sort((a, c) => c.t - a.t)[i]; o.path = r.v.path; o.live = r.live; });
+      b.innerHTML = rows.length ? rows.map(o => row(o).replace('</div>', `<br><u data-act="route" data-id="${esc(o.id)}" data-name="${esc(o.name)}" style="cursor:pointer;color:#ff6a6a">show route${o.path?.length > 1 ? ` (${o.path.length} points)` : ''}</u>${o.live ? ` · <u data-act="kill" data-id="${esc(o.id)}" data-name="${esc(o.name)}" style="cursor:pointer;color:#ff6a6a">end stream</u>` : ''}</div>`)).join('')
+        : `<p class="meta">No live or recent streams (routes are kept for 24 hours after a stream ends).</p>`;
+      b._paths = Object.fromEntries(rows.map(o => [o.id, o.path || [{lat: o.lat, lng: o.lng}]]));
     } else {
       const snap = await getDocs(query(collection(db, 'adminlog'), orderBy('at', 'desc'), limit(100)));
-      const K = {me: 'shared location', stream: 'stream exact spot', sighting: 'report exact spot'};
-      b.innerHTML = snap.docs.length ? snap.docs.map(d => { const v = d.data(); return `<div class="item"><span class="meta">${v.at?.toDate ? v.at.toDate().toLocaleString() : '…'}</span> — viewed <b>${esc(K[v.kind] || v.kind)}</b> of ${esc(v.name || v.target)}</div>`; }).join('')
+      const K = {me: 'shared location', stream: 'stream route / exact spot', sighting: 'report exact spot'};
+      b.innerHTML = snap.docs.length ? snap.docs.map(d => { const v = d.data(); return `<div class="item"><span class="meta">${v.at?.toDate ? v.at.toDate().toLocaleString() : '…'}</span> — viewed <b>${esc(K[v.kind] || v.kind)}</b> of ${esc(v.name || v.target)}${v.kind === 'stream' && v.ref ? ` · <u data-act="route" data-id="${esc(v.ref)}" data-name="${esc(v.name || '')}" style="cursor:pointer;color:#ff6a6a">show route</u>` : ''}</div>`; }).join('')
         : '<p class="meta">No views recorded yet.</p>';
     }
   } catch { b.innerHTML = '<p class="err">Could not load (publish the latest database rules).</p>'; }
