@@ -1274,7 +1274,7 @@ function pickHint() {
     $('#pkMe').disabled = true; $('#pkMe').lastChild.textContent = ' Locating…';
     getPos().then(pos => { picking = false; hint(''); const ll = {lat: pos.coords.latitude, lng: pos.coords.longitude};
       map.setView([ll.lat, ll.lng], Math.max(map.getZoom(), 13)); addSheet(ll); },
-      e => { const b = $('#pkMe'); if (b) { b.disabled = false; b.lastChild.textContent = ' Use my location'; } toast(geoErr(e) + ' You can tap the map instead.'); }); };
+      async e => { await geoCheck(); const b = $('#pkMe'); if (b) { b.disabled = false; b.lastChild.textContent = ' Use my location'; } toast(geoErr(e) + ' You can tap the map instead.'); }); };
 }
 map.on('click', e => { if (picking) { picking = false; hint(''); addSheet(e.latlng); } });
 map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
@@ -1612,7 +1612,7 @@ function profile() {
     $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
       catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
-const BUILD = '2026-11-16 · build 11';
+const BUILD = '2026-11-16 · build 12';
 // iPhone Safari scrolls the whole page when the keyboard opens and often leaves it shifted afterwards: snap it back
 (() => { const back = () => { const a = document.activeElement; if (!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { if (scrollX || scrollY) scrollTo(0, 0); document.documentElement.scrollTop = document.body.scrollTop = 0; } };
   document.addEventListener('focusout', () => setTimeout(back, 80));
@@ -2400,10 +2400,22 @@ const getPos = () => new Promise((res, rej) => {
     navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: false, timeout: 20000, maximumAge: 600000}); },
     {enableHighAccuracy: true, timeout: 8000, maximumAge: 60000});
 });
-const geoErr = e => e?.code === 1 ? 'Location access is blocked for this site. Click the lock icon next to the address bar → Site settings → Location → Allow, then reload the page.'
-  : e?.code === 2 ? 'Your device could not determine its location. On a computer this often happens without Wi-Fi or with location services turned off in the system settings (Windows: Settings → Privacy → Location).'
-  : e?.code === 3 ? 'Finding your location took too long. Try again outdoors or with Wi-Fi turned on.'
-  : 'Location is not supported in this browser.';
+// explain a location error; "blocked" can mean the site permission OR the operating system's location switch
+let geoPerm = 'unknown';
+const geoCheck = async () => { try { geoPerm = (await navigator.permissions.query({name: 'geolocation'})).state; } catch { geoPerm = 'unknown'; } };
+const OS_HELP = /iPhone|iPad/.test(navigator.userAgent) ? 'iPhone: Settings → Privacy & Security → Location Services → turn on, then Safari Websites → “While Using”.'
+  : /Android/.test(navigator.userAgent) ? 'Android: Settings → Location → turn on, and allow location for your browser app.'
+  : /Mac/.test(navigator.userAgent) ? 'Mac: System Settings → Privacy & Security → Location Services → turn on for your browser.'
+  : 'Windows: Settings → Privacy & security → Location → turn on “Location services” and “Let desktop apps access your location”.';
+const geoErr = e => {
+  const tech = e?.message ? ` (${e.message})` : '';
+  if (e?.code === 1) return geoPerm === 'granted'
+    ? `The site is allowed, but your device's location service is switched off. ${OS_HELP} Then reload the page.${tech}`
+    : `Location access is blocked. Click the lock icon next to the address bar → Site settings → Location → Allow. If it is already allowed, check the system switch — ${OS_HELP}${tech}`;
+  if (e?.code === 2) return `Your device could not determine its location. ${OS_HELP} On a computer, Wi-Fi must be on.${tech}`;
+  if (e?.code === 3) return `Finding your location took too long. Try again outdoors or with Wi-Fi turned on.${tech}`;
+  return 'Location is not supported in this browser.';
+};
 function goLiveSheet() {
   if (!canCreate('live streams')) return;
   if (LIVE) { toast('You are already in a stream.'); return; }
@@ -2420,7 +2432,7 @@ function goLiveSheet() {
     $('#lvgo').disabled = true; $('#lvgo').textContent = 'Getting your location…';
     let ll, track = true;
     try { const p = await getPos(); ll = [p.coords.latitude, p.coords.longitude]; }
-    catch (e) {
+    catch (e) { await geoCheck();
       if ($('#lvgo')) { $('#lvgo').disabled = false; $('#lvgo').textContent = 'Start streaming'; }
       const box = $('#lverr'); if (box) box.innerHTML = `<p class="err">${sprite('warn', 12)} ${esc(geoErr(e))}</p>${isAdmin() ? '<button class="b s" id="lvctr">Admin test: use the center of the map</button>' : ''}`;
       if ($('#lvctr')) $('#lvctr').onclick = () => { $('#lverr').dataset.ctr = '1'; $('#lvgo').click(); };
