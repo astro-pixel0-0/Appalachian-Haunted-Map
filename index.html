@@ -599,6 +599,12 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
 .qchat{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 10px;background:#84977A;color:#10141A;font-size:12px;font-weight:600;border:1px solid #0a0d11;box-shadow:inset 1px 1px 0 #b6c6a8;cursor:var(--cur-hot)}
 .qchat:hover{background:#9db08f}
 .cpbody .mfoot .t{font:11px 'IBM Plex Sans',sans-serif}
+.cpick{position:relative;margin:6px 0}.cpcur{width:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;background:#10141A;color:var(--ink);text-align:left;font:15px 'IBM Plex Sans',sans-serif}
+.cpcur span{flex:1}.cpcur i{font-style:normal;color:var(--mut)}.cpcur:focus-visible{outline:2px dashed #AAB8C5;outline-offset:2px}
+.cplist{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;max-height:min(360px,55vh);overflow:auto;padding:4px;background:#151a21;box-shadow:inset 0 0 0 1px #3a4552,6px 8px 0 rgba(0,0,0,.45)}
+.cpgrp{font:12px 'Silkscreen',monospace;letter-spacing:1px;color:#84977A;padding:8px 8px 4px}
+.cpopt{width:100%;display:flex;align-items:center;gap:10px;padding:6px 10px;background:transparent;border:0;color:var(--ink);text-align:left;font:14px 'IBM Plex Sans',sans-serif}
+.cpopt:hover{background:#232A33}.cpopt.on{background:#2f3a2c;box-shadow:inset 3px 0 0 #84977A}.cpopt svg,.cpcur svg{flex:none}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -729,9 +735,34 @@ const CATS = {cryptid:['🐾','Cryptid','#8d6e63'],ufo:['🛸','UFO / Lights','#
 const opt = ([k, v]) => `<option value="${k}">${v[0]} ${v[1]}</option>`;
 const catOptions = () => `<optgroup label="Mysteries">${Object.entries(CATS).filter(([, v]) => !v[3]).map(opt).join('')}</optgroup><optgroup label="Abandoned places">${Object.entries(CATS).filter(([, v]) => v[3]).map(opt).join('')}</optgroup>`;
 const isAb = k => !!(CATS[k] && CATS[k][3]);
+const catPicker = (val = 'cryptid') => {
+  const row = ([k, v]) => `<button type="button" class="cpopt${k === val ? ' on' : ''}" data-k="${k}" role="option" aria-selected="${k === val}">${catIco(k, 20)}<span>${esc(v[1])}</span></button>`;
+  const E = Object.entries(CATS);
+  return `<input type="hidden" id="cat" value="${val}"><div class="cpick"><button type="button" class="cpcur sunken" id="catBtn" aria-haspopup="listbox" aria-expanded="false">${catIco(val, 22)}<span>${esc(CATS[val][1])}</span><i>▾</i></button>
+    <div class="cplist win" id="catList" role="listbox" hidden><div class="cpgrp">Mysteries</div>${E.filter(([, v]) => !v[3]).map(row).join('')}<div class="cpgrp">Abandoned places</div>${E.filter(([, v]) => v[3]).map(row).join('')}</div></div>`;
+};
+document.addEventListener('click', e => {
+  const btn = e.target.closest('#catBtn'), opt = e.target.closest('.cpopt'), list = $('#catList');
+  if (!list) return;
+  if (btn) { list.hidden = !list.hidden; btn.setAttribute('aria-expanded', !list.hidden); sfx('select', 0.2); return; }
+  if (opt) { const k = opt.dataset.k; $('#cat').value = k; $('#catBtn').innerHTML = `${catIco(k, 22)}<span>${esc(CATS[k][1])}</span><i>▾</i>`;
+    list.querySelectorAll('.cpopt').forEach(o => { o.classList.toggle('on', o === opt); o.setAttribute('aria-selected', o === opt); });
+    list.hidden = true; $('#catBtn').setAttribute('aria-expanded', false); $('#cat').dispatchEvent(new Event('change')); return; }
+  if (!e.target.closest('.cpick')) list.hidden = true;
+});
 // ---------- pixel sprites (12x12) ----------
 const SPR_C = {O:'#10141A',F:'#E4EAF0',S:'#8798AA',B:'#C0505B',G:'#84977A',K:'#232A33',Y:'#d9c27a'};
 const SPR = {
+  moon:['....OOOO....','..OOYYYYO...','.OYYYYYOO...','.OYYYYO.....','OYYYYO......','OYYYYO......','OYYYYO......','OYYYYYO.....','.OYYYYYOOO..','.OOYYYYYYYO.','..OOYYYYOO..','....OOOO....'],
+  pin:['...OOOOOO...','..OBBBBBBO..','.OBBFFBBBBO.','.OBFFBBBBBO.','.OBBBBBBBBO.','.OBBBBBBBBO.','..OBBBBBBO..','...OBBBBO...','....OBBO....','.....OO.....','....OKKO....','.....OO.....'],
+  hosp:['.OOOOOOOOOO.','.OSSSSSSSSO.','.OSSSBBSSSO.','.OSSSBBSSSO.','.OSBBBBBBSO.','.OSBBBBBBSO.','.OSSSBBSSSO.','.OSSSBBSSSO.','.OSKKSSKKSO.','.OSKKSSKKSO.','.OSSSOOSSSO.','.OOOOOOOOOO.'],
+  school:['.....OO.....','....OBBO....','...OBBBBO...','..OOOOOOOO..','..OSSOOSSO..','..OSOYYOSO..','.OOSSOOSSOO.','.OSKSSSSKSO.','.OSKSSSSKSO.','.OSSSOOSSSO.','.OSSSOKOSSO.','.OOOOOOOOOO.'],
+  factory:['..SS........','.S..SS......','..OO........','..OKO.......','..OKO.O...O.','..OKOOSO.OSO','.OOOOSSOOSSO','.OSSSSSSSSSO','.OSKSKSKSKSO','.OSKSKSKSKSO','.OSSSSSSSSSO','.OOOOOOOOOOO'],
+  pick:['............','...OOOOOO...','..OSSSSSSO..','.OSO.OO.OSO.','.OO.OYO..OO.','....OYO.....','...OYO......','...OYO......','..OYO.......','..OYO.......','.OYO........','.OO.........'],
+  church:['.....OO.....','....OFFO....','...OFFFFO...','....OFFO....','....OSSO....','...OSSSSO...','..OSSSSSSO..','.OOOOOOOOOO.','.OSSSOOSSSO.','.OSSOKKOSSO.','.OSSOKKOSSO.','.OOOOOOOOOO.'],
+  train:['............','.OOOO.......','.OKKO..OO...','.OKKOOOSSO..','.OSSSSSSSSO.','.OSSSSSSSSOO','.OBBBBBBBBBO','.OOOOOOOOOOO','..OKO..OKO..','..OOO..OOO..','OOOOOOOOOOOO','............'],
+  town:['............','..OO........','.OSSO..OO...','OSSSSOOSSO..','OOOOOOSSSSO.','.OKKOOOOOOOO','.OKBO.OKKKO.','.OKKO.OKBKO.','.OKKO.OKKKO.','.OOOO.OOOOO.','OGGGGGGGGGGO','OOOOOOOOOOOO'],
+  barrier:['............','.OO......OO.','.OSO....OSO.','OOOOOOOOOOOO','OYYKKYYKKYYO','OYKKYYKKYYKO','OOOOOOOOOOOO','.OSO....OSO.','OOOOOOOOOOOO','OKKYYKKYYKKO','OOOOOOOOOOOO','.OSO....OSO.'],
   ghost:['....OOOO....','...OFFFFO...','..OFFFFFFO..','.OFFFFFFFFO.','.OFOOFFOOFO.','.OFOOFFOOFO.','.OFFFFFFFFO.','.OFFFOOFFFO.','.OFFFFFFFFO.','.OFFFFFFFFO.','.OFOFFOFFOO.','.OO.OO.OO...'],
   eye:['............','....OOOO....','..OOFFFFOO..','.OFFFOOFFFO.','OFFFOBBOFFFO','OFFOBOOBOFFO','OFFOBOOBOFFO','OFFFOBBOFFFO','.OFFFOOFFFO.','..OOFFFFOO..','....OOOO....','............'],
   shadow:['....OOOO....','...OKKKKO...','...OKBKBO...','...OKKKKO...','....OKKO....','..OOKKKKOO..','.OKKKKKKKKO.','.OKOKKKKOKO.','.OKOKKKKOKO.','..O.OKKO.O..','....OKKO....','....OOOO....'],
@@ -750,7 +781,8 @@ const sprite = (name, size = 24) => {
   }
   return `<svg class="spr" viewBox="0 0 12 12" width="${size}" height="${size}" shape-rendering="crispEdges" aria-hidden="true">${sprCache[key]}</svg>`;
 };
-const sprOf = k => isAb(k) ? 'house' : ({cryptid: 'paw', ufo: 'ufo', paranormal: 'eye', haunted: 'ghost', strange: 'shadow'}[k] || 'mark');
+const sprOf = k => ({cryptid: 'paw', ufo: 'ufo', paranormal: 'eye', haunted: 'moon', strange: 'mark', other: 'pin', ab_house: 'house', ab_hospital: 'hosp', ab_school: 'school', ab_factory: 'factory',
+  ab_mine: 'pick', ab_church: 'church', ab_rail: 'train', ab_town: 'town', ab_other: 'barrier'}[k] || 'mark');
 const catIco = (k, size) => sprite(sprOf(k), size);
 
 const ls = (k, v) => v === undefined ? new Set(JSON.parse(localStorage.getItem(k) || '[]')) : localStorage.setItem(k, JSON.stringify([...v]));
@@ -1109,7 +1141,7 @@ function resize(file) {
 function addSheet(ll) {
   if (!canPlaceAt(ll.lat, ll.lng)) { toast('Reports can only be placed in the Appalachian states (inside the red dashed border on the map).'); return; }
   sheet(`<h3>New report</h3>
-   <select id="cat">${catOptions()}</select><p class="meta" id="warn" style="display:none">⚠️ Abandoned places can be dangerous and are often private property. Never trespass, and don’t post addresses of occupied homes.</p>
+   ${catPicker()}<p class="meta" id="warn" style="display:none">⚠️ Abandoned places can be dangerous and are often private property. Never trespass, and don’t post addresses of occupied homes.</p>
    <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
    <input id="f" type="file" accept="image/*"><div id="pv"></div>
    <p class="meta">${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</p><p class="err" id="e"></p>
