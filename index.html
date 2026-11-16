@@ -613,6 +613,7 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
 #srules .sr-body{overflow:auto;line-height:1.5}#srules ol{padding-left:20px;margin:4px 0}#srules li{margin:6px 0}
 .rlink{color:#8fd3ff;text-decoration:underline;cursor:pointer;font-weight:bold}
 #srules h4{margin:14px 0 4px;letter-spacing:.5px}#srules ul{padding-left:18px;margin:4px 0}#srules p{margin:6px 0}#srules a{color:#8fd3ff}.legal a{color:#8fd3ff;text-decoration:underline}
+.admtabs{flex-wrap:wrap;gap:6px}.admtabs .b{width:auto;margin:0;padding:4px 10px}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -1153,7 +1154,7 @@ function addSheet(ll) {
    <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
    <input id="f" type="file" accept="image/*"><div id="pv"></div>
    <p class="meta">${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</p>
-   <label class="ck"><input type="checkbox" id="fuzz"> 🛡️ Hide the exact spot (moves the marker ~300–600 m) — use it if this is near your home. Only the moderator sees the exact spot.</label><p class="err" id="e"></p>
+   <label class="ck"><input type="checkbox" id="fuzz"> 🛡️ Hide the exact spot (moves the marker ~300–600 m) — use it if this is near your home. Only the site administrator sees the exact spot.</label><p class="err" id="e"></p>
    <button class="b" id="go">Post</button><button class="b s" id="cx">Cancel</button>`);
   let photo = null;
   $('#cat').onchange = () => { $('#warn').style.display = isAb($('#cat').value) ? 'block' : 'none'; };
@@ -1231,7 +1232,7 @@ async function showSighting(s) {
   $('#dir').onclick = () => window.open(`https://www.google.com/maps/dir/?api=1&destination=${(+s.lat).toFixed(6)},${(+s.lon).toFixed(6)}`, '_blank', 'noopener');
   if (isAdmin()) getDoc(doc(db, 'exact', s.id)).then(e => { if (!e.exists() || !$('#exa')) return; const v = e.data();
     $('#exa').innerHTML = `<p class="meta" style="color:#ff6a6a">🛡️ ADMIN · exact spot: <u style="cursor:pointer" id="exgo">${v.lat.toFixed(5)}, ${v.lng.toFixed(5)}</u></p>`;
-    $('#exgo').onclick = () => { map.setView([v.lat, v.lng], 16); L.circleMarker([v.lat, v.lng], {radius: 7, color: '#ff2a2a'}).addTo(map).bindTooltip('exact spot (admin)').openTooltip(); }; }).catch(() => {});
+    $('#exgo').onclick = () => { admLog('sighting', v.owner, s.authorName, s.id); map.setView([v.lat, v.lng], 16); L.circleMarker([v.lat, v.lng], {radius: 7, color: '#ff2a2a'}).addTo(map).bindTooltip('exact spot (admin)').openTooltip(); }; }).catch(() => {});
   if (mine) $('#del').onclick = async () => { deleteDoc(doc(db, 'exact', s.id)).catch(() => {}); await deleteDoc(doc(db, 'sightings', s.id)); if (s.hasPhoto) deleteDoc(doc(db, 'photos', s.id)).catch(() => {}); closePanel(); loadSightings(); };
   else { $('#rep').onclick = () => { closePanel(); report('sighting', s.id); loadSightings(); }; $('#blk').onclick = () => { block(s.authorID); closePanel(); loadSightings(); }; }
   getWx(+s.lat, +s.lon).then(w => { const o = $('#owx'); if (o && selId === s.id) o.textContent = w ? `${w.t}°F · ${w.d}` : '—'; });
@@ -1265,7 +1266,7 @@ function siteRules() { infoModal('📜 COMMUNITY RULES', `<ol>
     <li><b>Live streams.</b> Don't film people who didn't agree to it, and don't stream anything that breaks these rules.</li>
     <li><b>See something wrong? Report it.</b> If someone breaks these rules — or you just feel that something is off, even if you're not sure — send a report with the <b>⚑ Report</b> button on the post, profile or message, and block them if you need to. You won't get in trouble for a report made in good faith. The moderator reviews every report and can hide posts or ban accounts for a while or forever.</li>
    </ol>
-   <p class="meta">Exact locations of live streams and hidden-spot reports are visible only to the moderator, for emergencies. You must be 13 or older to use the site.</p>`); }
+   <p class="meta">Exact locations of live streams and hidden-spot reports are visible only to the site administrator, for emergencies. You must be 13 or older to use the site.</p>`); }
 function privacyDoc() { infoModal('🔒 PRIVACY POLICY', `<p class="meta">Last updated: ${LEGAL_DATE}</p>
   <p>Appalachia Anomalies is a free, non-commercial hobby project run by an independent developer (“we”). This policy explains what we collect, why, who can see it and how to delete it. <b>We don't sell your data, show ads or use tracking/analytics.</b></p>
   <h4>What we collect</h4><ul>
@@ -1273,12 +1274,12 @@ function privacyDoc() { infoModal('🔒 PRIVACY POLICY', `<p class="meta">Last u
    <li><b>Profile (optional):</b> avatar, banner, “about me”, links, profile style and who may see your details.</li>
    <li><b>What you post:</b> reports with their map location, photos, forum threads and replies, group and stream chat messages, friend lists and requests, game invites, and reports you send about other users.</li>
    <li><b>Online status:</b> when you were last active on the site, shown according to your privacy setting.</li>
-   <li><b>Location (only if you turn it on):</b> when you use “📍 Me”, your device's location is shown to you; while it's on it is saved so that only you and the moderator can see it, and it is deleted after 24 hours. When you go live, other members see only an approximate area (1–2 km off); the exact spot is visible only to the moderator, for emergencies, and is deleted when the stream ends. If you tick “Hide the exact spot” on a report, other members see a point moved 300–600 m; the exact spot is visible only to the moderator.</li>
+   <li><b>Location (only if you turn it on):</b> when you use “📍 Me”, your device's location is shown to you; while it's on it is saved so that only you and the site administrator can see it, and it is deleted after 24 hours. When you go live, other members see only an approximate area (1–2 km off); the exact spot is visible only to the site administrator, for emergencies, and is deleted when the stream ends. If you tick “Hide the exact spot” on a report, other members see a point moved 300–600 m; the exact spot is visible only to the site administrator.</li>
    <li><b>Settings on your device:</b> things like sound on/off, map options and hidden posts are kept in your browser's local storage. We don't use advertising or tracking cookies.</li></ul>
   <h4>Why we use it</h4><p>Only to run the site: show your posts and profile, let you chat and play with others, keep the community safe (moderation, bans, abuse reports) and answer your messages.</p>
   <h4>Who can see it</h4><ul>
    <li><b>Other members</b> see what you publish (reports, posts, messages in groups you're in) and your profile according to your privacy setting. People you've blocked can't see your online status, message you through requests and invites, or watch your streams.</li>
-   <li><b>The moderator</b> can see account emails, reports, ban history and the exact locations described above, and uses them only for safety and moderation.</li>
+   <li><b>The site administrator</b> (not moderators) can see account emails, reports, ban history and the exact locations described above, and uses them only for safety and moderation. Every time the administrator opens someone's exact location it is recorded in a log that can't be edited from the site.</li>
    <li><b>Live video</b> travels directly between devices (WebRTC) and is not recorded by us. As with any video call, people in the stream may be able to see your IP address.</li>
    <li><b>Services that make the site work:</b> Google Firebase (accounts and database; data is stored on Google's servers), GitHub Pages (hosting), map tiles from USGS The National Map and OpenStreetMap, place search by OpenStreetMap Nominatim, weather by Open-Meteo (the report's coordinates are sent), Google STUN servers (to connect streams), cdnjs and Google Fonts (code and fonts), and Web3Forms if you send feedback. These services receive your IP address and technical request data as part of normal web traffic, under their own privacy policies.</li></ul>
   <h4>How long we keep it</h4><p>We keep your data while your account exists. Shared live locations are removed after 24 hours, exact stream locations when the stream ends. When you delete your account your profile disappears immediately and you have 48 hours to restore it; after that the deletion is final and your remaining data is removed. If anything is left over, email us and we'll remove it.</p>
@@ -1369,13 +1370,13 @@ function profile() {
       <div class="kv"><span>Status</span><b>${user.emailVerified ? '<span class="ok">✔ Verified</span>' : '<span class="err">Not verified</span>'}</b></div><div class="kv"><span>Member since</span><b>${esc(since)}</b></div>
       ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<div class="row"><button class="b s" id="so">Sign out</button><button class="b s" id="bl">🚫 Blocked users</button><button class="b d" id="da">Delete account</button></div>`)}
     ${pPanel('CONTACT', discordBtn() + '<button class="b s" id="fb-open">✉️ Send feedback</button>')}
-    ${isAdmin() ? pPanel('ADMIN · REPORTS', '<div id="adm"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"') + pPanel('ADMIN · BANNED USERS', '<div id="admb"><p class="meta">Loading…</p></div>') + pPanel('ADMIN · ACCOUNT DELETIONS', '<div id="admd"><p class="meta">Loading…</p></div>') : ''}
+    ${isAdmin() ? pPanel('ADMIN · REPORTS', '<div id="adm"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"') + pPanel('ADMIN · BANNED USERS', '<div id="admb"><p class="meta">Loading…</p></div>') + pPanel('ADMIN · ACCOUNT DELETIONS', '<div id="admd"><p class="meta">Loading…</p></div>') + pPanel('ADMIN · LOCATIONS', '<div id="adml"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"') : ''}
   </div>${links()}</div>`;
   if (!user.emailVerified) $('#vf').onclick = () => verifySheet();
   syncPrivate();
   if (user.emailVerified) myProfileSection();
   else { $('#myp').innerHTML = profileCard(null, user.displayName, {self: true}); $('#fpanel').innerHTML = '<p class="meta">Verify your email to customise your profile and add friends.</p>'; }
-  if (isAdmin()) { loadReports(); loadBans(); }
+  if (isAdmin()) { loadReports(); loadBans(); loadAdmLocs(); }
   $('#so').onclick = () => signOut(auth);
   $('#bl').onclick = async () => {
     const ids = [...blocked]; const prs = await Promise.all(ids.map(id => getProfile(id).catch(() => null)));
@@ -2111,7 +2112,7 @@ function goLiveSheet() {
     <label>Place on the map<select class="sunken" id="lvp"><option value="me">My current location</option><option value="map">Center of the map view</option></select></label>
     <label>Camera<select class="sunken" id="lvc"><option value="environment">Back camera</option><option value="user">Front camera</option></select></label>
     <label>Who can watch<select class="sunken" id="lva"><option value="friends">Only my friends</option><option value="all">Everyone signed in</option></select></label>
-    <p class="meta">🛡️ For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot. Only the moderator can see the exact spot (for emergencies).</p>
+    <p class="meta">🛡️ For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot. Only the site administrator can see the exact spot (for emergencies).</p>
     <div class="row"><button class="b" id="lvgo">Start streaming</button><button class="b s" id="cx">Cancel</button></div>`);
   $('#cx').onclick = closeSheet;
   $('#lvgo').onclick = async () => {
@@ -3270,7 +3271,7 @@ function newGroupSheet(pre = {}) {
    <input id="gpl" maxlength="100" placeholder="Place" value="${esc(pre.place || '')}"><input id="gw" maxlength="60" placeholder="When (e.g. Sat, Nov 21, 10:00)">
    <textarea id="gd" maxlength="500" placeholder="Plans, meeting point, difficulty, what to bring…"></textarea>
    <label class="ck"><input type="checkbox" id="gpv">🔒 Private group (hidden from the list, join by invite link only)</label>
-   <p class="meta">Meet in public places and tell someone where you’re going. Group chats may be reviewed by moderators to enforce the rules.</p><p class="err" id="e"></p>
+   <p class="meta">Meet in public places and tell someone where you’re going. Group chats may be reviewed by the site administrator to enforce the rules.</p><p class="err" id="e"></p>
    <button class="b" id="go">Create</button><button class="b s" id="cx">Cancel</button>`);
   $('#cx').onclick = closeSheet;
   $('#go').onclick = async () => {
@@ -3334,7 +3335,7 @@ async function openGroup(g) {
    ${typeof g.lat === 'number' ? '<button class="b s" id="sm">Show on map</button>' : ''}
    </div>
    <div class="acts">${member && !owner ? '<button class="lnk" id="lv">Leave group</button>' : ''}${owner || adm ? '<button class="lnk red" id="dg">Delete group</button>' : '<button class="lnk" id="rg">Report group</button>'}</div>
-   ${g.private ? '<p class="meta">🔒 Private group. Chats may be reviewed by moderators to enforce the rules.</p>' : ''}</div></div>
+   ${g.private ? '<p class="meta">🔒 Private group. Chats may be reviewed by the site administrator to enforce the rules.</p>' : ''}</div></div>
    <section class="panel win"><div class="tbar"><span>MEMBERS · ${shown.length}</span></div><div class="pad"><div class="fgrid" id="mem">${shown.map((m, i) => `<div class="fcard raised"><a href="#" class="prof" data-uid="${esc(m.id)}" style="border:0;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:100%">${avatarHtml(mprof[i], true)}<span>${esc(mprof[i]?.name || m.name)}</span></a>${m.id === g.authorID ? '<span class="badge">ORGANIZER</span>' : ''}${(owner || adm) && m.id !== g.authorID ? `<button class="lnk red" data-kick="${esc(m.id)}">remove</button>` : ''}</div>`).join('') || '<p class="meta">—</p>'}</div></div></section></div>`;
   $('#bk').onclick = groupList;
   $('#mem').onclick = async e => { const k = e.target.closest('[data-kick]'); if (!k) return;
@@ -3426,7 +3427,7 @@ function mountChat(box, g, readonly) {
   box.innerHTML = '<div class="mlwrap"><div id="ml"></div><button class="jump raised" id="jump" hidden>' + pxi('down', 12) + ' New messages</button></div>' + (readonly ? '<p class="meta" style="padding:8px 12px">Admin view (read-only).</p>' :
     `<div class="composer"><div id="rec" class="recbar" style="display:none"></div>
      <div class="cbar sunken"><button class="cbtn" id="at" aria-label="Attach photo or file" title="Attach">${pxi('clip', 16)}</button><textarea id="mi" rows="1" maxlength="1000" placeholder="Write a message…" title="Enter to send, Shift+Enter for a new line"></textarea><button class="cbtn" id="mic" aria-label="Record voice message" title="Voice message">${pxi('mic', 16)}</button><button class="cbtn send" id="ms" aria-label="Send" title="Send">${pxi('send', 16)}</button></div>
-     <input type="file" id="fi" hidden><p class="meta chint">Files up to 650 KB · voice up to 60 s · moderators may review chats</p></div>`);
+     <input type="file" id="fi" hidden><p class="meta chint">Files up to 650 KB · voice up to 60 s · the site administrator may review chats</p></div>`);
   const ml = $('#ml'), jump = $('#jump'); let rec = null, tick = null, first = true, lastA = null, lastT = 0, lastDay = '';
   jump.onclick = () => { ml.scrollTop = ml.scrollHeight; jump.hidden = true; };
   ml.addEventListener('scroll', () => { if (ml.scrollHeight - ml.scrollTop - ml.clientHeight < 60) jump.hidden = true; });
@@ -3534,6 +3535,66 @@ function route() {
 }
 
 // ---------- admin ----------
+// every time the admin deliberately opens someone's exact location it is written to an append-only log (the admin can't edit or delete it from the site)
+function admLog(kind, target, name, ref = '') {
+  if (!isAdmin()) return; addDoc(collection(db, 'adminlog'), {at: serverTimestamp(), kind, target: target || '', name: (name || '').slice(0, 30), ref: (ref || '').slice(0, 60)}).catch(() => {});
+}
+function admShow(lat, lng, label) {
+  showView('mapv'); setTimeout(() => { map.invalidateSize(); map.setView([lat, lng], 16);
+    L.circleMarker([lat, lng], {radius: 8, color: '#ff2a2a', weight: 3, fillOpacity: .5}).addTo(map).bindTooltip(label).openTooltip(); }, 80);
+}
+let admLocTab = 'me';
+async function loadAdmLocs() {
+  const box = $('#adml'); if (!box) return;
+  const tabs = [['me', '📍 Me'], ['live', '● Live streams'], ['hid', '🛡️ Hidden spots'], ['log', '📜 View log']];
+  const head = `<div class="row admtabs">${tabs.map(([k, t]) => `<button class="b ${admLocTab === k ? '' : 's'}" data-alt="${k}">${t}</button>`).join('')}</div>
+    <p class="meta">Current data only — no movement history. Opening an exact location is recorded in the view log.</p>`;
+  box.innerHTML = head + '<div id="admlb"><p class="meta">Loading…</p></div>';
+  box.onclick = async e => {
+    const t = e.target.closest('[data-alt]'); if (t) { admLocTab = t.dataset.alt; loadAdmLocs(); return; }
+    const u = e.target.closest('u[data-act]'); if (!u) return; const d = u.dataset;
+    if (d.act === 'prof') openProfile(d.uid);
+    if (d.act === 'show') { admLog(d.kind, d.uid, d.name, d.ref); admShow(+d.lat, +d.lng, `🛡️ ${d.name} — ${d.kind === 'me' ? 'shared location' : d.kind === 'stream' ? 'stream, exact' : 'report, exact'}`); }
+    if (d.act === 'del') { try { await deleteDoc(doc(db, d.col, d.id)); u.closest('.item').remove(); } catch { toast('Could not delete.'); } }
+  };
+  const b = $('#admlb'), H = 3600000, ago = ms => seenAgo(ms);
+  const row = (o) => `<div class="item"><b>${esc(o.name)}</b> <span class="meta">${esc(o.meta)}</span><br>
+    <u data-act="show" data-kind="${o.kind}" data-uid="${esc(o.uid)}" data-name="${esc(o.name)}" data-ref="${esc(o.ref || '')}" data-lat="${o.lat}" data-lng="${o.lng}" style="cursor:pointer;color:var(--acc)">show on map</u>
+    · <u data-act="prof" data-uid="${esc(o.uid)}" style="cursor:pointer;color:var(--acc)">profile</u>
+    · <u data-act="del" data-col="${o.col}" data-id="${esc(o.id)}" style="cursor:pointer;color:#ff6a6a">delete</u></div>`;
+  const names = async ids => { const u = [...new Set(ids)]; const ps = await Promise.all(u.map(id => getProfile(id).catch(() => null))); return Object.fromEntries(u.map((id, i) => [id, ps[i]?.name || 'User'])); };
+  try {
+    if (admLocTab === 'me') {
+      const snap = await getDocs(collection(db, 'userloc')); const rows = [];
+      snap.forEach(d => { const v = d.data(), t = v.t?.toDate ? v.t.toDate().getTime() : 0;
+        if (!t || Date.now() - t > 24 * H) { deleteDoc(d.ref).catch(() => {}); return; }
+        if (typeof v.lat === 'number') rows.push({kind: 'me', col: 'userloc', id: d.id, uid: d.id, name: v.name || 'User', lat: v.lat, lng: v.lng, t,
+          meta: `updated ${ago(t)}${v.acc ? ` · ±${Math.round(v.acc)} m` : ''}${Date.now() - t > H ? ' · outdated' : ''}`}); });
+      rows.sort((a, c) => c.t - a.t);
+      b.innerHTML = rows.length ? rows.map(row).join('') : '<p class="meta">Nobody is sharing their location right now.</p>';
+    } else if (admLocTab === 'live' || admLocTab === 'hid') {
+      const kind = admLocTab === 'live' ? 'stream' : 'sighting';
+      const snap = await getDocs(query(collection(db, 'exact'), where('kind', '==', kind))); const raw = [];
+      await Promise.all(snap.docs.map(async d => { const v = d.data();
+        const src = await getDoc(doc(db, kind === 'stream' ? 'streams' : 'sightings', d.id)).catch(() => null);
+        if (!src || !src.exists()) { deleteDoc(d.ref).catch(() => {}); return; }                       // orphan: report deleted
+        const sv = src.data();
+        if (kind === 'stream') { const hb = sv.hb?.toDate ? sv.hb.toDate().getTime() : 0;
+          if (!sv.live || Date.now() - hb > 24 * H) { deleteDoc(d.ref).catch(() => {}); return; }        // stream is over
+          raw.push({v, d, title: sv.title, t: hb, extra: Date.now() - hb > LIVE_TTL ? 'not responding' : 'live now'}); }
+        else raw.push({v, d, title: sv.title, t: sv.createdAt?.toDate ? sv.createdAt.toDate().getTime() : 0, extra: ''}); }));
+      const nm = await names(raw.map(r => r.v.owner));
+      const rows = raw.sort((a, c) => c.t - a.t).map(r => ({kind, col: 'exact', id: r.d.id, uid: r.v.owner, name: nm[r.v.owner], lat: r.v.lat, lng: r.v.lng, ref: r.d.id,
+        meta: `“${(r.title || '').slice(0, 50)}” · ${r.t ? (kind === 'stream' ? 'last signal ' : 'posted ') + ago(r.t) : ''}${r.extra ? ' · ' + r.extra : ''}`}));
+      b.innerHTML = rows.length ? rows.map(row).join('') : `<p class="meta">${kind === 'stream' ? 'No live streams right now.' : 'No reports with a hidden spot.'}</p>`;
+    } else {
+      const snap = await getDocs(query(collection(db, 'adminlog'), orderBy('at', 'desc'), limit(100)));
+      const K = {me: 'shared location', stream: 'stream exact spot', sighting: 'report exact spot'};
+      b.innerHTML = snap.docs.length ? snap.docs.map(d => { const v = d.data(); return `<div class="item"><span class="meta">${v.at?.toDate ? v.at.toDate().toLocaleString() : '…'}</span> — viewed <b>${esc(K[v.kind] || v.kind)}</b> of ${esc(v.name || v.target)}</div>`; }).join('')
+        : '<p class="meta">No views recorded yet.</p>';
+    }
+  } catch { b.innerHTML = '<p class="err">Could not load (publish the latest database rules).</p>'; }
+}
 async function loadReports() {
   const box = $('#adm'); if (!box) return;
   try {
@@ -3550,7 +3611,7 @@ async function loadReports() {
 function terms(lock = true) {
   sheet(`<h3>Appalachia Anomalies</h3><p>Community reports of cryptids and strange events. Reports are user-generated and unverified.</p>
    <p>No hateful, harassing or objectionable content, and nothing private (names, faces, home addresses). Never trespass on private land. You can report or block any post; violating content is removed and abusive users are banned.</p>
-   <p>Group chats, including private ones, may be reviewed by moderators to enforce these rules.</p>
+   <p>Group chats, including private ones, may be reviewed by the site administrator to enforce these rules.</p>
    <button class="b" id="ok">${lock ? 'I Agree' : 'Close'}</button>`, lock);
   $('#ok').onclick = () => { localStorage.setItem('terms', '1'); closeSheet(); };
 }
