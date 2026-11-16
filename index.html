@@ -754,7 +754,7 @@ document.addEventListener('click', e => {
 const SPR_C = {O:'#10141A',F:'#E4EAF0',S:'#8798AA',B:'#C0505B',G:'#84977A',K:'#232A33',Y:'#d9c27a'};
 const SPR = {
   moon:['....OOOO....','..OOYYYYO...','.OYYYYYOO...','.OYYYYO.....','OYYYYO......','OYYYYO......','OYYYYO......','OYYYYYO.....','.OYYYYYOOO..','.OOYYYYYYYO.','..OOYYYYOO..','....OOOO....'],
-  pin:['...OOOOOO...','..OBBBBBBO..','.OBBFFBBBBO.','.OBFFBBBBBO.','.OBBBBBBBBO.','.OBBBBBBBBO.','..OBBBBBBO..','...OBBBBO...','....OBBO....','.....OO.....','....OKKO....','.....OO.....'],
+  pin:['....OOOO....','..OOBBBBOO..','.OBBBBBBBBO.','.OBBBOOBBBO.','OBBBOFFOBBBO','OBBBOFFOBBBO','.OBBBOOBBBO.','.OBBBBBBBBO.','..OBBBBBBO..','...OBBBBO...','....OBBO....','.....OO.....'],
   hosp:['.OOOOOOOOOO.','.OSSSSSSSSO.','.OSSSBBSSSO.','.OSSSBBSSSO.','.OSBBBBBBSO.','.OSBBBBBBSO.','.OSSSBBSSSO.','.OSSSBBSSSO.','.OSKKSSKKSO.','.OSKKSSKKSO.','.OSSSOOSSSO.','.OOOOOOOOOO.'],
   school:['.....OO.....','....OBBO....','...OBBBBO...','..OOOOOOOO..','..OSSOOSSO..','..OSOYYOSO..','.OOSSOOSSOO.','.OSKSSSSKSO.','.OSKSSSSKSO.','.OSSSOOSSSO.','.OSSSOKOSSO.','.OOOOOOOOOO.'],
   factory:['..SS........','.S..SS......','..OO........','..OKO.......','..OKO.O...O.','..OKOOSO.OSO','.OOOOSSOOSSO','.OSSSSSSSSSO','.OSKSKSKSKSO','.OSKSKSKSKSO','.OSSSSSSSSSO','.OOOOOOOOOOO'],
@@ -781,7 +781,7 @@ const sprite = (name, size = 24) => {
   }
   return `<svg class="spr" viewBox="0 0 12 12" width="${size}" height="${size}" shape-rendering="crispEdges" aria-hidden="true">${sprCache[key]}</svg>`;
 };
-const sprOf = k => ({cryptid: 'paw', ufo: 'ufo', paranormal: 'eye', haunted: 'moon', strange: 'mark', other: 'pin', ab_house: 'house', ab_hospital: 'hosp', ab_school: 'school', ab_factory: 'factory',
+const sprOf = k => ({cryptid: 'shadow', ufo: 'ufo', paranormal: 'eye', haunted: 'moon', strange: 'mark', other: 'pin', ab_house: 'house', ab_hospital: 'hosp', ab_school: 'school', ab_factory: 'factory',
   ab_mine: 'pick', ab_church: 'church', ab_rail: 'train', ab_town: 'town', ab_other: 'barrier'}[k] || 'mark');
 const catIco = (k, size) => sprite(sprOf(k), size);
 
