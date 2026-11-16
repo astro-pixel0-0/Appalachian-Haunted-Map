@@ -1146,7 +1146,7 @@ function addSheet(ll) {
    <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
    <input id="f" type="file" accept="image/*"><div id="pv"></div>
    <p class="meta">${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</p>
-   <label class="ck"><input type="checkbox" id="fuzz"> 🛡️ Hide the exact spot (moves the marker ~300–600 m) — use it if this is near your home</label><p class="err" id="e"></p>
+   <label class="ck"><input type="checkbox" id="fuzz"> 🛡️ Hide the exact spot (moves the marker ~300–600 m) — use it if this is near your home. Only the moderator sees the exact spot.</label><p class="err" id="e"></p>
    <button class="b" id="go">Post</button><button class="b s" id="cx">Cancel</button>`);
   let photo = null;
   $('#cat').onchange = () => { $('#warn').style.display = isAb($('#cat').value) ? 'block' : 'none'; };
@@ -1163,6 +1163,7 @@ function addSheet(ll) {
       await setDoc(ref, {title, details: $('#d').value.trim().slice(0, 1000), category: $('#cat').value, lat: plat, lon: plon,
         authorID: user.uid, authorName: user.displayName || 'User', hasPhoto: !!photo, createdAt: serverTimestamp()});
       if (photo) await setDoc(doc(db, 'photos', ref.id), {data: photo, authorID: user.uid});
+      if (plat !== ll.lat) setDoc(doc(db, 'exact', ref.id), {kind: 'sighting', owner: user.uid, lat: ll.lat, lng: ll.lng}).catch(() => {});
       closeSheet(); loadSightings(); sfx('success');
     } catch (e) { $('#e').textContent = 'Could not save. Try again.'; $('#go').disabled = false; }
   };
@@ -1211,7 +1212,7 @@ async function showSighting(s) {
   $('#obsT').textContent = 'OBSERVATION';
   panel(`<div class="obs-head"><div class="obs-ico sunken">${catIco(s.category, 40)}</div><div style="min-width:0">
      <span class="tag${isAb(s.category) ? ' ab' : ''}">${esc(c[1])}</span><h3>${esc(s.title)}</h3><p class="meta">${plink(s.authorID, s.authorName)} · ${fmt(s.createdAt)}</p></div></div>
-   <div id="ph"></div>
+   <div id="ph"></div><div id="exa"></div>
    ${s.details ? `<p style="white-space:pre-wrap;line-height:1.55">${esc(s.details)}</p>` : ''}
    <div class="grid2 sunken"><div><span>Coordinates</span><b>${(+s.lat).toFixed(5)}, ${(+s.lon).toFixed(5)}</b></div><div><span>Weather now</span><b id="owx">…</b></div></div>
    ${isAb(s.category) ? '<p class="meta">⚠️ Abandoned places can be dangerous and are often private property. Never trespass.</p>' : ''}
@@ -1221,7 +1222,10 @@ async function showSighting(s) {
   if ($('#cl')) $('#cl').onclick = closePanel;
   $('#gpb').onclick = () => { if (canPost()) newGroupSheet({place: s.title, lat: s.lat, lon: s.lon}); };
   $('#dir').onclick = () => window.open(`https://www.google.com/maps/dir/?api=1&destination=${(+s.lat).toFixed(6)},${(+s.lon).toFixed(6)}`, '_blank', 'noopener');
-  if (mine) $('#del').onclick = async () => { await deleteDoc(doc(db, 'sightings', s.id)); if (s.hasPhoto) deleteDoc(doc(db, 'photos', s.id)).catch(() => {}); closePanel(); loadSightings(); };
+  if (isAdmin()) getDoc(doc(db, 'exact', s.id)).then(e => { if (!e.exists() || !$('#exa')) return; const v = e.data();
+    $('#exa').innerHTML = `<p class="meta" style="color:#ff6a6a">🛡️ ADMIN · exact spot: <u style="cursor:pointer" id="exgo">${v.lat.toFixed(5)}, ${v.lng.toFixed(5)}</u></p>`;
+    $('#exgo').onclick = () => { map.setView([v.lat, v.lng], 16); L.circleMarker([v.lat, v.lng], {radius: 7, color: '#ff2a2a'}).addTo(map).bindTooltip('exact spot (admin)').openTooltip(); }; }).catch(() => {});
+  if (mine) $('#del').onclick = async () => { deleteDoc(doc(db, 'exact', s.id)).catch(() => {}); await deleteDoc(doc(db, 'sightings', s.id)); if (s.hasPhoto) deleteDoc(doc(db, 'photos', s.id)).catch(() => {}); closePanel(); loadSightings(); };
   else { $('#rep').onclick = () => { closePanel(); report('sighting', s.id); loadSightings(); }; $('#blk').onclick = () => { block(s.authorID); closePanel(); loadSightings(); }; }
   getWx(+s.lat, +s.lon).then(w => { const o = $('#owx'); if (o && selId === s.id) o.textContent = w ? `${w.t}°F · ${w.d}` : '—'; });
   if (s.hasPhoto) { const p = await getDoc(doc(db, 'photos', s.id)); const u = p.exists() && p.data().data;
@@ -2004,7 +2008,9 @@ function liveWatch() {
     snap.forEach(d => { const s = d.data(), hb = s.hb?.toDate ? s.hb.toDate().getTime() : Date.now(); if (Date.now() - hb > LIVE_TTL) return;
       if (blocked.has(s.owner) || (s.aud === 'friends' && s.owner !== user.uid && !myFriends.has(s.owner) && !isAdmin())) return;
       L.marker([s.lat, s.lng], {icon: L.divIcon({className: '', html: `<div class="livemk"><span>LIVE</span></div>`, iconSize: [46, 22]}), zIndexOffset: 900, title: s.title})
-        .bindTooltip(`${esc(s.title)} — ${esc(s.name)}<br><small>approximate area${s.aud === 'friends' ? ' · friends only' : ''}</small>`).on('click', () => liveOpen(d.id)).addTo(liveLayer); });
+        .bindTooltip(`${esc(s.title)} — ${esc(s.name)}<br><small>approximate area${s.aud === 'friends' ? ' · friends only' : ''}</small>`).on('click', () => liveOpen(d.id)).addTo(liveLayer);
+      if (isAdmin()) getDoc(doc(db, 'exact', d.id)).then(e => { if (!e.exists()) return; const v = e.data();
+        L.circleMarker([v.lat, v.lng], {radius: 6, color: '#ff2a2a', weight: 2, fillOpacity: .6}).bindTooltip(`🛡️ exact spot (admin) — ${esc(s.name)}`).addTo(liveLayer); }).catch(() => {}); });
   }, () => {});
 }
 function liveUnwatch() { if (liveUnsub) { liveUnsub(); liveUnsub = null; } liveLayer.clearLayers(); }
@@ -2041,7 +2047,7 @@ function goLiveSheet() {
     <label>Place on the map<select class="sunken" id="lvp"><option value="me">My current location</option><option value="map">Center of the map view</option></select></label>
     <label>Camera<select class="sunken" id="lvc"><option value="environment">Back camera</option><option value="user">Front camera</option></select></label>
     <label>Who can watch<select class="sunken" id="lva"><option value="friends">Only my friends</option><option value="all">Everyone signed in</option></select></label>
-    <p class="meta">🛡️ For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot.</p>
+    <p class="meta">🛡️ For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot. Only the moderator can see the exact spot (for emergencies).</p>
     <div class="row"><button class="b" id="lvgo">Start streaming</button><button class="b s" id="cx">Cancel</button></div>`);
   $('#cx').onclick = closeSheet;
   $('#lvgo').onclick = async () => {
@@ -2052,13 +2058,14 @@ function goLiveSheet() {
     let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: true}); }
     catch { toast('Camera or microphone access was denied.'); return; }
     if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the red dashed border on the map).'); return; }
-    for (let k = 0; k < 8; k++) { const j = jitter(ll[0], ll[1], 1000, 2000); if (canPlaceAt(j[0], j[1])) { ll = j; break; } }
-    closeSheet(); liveHost(title, ll, stream, facing, aud);
+    const exact = ll; for (let k = 0; k < 8; k++) { const j = jitter(ll[0], ll[1], 1000, 2000); if (canPlaceAt(j[0], j[1])) { ll = j; break; } }
+    closeSheet(); liveHost(title, ll, stream, facing, aud, exact);
   };
 }
-async function liveHost(title, ll, stream, facing, aud = 'friends') {
+async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null) {
   let ref; try { ref = await addDoc(collection(db, 'streams'), {owner: user.uid, name: myName(), title, lat: ll[0], lng: ll[1], aud, live: true, startedAt: serverTimestamp(), hb: serverTimestamp()}); }
   catch { stream.getTracks().forEach(t => t.stop()); toast('Could not start the stream (check the database rules).'); return; }
+  if (exact) setDoc(doc(db, 'exact', ref.id), {kind: 'stream', owner: user.uid, lat: exact[0], lng: exact[1]}).catch(() => {});
   const sid = ref.id; LIVE = {sid, role: 'host', stream, pcs: new Map(), unsubs: [], facing};
   const w = liveWin(liveShell(title, 'You are live', 'host'));
   const v = $('#lvv'); v.srcObject = stream;
@@ -2096,6 +2103,7 @@ async function liveEnd() {
   if (L0.role === 'host') {
     L0.pcs.forEach(pc => pc.close()); L0.stream.getTracks().forEach(t => t.stop());
     try { await updateDoc(doc(db, 'streams', L0.sid), {live: false, endedAt: serverTimestamp()}); } catch {}
+    deleteDoc(doc(db, 'exact', L0.sid)).catch(() => {});
   } else {
     L0.pc?.close(); try { await deleteDoc(doc(db, `streams/${L0.sid}/peers`, user.uid)); } catch {}
   }
