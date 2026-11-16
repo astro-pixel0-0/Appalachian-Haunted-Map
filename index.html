@@ -573,7 +573,7 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
   const fast = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const narrow = innerWidth < 560, pad = t => t + ' ' + '.'.repeat(Math.max(2, (narrow ? 24 : 34) - t.length));
   const LINES = [
-    [narrow ? 'AA BIOS v2.6 — HAUNTED Y2K' : 'APPALACHIA ANOMALIES BIOS v2.6 — HAUNTED Y2K EDITION', ''],
+    [narrow ? 'AA BIOS v2.6' : 'APPALACHIA ANOMALIES BIOS v2.6', ''],
     [pad('MEMORY TEST'), '640K OK'], [pad('LOADING TOPO TILES'), 'OK'], [pad('EMF SENSOR'), 'OK'], [pad('SPIRIT RADIO 13.13'), 'OK'],
     [pad('SCANNING THE RIDGES'), narrow ? '3 FOUND' : '3 ANOMALIES'], [pad('WAKING FLATWOODS'), 'OK'], [pad('MOUNTING /MAP'), 'READY'],
   ];
@@ -629,7 +629,7 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
  <section class="view on" id="mapv">
   <div class="mapwin win">
    <div class="tbar"><span id="tico"></span><span class="ttl">MAP.EXE — Appalachia</span>
-    <div class="seg" role="group" aria-label="Map style"><button id="stPx" class="on" aria-pressed="true" title="Pixel map in the site palette">Pixel</button><button id="stPc" aria-pressed="false" title="Pixel satellite map with real colors">Pixel color</button><button id="stDt" aria-pressed="false" title="Normal detailed map">Detailed</button></div><div class="seg mtools" role="group" aria-label="Map tools"><button id="locBtn" aria-pressed="false" title="Show my location (only you can see it)">📍 Me</button><button id="liveBtn" title="Start a live stream from your location">● Go live</button><button id="admLocBtn" hidden aria-pressed="false" title="Admin: show or hide everyone's shared location">👥 Users</button></div></div>
+    <div class="seg" role="group" aria-label="Map style"><button id="stPx" class="on" aria-pressed="true" title="Pixel map in the site palette">Pixel</button><button id="stPc" aria-pressed="false" title="Pixel satellite map with real colors">Pixel color</button><button id="stDt" aria-pressed="false" title="Normal detailed map">Detailed</button></div><div class="seg mtools" role="group" aria-label="Map tools"><button id="areaBtn" aria-pressed="true" title="Show or hide the red border of the Appalachian states">▭ Border</button><button id="locBtn" aria-pressed="false" title="Show my location (only you can see it)">📍 Me</button><button id="liveBtn" title="Start a live stream from your location">● Go live</button><button id="admLocBtn" hidden aria-pressed="false" title="Admin: show or hide everyone's shared location">👥 Users</button></div></div>
    <div class="chips" id="chips"></div>
    <div class="mapbox sunken"><div id="map"></div><div id="hint"></div></div>
    <div class="status sunken"><span><b>●</b> <span id="cnt">0</span> reports in view</span><span id="zm">Zoom 7</span></div>
@@ -901,7 +901,11 @@ setMode(startMode);
 $('#tico').innerHTML = sprite('ghost', 16);
 L.control.locate = null;
 const cluster = L.markerClusterGroup({maxClusterRadius: 45}).addTo(map);
-L.polygon(APP_POLY, {color: '#84977A', weight: 2, opacity: 0.7, dashArray: '6 6', fill: false, interactive: false}).addTo(map);
+const areaLine = L.polygon(APP_POLY, {color: '#ff2a2a', weight: 3, opacity: 0.95, dashArray: '8 6', fill: false, interactive: false});
+let areaOn = true; try { areaOn = localStorage.getItem('areaLine') !== '0'; } catch {}
+const areaSync = () => { if (areaOn) areaLine.addTo(map); else map.removeLayer(areaLine); const b = $('#areaBtn'); if (b) { b.classList.toggle('on', areaOn); b.setAttribute('aria-pressed', areaOn); } };
+$('#areaBtn').onclick = () => { areaOn = !areaOn; try { localStorage.setItem('areaLine', areaOn ? '1' : '0'); } catch {} areaSync(); };
+areaSync();
 
 const chip = ([k, v]) => `<button class="chip" data-c="${k}">${catIco(k, 16)}${esc(v[1])}</button>`;
 $('#chips').innerHTML = `<button class="chip on" data-c="">All</button>` + Object.entries(CATS).filter(([, v]) => !v[3]).map(chip).join('') + `<button class="chip sepl" data-c="abandoned">${sprite('house', 16)}All abandoned</button>` + Object.entries(CATS).filter(([, v]) => v[3]).map(chip).join('');
@@ -994,7 +998,7 @@ map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
     if (c) {
       last = {s: new Map(), p: [], c};
       res.innerHTML = inArea(c) ? `<div class="qh">Coordinates</div><div class="qi" data-t="c">📌 ${c.lat.toFixed(5)}, ${c.lon.toFixed(5)}</div>`
-        : '<div class="qi meta">These coordinates are outside the Appalachian states (the dashed outline on the map).</div>';
+        : '<div class="qi meta">These coordinates are outside the Appalachian states (the red dashed border on the map).</div>';
       return;
     }
     res.innerHTML = '<div class="qi meta">Searching…</div>';
@@ -1043,7 +1047,7 @@ function resize(file) {
     img.onerror = rej; img.src = URL.createObjectURL(file); });
 }
 function addSheet(ll) {
-  if (!canPlaceAt(ll.lat, ll.lng)) { toast('Reports can only be placed in the Appalachian states (inside the dashed outline on the map).'); return; }
+  if (!canPlaceAt(ll.lat, ll.lng)) { toast('Reports can only be placed in the Appalachian states (inside the red dashed border on the map).'); return; }
   sheet(`<h3>New report</h3>
    <select id="cat">${catOptions()}</select><p class="meta" id="warn" style="display:none">⚠️ Abandoned places can be dangerous and are often private property. Never trespass, and don’t post addresses of occupied homes.</p>
    <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
@@ -1880,7 +1884,7 @@ function goLiveSheet() {
     if (place === 'me') { try { const p = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: true, timeout: 15000})); ll = [p.coords.latitude, p.coords.longitude]; } catch { toast('Could not get your location — using the center of the map instead.'); } }
     let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: true}); }
     catch { toast('Camera or microphone access was denied.'); return; }
-    if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the dashed outline on the map).'); return; }
+    if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the red dashed border on the map).'); return; }
     closeSheet(); liveHost(title, ll, stream, facing);
   };
 }
