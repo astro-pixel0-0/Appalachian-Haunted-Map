@@ -655,6 +655,49 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
 @media (min-width:760px){.pgrid.pme{grid-template-columns:1fr 1fr}}
 #sheetBody .pcols{grid-template-columns:1fr}#sheetBody .pc2 .pban{height:150px}
 @media (max-width:700px){.pcols{grid-template-columns:1fr}.pc2 .phead{flex-direction:column;align-items:flex-start;gap:8px;margin-top:-56px}.pc2 .phead .fr .av{width:96px;height:96px}.pc2 .pname{min-width:0;width:100%}.pact{width:100%;margin:4px 0 0}.pact .b{width:100%}.pc2 .pname h2{font-size:22px}}
+
+/* ---------- crisp icon alignment ---------- */
+.b .spr{vertical-align:middle;margin:-5px 4px -4px 0}
+.meta .spr,label .spr,.qi .spr,.adminbox .spr,.chip .spr,.badge .spr{vertical-align:-2px}
+/* ---------- private abandoned places: red marker ---------- */
+.mk.priv{background:rgba(190,24,40,.38);border:2px solid #ff3b4d;box-shadow:0 0 0 2px #10141A,0 0 10px rgba(255,59,77,.65)}
+.mk.priv svg{filter:drop-shadow(1px 0 0 #ff3b4d) drop-shadow(-1px 0 0 #ff3b4d) drop-shadow(0 1px 0 #ff3b4d) drop-shadow(0 -1px 0 #ff3b4d)}
+/* ---------- groups page ---------- */
+.ghero2 .ghbody{display:flex;align-items:center;gap:18px;padding:16px 18px;flex-wrap:wrap}
+.ghero2 h2{margin:0;font-family:var(--px);font-weight:400;font-size:26px;letter-spacing:1px;text-shadow:2px 2px 0 #10141A}
+.ghart{position:relative;flex:none;width:96px;height:96px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 60%,rgba(132,151,122,.22),transparent 65%),#151a21}
+.ghart i{position:absolute;animation:btfloat 1.6s steps(2) infinite}.ghart .gh1{left:4px;top:4px}.ghart .gh2{right:4px;bottom:4px;animation-delay:.8s}
+.ghstats{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.ghstats .chip{cursor:default;background:var(--mid);border:1px solid #3a4552}.ghstats b{color:var(--ink);margin-left:2px}
+.ghbtns{display:flex;flex-direction:column;gap:8px;min-width:220px}.ghbtns .b{margin:0;width:100%}
+.sech{display:flex;align-items:center;gap:10px}.sech::after{content:'';flex:1;height:2px;background:repeating-linear-gradient(90deg,#3a4552 0 6px,transparent 6px 10px)}
+.sech.adm{color:#ff8a96}.sech.adm::after{background:repeating-linear-gradient(90deg,#8a2b37 0 6px,transparent 6px 10px)}
+.tlist.gl2{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:10px}.tlist.gl2>.empty,.tlist.gl2>p{grid-column:1/-1}
+.gcard.gpub{box-shadow:inset 4px 0 0 #84977A}.gcard.gpriv{box-shadow:inset 4px 0 0 #C0505B}.gcard{padding-left:16px}
+@media (max-width:700px){.ghbtns{width:100%;min-width:0}.tlist.gl2{grid-template-columns:1fr}.ghart{width:72px;height:72px}}
+/* ---------- chat window v2 ---------- */
+#chatpop{width:410px;height:min(660px,calc(100vh - 90px));outline:2px solid #3a4552;outline-offset:-4px}
+.cphead{background:linear-gradient(180deg,#43303a,#2a1e24);padding:10px 10px 10px 12px}
+.cpava{width:42px;height:42px;background:#10141A;box-shadow:inset 0 0 0 2px #5a3a44,0 0 12px rgba(151,64,72,.45)}
+.cptitle b{font-size:16px}.cpbtn{width:32px;height:32px}
+.cpbody #ml{padding:14px 12px 12px;background:radial-gradient(circle at 15% 0%,rgba(151,64,72,.10),transparent 45%),radial-gradient(circle at 90% 100%,rgba(132,151,122,.08),transparent 45%),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0 1px,transparent 1px 4px),#11161c}
+.cpbody .mrow{max-width:84%;margin-top:12px}.cpbody .mrow.cont{margin-top:3px}
+.cpbody .bubble{--k:4px;clip-path:polygon(var(--k) 0,calc(100% - var(--k)) 0,100% var(--k),100% calc(100% - var(--k)),calc(100% - var(--k)) 100%,var(--k) 100%,0 calc(100% - var(--k)),0 var(--k));background:#262e38;box-shadow:none;padding:8px 11px 5px;border-left:3px solid #3a4552}
+.cpbody .bubble::before{display:none}
+.cpbody .mrow.me .bubble{background:#34503c;border-left:0;border-right:3px solid #84977A}
+.cpbody .mname{font-family:var(--px);font-weight:400;font-size:12px;letter-spacing:.5px;margin-bottom:3px}.cpbody .mname a,.cpbody .mname a.prof{color:var(--nc,#d9c27a)}
+.cpbody .mrow:not(.me) .bubble{border-left-color:color-mix(in srgb,var(--nc,#3a4552) 60%,#262e38)}
+.cpbody .mtext{font-size:14.5px;line-height:1.4}
+.cpbody .mfoot{gap:6px;margin-top:3px}
+.macts{gap:4px}.macts u{display:inline-flex;padding:2px;background:rgba(16,20,26,.55);border:1px solid #3a4552;text-decoration:none}.macts u:hover{background:#974048}
+.cpbody .daysep{align-items:center;gap:10px;margin:16px 0 4px}.cpbody .daysep::before,.cpbody .daysep::after{content:'';flex:1;height:2px;background:repeating-linear-gradient(90deg,#2c3540 0 4px,transparent 4px 8px)}
+.cpbody .cempty{display:flex;flex-direction:column;align-items:center;gap:6px}.cpbody .cempty b{font-family:var(--px);font-weight:400;font-size:15px;color:#c9d2db;letter-spacing:1px}.cpbody .cempty p{margin:0;font-size:13px}
+.cpbody .composer{background:#1a2028;padding:10px}
+.cpbody .cbar{padding:5px;gap:6px;background:#0d1116;border:2px solid #2c3540}
+.cpbody .cbar .cbtn{width:36px;height:36px}
+.cpbody .cbar #ms{width:44px;background:#84977A;color:#10141A;box-shadow:inset 1px 1px 0 #b6c6a8,inset -1px -1px 0 #4f5e4b}
+.cpbody #mi{font-size:14.5px;padding:8px 6px}
+.cpbody .chint{text-align:center}
+.jump[hidden]{display:none!important}.ghbody .grow{flex:1;min-width:240px}.ghart>.spr{animation:btfloat 1.6s steps(2) infinite}.ghart .gh2{right:2px;top:2px;bottom:auto}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -821,7 +864,7 @@ const SPR = {
   paw:['............','..OO....OO..','.OGGO..OGGO.','.OGGO..OGGO.','..OO.OO.OO..','....OGGO....','..OOGGGGOO..','.OGGGGGGGGO.','.OGGGGGGGGO.','..OGGGGGGO..','...OOOOOO...','............'],
   lock:['...OOOOOO...','..OSSSSSSO..','..OSO..OSO..','..OSO..OSO..','.OOOOOOOOOO.','.OYYYYYYYYO.','.OYYYOOYYYO.','.OYYYOOYYYO.','.OYYYYOYYYO.','.OYYYYYYYYO.','.OOOOOOOOOO.','............'],
   shield:['.OOOOOOOOOO.','.OUUUUUFFFO.','.OUUUUUFFFO.','.OUUUUUFFFO.','.OUUUUUFFFO.','.OUUUUUFFFO.','..OUUUUFFO..','..OUUUUFFO..','...OUUUFO...','....OUFO....','.....OO.....','............'],
-  people:['..OOO.......','.OFFFO..OOO.','.OFFFO.OSSSO','.OFFFO.OSSSO','..OOO...OOO.','.OOOOO.OOOOO','OFFFFFOSSSSO','OFFFFFOSSSSO','OFFFFFOSSSSO','OOOOOOOOOOOO','............','............'],
+  people:['............','.OOOO.......','OFFFFO......','OKFFKO.OOOO.','OFFFFOOSSSSO','OFFFFOOKSSKO','OFFFFOOSSSSO','OFOFFOOSSSSO','.O.OO.OSSSSO','.......OSOSO','........O.O.','............'],
   mail:['............','............','OOOOOOOOOOOO','OFOFFFFFFOFO','OFFOFFFFOFFO','OFFFOFFOFFFO','OFFFFOOFFFFO','OFFFFFFFFFFO','OFFFFFFFFFFO','OOOOOOOOOOOO','............','............'],
   noentry:['....OOOO....','..OORRRROO..','.ORRRRRRRRO.','.ORRRRRRRRO.','ORRRRRRRRRRO','ORFFFFFFFFRO','ORFFFFFFFFRO','ORRRRRRRRRRO','.ORRRRRRRRO.','.ORRRRRRRRO.','..OORRRROO..','....OOOO....'],
   key:['............','..OOOO......','.OYYYYO.....','OYYOOYYO....','OYO..OYO....','OYYOOYYOOOOO','.OYYYYYYYYYO','..OOOOOYOYOO','......OYOYO.','.......O.O..','............','............'],
@@ -849,6 +892,7 @@ const SPR = {
 };
 const sprCache = {};
 const sprite = (name, size = 24) => {
+  size = size < 15 ? 12 : Math.max(24, Math.round(size / 12) * 12);   // 12x12 art: only whole-number scaling stays sharp
   const key = name in SPR ? name : 'mark';
   if (!sprCache[key]) {
     let r = '';
@@ -1086,7 +1130,7 @@ $('#chips').onclick = e => { const c = e.target.closest('.chip'); if (!c) return
 function render() {
   cluster.clearLayers();
   data.filter(s => !filter || (filter === 'abandoned' ? isAb(s.category) : s.category === filter)).forEach(s => {
-    L.marker([s.lat, s.lon], {icon: L.divIcon({className: '', html: `<div class="mk${s.id === selId ? ' sel' : ''}">${catIco(s.category, 32)}${s.priv ? '<i class="mkpriv" title="Private property">' + sprite('barrier', 14) + '</i>' : ''}</div>`, iconSize: [40, 40]}), title: s.title})
+    L.marker([s.lat, s.lon], {icon: L.divIcon({className: '', html: `<div class="mk${s.id === selId ? ' sel' : ''}${s.priv ? ' priv' : ''}"${s.priv ? ' title="Private property"' : ''}>${catIco(s.category, 32)}</div>`, iconSize: [40, 40]}), title: s.title})
       .on('click', () => showSighting(s)).addTo(cluster);
   });
   $('#cnt').textContent = data.length;
@@ -3343,12 +3387,14 @@ const PXI = {
   pin: 'M2 0h4v1h-4zM1 1h6v3h-6zM2 4h4v1h-4zM3 5h2v3h-2z',
   cal: 'M1 0h1v1h-1zM6 0h1v1h-1zM0 1h8v2h-8zM0 3h1v5h-1zM7 3h1v5h-1zM1 7h6v1h-6zM2 4h2v2h-2z',
 };
-const pxi = (k, sz = 14) => `<svg viewBox="0 0 8 8" width="${sz}" height="${sz}" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="${PXI[k]}"/></svg>`;
+const pxi = (k, sz = 14) => { sz = sz < 12 ? 8 : Math.round(sz / 8) * 8; return `<svg viewBox="0 0 8 8" width="${sz}" height="${sz}" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges"><path d="${PXI[k]}"/></svg>`; };
 const dayKey = ts => { const d = ts?.toDate ? ts.toDate() : new Date(); return d.toDateString(); };
 const dayLabel = ts => { const d = ts?.toDate ? ts.toDate() : new Date(), t = new Date(); const y = new Date(); y.setDate(t.getDate() - 1);
   return d.toDateString() === t.toDateString() ? 'Today' : d.toDateString() === y.toDateString() ? 'Yesterday' : d.toLocaleDateString(undefined, {weekday: 'short', day: 'numeric', month: 'short'}); };
+const NAMEC = ['#d9c27a', '#7fc8a9', '#e8918f', '#8fb3e8', '#c49be0', '#e8b07a', '#9fd38a', '#7fd0d8'];
+const nameColor = id => { let h = 0; for (const c of String(id)) h = (h * 31 + c.charCodeAt(0)) | 0; return NAMEC[Math.abs(h) % NAMEC.length]; };
 const hhmm = ts => ts?.toDate ? ts.toDate().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '…';
-const groupCard = (g, mine) => `<button class="gcard raised" data-id="${esc(g.id)}"><span class="gico sunken">${sprite(g.private ? 'shadow' : 'ghost', 30)}</span>
+const groupCard = (g, mine) => `<button class="gcard raised ${g.private ? 'gpriv' : 'gpub'}" data-id="${esc(g.id)}"><span class="gico sunken">${sprite(g.private ? 'shadow' : 'ghost', 36)}</span>
   <span class="tmain"><b>${esc(g.name)}</b><span class="tmeta">${g.private ? `<span class="badge blood">${pxi('lock', 9)} PRIVATE</span>` : '<span class="badge">PUBLIC</span>'}${g.place ? `<span>${pxi('pin', 10)} ${esc(g.place)}</span>` : ''}${g.when ? `<span>${pxi('cal', 10)} ${esc(g.when)}</span>` : ''}</span>
   <span class="tmeta">by ${esc(g.authorName || 'User')}</span>${mine ? `<span class="qchat" data-chat="${esc(g.id)}" role="button">${sprite('chat', 14)} Open chat</span>` : ''}</span><span class="tcount sunken"><b data-mc="${esc(g.id)}">·</b><small>members</small></span></button>`;
 const fillMemberCounts = list => list.slice(0, 60).forEach(async g => { try { const c = await getCountFromServer(collection(db, `groups/${g.id}/members`));
@@ -3358,11 +3404,13 @@ const toDataURL = f => new Promise((res, rej) => { const r = new FileReader(); r
 
 async function groupList() {
   const el = $('#groups');
-  el.innerHTML = `<div class="pwrap"><div class="pcard win"><div class="tbar">${sprite('ghost', 14)}<span>EXPEDITION BOARD</span></div>
-    <div class="pad fhead"><div class="grow"><h2 style="margin:0">Groups &amp; Chats</h2><p class="meta">Find people to visit a place together, plan the trip and chat in real time.</p></div>
-    <div class="row" style="flex:0 1 auto"><button class="b" id="ng" style="width:auto">${sprite('plus', 16)} New group</button><button class="b s" id="jc" style="width:auto">${sprite('key', 16)} Join by invite</button></div></div></div>
-    <div id="mg"></div><h3 class="sech">Public groups</h3><div id="gl" class="tlist"><p class="meta">Loading…</p></div>
-    ${isAdmin() ? '<h3 class="sech">Admin · all groups (incl. private)</h3><div id="ag" class="tlist"><p class="meta">Loading…</p></div>' : ''}
+  el.innerHTML = `<div class="pwrap"><div class="pcard win ghero2"><div class="tbar">${sprite('ghost', 12)}<span>EXPEDITION BOARD</span></div>
+    <div class="ghbody"><div class="ghart sunken">${sprite('ghost', 48)}<i class="gh2">${sprite('chat', 24)}</i></div>
+    <div class="grow"><h2>Groups &amp; Chats</h2><p class="meta">Find people to visit a place together, plan the trip and chat in real time.</p>
+      <div class="ghstats"><span class="chip">${sprite('people', 12)} My groups: <b id="ghm">·</b></span><span class="chip">${sprite('ghost', 12)} Public: <b id="ghp">·</b></span></div></div>
+    <div class="ghbtns"><button class="b" id="ng">${sprite('plus', 24)} New group</button><button class="b s" id="jc">${sprite('key', 24)} Join by invite</button></div></div></div>
+    <div id="mg"></div><h3 class="sech">${sprite('ghost', 24)}<span>Public groups</span></h3><div id="gl" class="tlist gl2"><p class="meta">Loading…</p></div>
+    ${isAdmin() ? `<h3 class="sech adm">${sprite('shield', 24)}<span>Admin · all groups (incl. private)</span></h3><div id="ag" class="tlist gl2"><p class="meta">Loading…</p></div>` : ''}
     <div style="margin-top:16px">${discordBtn()}</div></div>`;
   $('#ng').onclick = () => { if (canCreate('groups')) newGroupSheet(); };
   $('#jc').onclick = () => {
@@ -3378,14 +3426,15 @@ async function groupList() {
         try { const gs = await getDoc(doc(db, 'groups', d.id)); if (gs.exists()) return {id: gs.id, ...gs.data()}; } catch {}
         deleteDoc(d.ref).catch(() => {}); return null; }))).filter(Boolean).sort(byNew);
       const box = $('#mg'); if (!box) return;
-      box.innerHTML = mine.length ? '<h3 class="sech">My groups</h3><div class="tlist">' + mine.map(g => groupCard(g, true)).join('') + '</div>' : ''; bind('#mg', mine);
+      box.innerHTML = mine.length ? `<h3 class="sech">${sprite('chat', 24)}<span>My groups</span></h3><div class="tlist gl2">` + mine.map(g => groupCard(g, true)).join('') + '</div>' : ''; bind('#mg', mine);
+      const hm = $('#ghm'); if (hm) hm.textContent = mine.length;
       mineIds = new Set(mine.map(g => g.id));
     } catch {}
   }
   try {
     const snap = await getDocs(query(collection(db, 'groups'), where('private', '==', false), limit(100)));
     groups = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(g => okItem(g.authorID, g.id) && !mineIds.has(g.id)).sort(byNew);
-    const gl = $('#gl'); if (!gl) return;
+    const gl = $('#gl'); if (!gl) return; const hp = $('#ghp'); if (hp) hp.textContent = groups.length;
     gl.innerHTML = groups.length ? groups.map(g => groupCard(g)).join('') : `<div class="empty win">${sprite('ghost', 48)}<p>No public groups yet. Create the first one!</p></div>`; bind('#gl', groups);
   } catch { const gl = $('#gl'); if (gl) gl.innerHTML = '<p class="err">Could not load groups.</p>'; }
   if (isAdmin()) {
@@ -3514,7 +3563,7 @@ async function openChatPop(gid) {
   let mcount = '·'; try { mcount = (await getCountFromServer(collection(db, `groups/${gid}/members`))).data().count; } catch {}
   w.innerHTML = `<div class="cphead" id="cph"><span class="cpava">${sprite(g.private ? 'shadow' : 'ghost', 26)}</span>
       <span class="cptitle"><b>${esc(g.name)} <em id="cpun" class="cpun" hidden>0</em></b><small><i class="cpdot"></i>${mcount} members${g.place ? ' · ' + esc(g.place) : ''}${!member ? ' · admin view' : ''}</small></span>
-      <button class="cpbtn" id="cpm" aria-label="Members" title="Members">${pxi('users', 14)}</button><button class="cpbtn" id="cpn" aria-label="Minimize" title="Minimize">▁</button><button class="cpbtn" id="cpx" aria-label="Close chat" title="Close">${pxi('x', 12)}</button></div>
+      <button class="cpbtn" id="cpm" aria-label="Members" title="Members">${pxi('users', 16)}</button><button class="cpbtn" id="cpn" aria-label="Minimize" title="Minimize">▁</button><button class="cpbtn" id="cpx" aria-label="Close chat" title="Close">${pxi('x', 12)}</button></div>
     <div class="cpbody" id="cpb"></div>`;
   $('#cpm').onclick = e => { e.stopPropagation(); showMembers(g); };
   $('#cpx').onclick = e => { e.stopPropagation(); closeChatPop(); };
@@ -3557,7 +3606,7 @@ async function fillAtt(gid, n) {
 function mountChat(box, g, readonly) {
   box.innerHTML = '<div class="mlwrap"><div id="ml"></div><button class="jump raised" id="jump" hidden>' + pxi('down', 12) + ' New messages</button></div>' + (readonly ? '<p class="meta" style="padding:8px 12px">Admin view (read-only).</p>' :
     `<div class="composer"><div id="rec" class="recbar" style="display:none"></div>
-     <div class="cbar sunken"><button class="cbtn" id="at" aria-label="Attach photo or file" title="Attach">${pxi('clip', 16)}</button><textarea id="mi" rows="1" maxlength="1000" placeholder="Write a message…" title="Enter to send, Shift+Enter for a new line"></textarea><button class="cbtn" id="mic" aria-label="Record voice message" title="Voice message">${pxi('mic', 16)}</button><button class="cbtn send" id="ms" aria-label="Send" title="Send">${pxi('send', 16)}</button></div>
+     <div class="cbar sunken"><button class="cbtn" id="at" aria-label="Attach photo or file" title="Attach">${pxi('clip', 16)}</button><textarea id="mi" rows="1" maxlength="1000" placeholder="Message the group…" title="Enter to send, Shift+Enter for a new line"></textarea><button class="cbtn" id="mic" aria-label="Record voice message" title="Voice message">${pxi('mic', 16)}</button><button class="cbtn send" id="ms" aria-label="Send" title="Send">${pxi('send', 16)}</button></div>
      <input type="file" id="fi" hidden><p class="meta chint">Files up to 650 KB · voice up to 60 s · the site administrator may review chats</p></div>`);
   const ml = $('#ml'), jump = $('#jump'); let rec = null, tick = null, first = true, lastA = null, lastT = 0, lastDay = '';
   jump.onclick = () => { ml.scrollTop = ml.scrollHeight; jump.hidden = true; };
@@ -3573,9 +3622,9 @@ function mountChat(box, g, readonly) {
     if (a) body += a.kind === 'file'
       ? `<button class="dl filechip" data-mid="${esc(m.id)}" data-name="${esc(a.name)}">${sprite('doc', 14)} <span>${esc(a.name)}</span><small>${Math.max(1, Math.round((a.size || 0) / 1024))} KB</small></button>`
       : `<div class="att" data-mid="${esc(m.id)}" data-kind="${esc(a.kind)}">${sprite('hourglass', 14)} ${a.kind === 'audio' ? 'Voice message…' : 'Photo…'}</div>`;
-    const acts = `${me || isAdmin() ? `<u data-a="del" data-id="${esc(m.id)}">delete</u>` : ''}${me ? '' : `<u data-a="rep" data-id="${esc(m.id)}">report</u>`}`;
+    const acts = `${me || isAdmin() ? `<u data-a="del" data-id="${esc(m.id)}" title="Delete">${sprite('trash', 12)}</u>` : ''}${me ? '' : `<u data-a="rep" data-id="${esc(m.id)}" title="Report">${sprite('flag', 12)}</u>`}`;
     d.innerHTML = `${me ? '' : `<span class="mav" data-av="${esc(m.authorID)}">${cont ? '' : avatarHtml(profCache.get(m.authorID), true)}</span>`}
-      <div class="bubble">${me || cont ? '' : `<div class="mname">${plink(m.authorID, m.authorName)}</div>`}${body}<div class="mfoot"><span class="t">${hhmm(m.createdAt)}</span><span class="macts">${acts}</span></div></div>`;
+      <div class="bubble">${me || cont ? '' : `<div class="mname" style="--nc:${nameColor(m.authorID)}">${plink(m.authorID, m.authorName)}</div>`}${body}<div class="mfoot"><span class="t">${hhmm(m.createdAt)}</span><span class="macts">${acts}</span></div></div>`;
     ml.appendChild(d); const at = d.querySelector('.att'); if (at) io.observe(at);
     if (!me && !cont && !profCache.has(m.authorID)) getProfile(m.authorID).then(pr => document.querySelectorAll(`#m_${CSS.escape(m.id)} .mav`).forEach(n => n.innerHTML = avatarHtml(pr, true)));
   };
@@ -3587,7 +3636,7 @@ function mountChat(box, g, readonly) {
       else if (ch.type === 'removed') document.getElementById('m_' + m.id)?.remove();
       else { const t = document.querySelector(`#m_${m.id} .t`); if (t) t.textContent = hhmm(m.createdAt); }
     });
-    if (first && !snap.docs.length) ml.innerHTML = `<div class="cempty">${sprite('ghost', 56)}<p>No messages yet.<br>Say hi to the group!</p></div>`;
+    if (first && !snap.docs.length) ml.innerHTML = `<div class="cempty">${sprite('ghost', 48)}<b>It's quiet here…</b><p>No messages yet. Say hi to the group!</p></div>`;
     else if (snap.docs.length) ml.querySelector(':scope > .cempty')?.remove();
     first = false; if (near) ml.scrollTop = ml.scrollHeight;
   }, () => { ml.innerHTML = '<p class="err">Chat unavailable.</p>'; });
