@@ -126,6 +126,14 @@ service cloud.firestore {
         && (!('vis' in request.resource.data) || request.resource.data.vis in ['all', 'friends', 'nobody']);
     }
     // shared location: visible only to the user themself and the admin
+    // location shared with friends: the owner lists exactly who may see it (their friends); approximate if they chose so
+    match /friendloc/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin() || request.auth.uid in resource.data.to);
+      allow create, update: if verified() && request.auth.uid == uid && request.resource.data.keys().hasOnly(['lat', 'lng', 'fuzz', 'name', 'to', 't'])
+        && request.resource.data.lat is number && request.resource.data.lng is number && request.resource.data.fuzz is bool
+        && request.resource.data.to is list && request.resource.data.to.size() <= 200;
+      allow delete: if request.auth != null && (request.auth.uid == uid || isAdmin());
+    }
     match /userloc/{uid} {
       allow read: if verified() && (request.auth.uid == uid || isAdmin());
       allow write: if verified() && request.auth.uid == uid && request.resource.data.keys().hasOnly(['lat', 'lng', 'acc', 'name', 't'])
@@ -136,7 +144,8 @@ service cloud.firestore {
     match /exact/{id} {
       allow read: if isAdmin();
       allow create, update: if verified() && request.resource.data.owner == request.auth.uid
-        && request.resource.data.keys().hasOnly(['kind', 'owner', 'lat', 'lng']) && request.resource.data.kind in ['stream', 'sighting']
+        && request.resource.data.keys().hasOnly(['kind', 'owner', 'lat', 'lng', 'path', 'ended', 'endedAt']) && request.resource.data.kind in ['stream', 'sighting']
+        && (!('path' in request.resource.data) || (request.resource.data.path is list && request.resource.data.path.size() <= 600))
         && request.resource.data.lat is number && request.resource.data.lng is number
         && (resource == null || resource.data.owner == request.auth.uid);
       allow delete: if request.auth != null && (isAdmin() || resource.data.owner == request.auth.uid);
@@ -155,7 +164,12 @@ service cloud.firestore {
         && request.resource.data.lat is number && request.resource.data.lng is number && request.resource.data.live == true
         && (!('aud' in request.resource.data) || request.resource.data.aud in ['all', 'friends'])
         && (isAdmin() || (request.resource.data.lat >= 30.0 && request.resource.data.lat <= 45.1 && request.resource.data.lng >= -91.7 && request.resource.data.lng <= -71.7));
-      allow update: if verified() && resource.data.owner == request.auth.uid && request.resource.data.owner == resource.data.owner;
+      // the owner updates their stream until the admin ends it; the admin can end any stream for good (killed)
+      allow update: if verified() && (
+        (resource.data.owner == request.auth.uid && request.resource.data.owner == resource.data.owner
+          && resource.data.get('killed', false) != true && request.resource.data.get('killed', false) != true)
+        || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['live', 'killed', 'endedAt'])
+          && request.resource.data.live == false && request.resource.data.killed == true));
       allow delete: if verified() && (resource.data.owner == request.auth.uid || isAdmin());
       match /peers/{vid} {
         allow read, update: if verified() && (request.auth.uid == vid || get(/databases/$(db)/documents/streams/$(sid)).data.owner == request.auth.uid);
