@@ -614,6 +614,47 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
 .rlink{color:#8fd3ff;text-decoration:underline;cursor:pointer;font-weight:bold}
 #srules h4{margin:14px 0 4px;letter-spacing:.5px}#srules ul{padding-left:18px;margin:4px 0}#srules p{margin:6px 0}#srules a{color:#8fd3ff}.legal a{color:#8fd3ff;text-decoration:underline}
 .admtabs{flex-wrap:wrap;gap:6px}.admtabs .b{width:auto;margin:0;padding:4px 10px}
+.privsign{display:inline-block;margin:4px 0 0 6px;padding:2px 7px;font:bold 11px/1.4 monospace;letter-spacing:1px;color:#111;background:#f2c230;border:2px solid #111;box-shadow:0 0 0 2px #f2c230;image-rendering:pixelated}
+.mk{position:relative}.mkpriv{position:absolute;right:-4px;bottom:-4px;font-size:13px;font-style:normal;line-height:1;filter:drop-shadow(0 0 1px #000)}
+.adminname{color:#b02a3d!important;text-shadow:0 0 6px rgba(176,42,61,.45)}
+.frdot{display:flex;align-items:center;gap:3px;transform:translate(0,0);white-space:nowrap}
+.frdot svg{width:22px;height:22px;padding:3px;background:#1b2b25;border:2px solid #7fc8a9;box-shadow:0 0 0 2px #0b0f14;image-rendering:pixelated;fill:#cfeee0}
+.frdot span{font:bold 11px/1 monospace;color:#cfeee0;background:rgba(11,15,20,.85);padding:2px 4px;border:1px solid #7fc8a9}
+.frdot.fz svg{border-style:dashed}
+.b .spr,.chip .spr,.tbar .spr,h2 .spr,h3 .spr,label .spr,.meta .spr,.adminbox .spr,.qi .spr,.lbadge .spr,.att .spr,.filechip .spr,.qchat .spr,#banbar .spr{vertical-align:-3px;flex:none}
+.b .spr{margin-right:2px}
+
+/* ---------- profile v2 ---------- */
+.pc2 .pban{height:190px}
+.pc2 .pban .pfade{position:absolute;left:0;right:0;bottom:0;height:70%;background:linear-gradient(to bottom,rgba(35,42,51,0),var(--gra));pointer-events:none}
+.pc2 .pban::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(to bottom,rgba(0,0,0,.12) 0 1px,transparent 1px 3px);pointer-events:none}
+.pc2 .phead{margin-top:-64px;padding:0 18px;gap:16px;align-items:flex-end;z-index:1}
+.pc2 .phead .fr .av{width:124px;height:124px}
+.pc2 .pname{flex:1;min-width:180px;padding-bottom:4px}
+.pc2 .pname h2{font-family:var(--px);font-weight:400;font-size:28px;letter-spacing:1px;line-height:1.1;text-shadow:2px 2px 0 #10141A}
+.pc2 .badges{margin-top:6px}.pc2 .badge{display:inline-flex;align-items:center;gap:4px}
+.ppres{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}.ppres .meta{margin:0;font-size:12px}
+.ppres .pres{background:var(--mid);border:1px solid #3a4552;padding:3px 9px 3px 7px}
+.pact{margin-left:auto;padding-bottom:6px}.pact .b{width:auto;margin:0;padding:9px 16px;white-space:nowrap}
+.pcols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;padding:16px 18px 18px;align-items:start}
+.plabel{display:flex;align-items:center;gap:8px;font-family:var(--px);font-size:11px;letter-spacing:2px;color:var(--mut);margin-bottom:6px}
+.plabel::after{content:'';flex:1;height:1px;background:var(--mid)}
+.pc2 .pbio{margin:4px 0 10px;font-size:14px}.pc2 .pbio.locked{color:var(--mut)}
+.pc2 .plinks .chip{background:var(--mid);border:1px solid #3a4552}
+.pc2 .pstats{grid-template-columns:repeat(auto-fit,minmax(86px,1fr));margin:0;gap:8px}
+.pc2 .stat{position:relative;align-items:flex-start;gap:4px;padding:10px 10px 9px;border-left:3px solid var(--sag)}
+.pc2 .stat .spr{margin-bottom:2px}.pc2 .stat b{font-size:30px}
+.pc2 .stat.st-pin{border-left-color:#C0505B}.pc2 .stat.st-people{border-left-color:#6f9fd8}.pc2 .stat.st-ghost{border-left-color:#d9c27a}
+.panel .tbar .spr{margin-right:2px}
+.panel.adm .tbar{background:linear-gradient(90deg,#5a1f27,var(--gra2) 70%);color:#ffd9de}
+.admhead{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin:14px 0 0;font-family:var(--px);font-size:14px;letter-spacing:3px;color:#ff8a96}
+.admhead i{flex:1;height:2px;background:repeating-linear-gradient(90deg,#8a2b37 0 6px,transparent 6px 10px)}
+.kv span{display:inline-flex;align-items:center;gap:6px}.kvnote{margin:4px 0 8px;font-size:12px}
+.accbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.accbtns .b{margin:0;width:100%}
+.accbtns .b.d{grid-column:1/-1;background:transparent;border-color:#5a2a31;color:#ff7a86}
+@media (min-width:760px){.pgrid.pme{grid-template-columns:1fr 1fr}}
+#sheetBody .pcols{grid-template-columns:1fr}#sheetBody .pc2 .pban{height:150px}
+@media (max-width:700px){.pcols{grid-template-columns:1fr}.pc2 .phead{flex-direction:column;align-items:flex-start;gap:8px;margin-top:-56px}.pc2 .phead .fr .av{width:96px;height:96px}.pc2 .pname{min-width:0;width:100%}.pact{width:100%;margin:4px 0 0}.pact .b{width:100%}.pc2 .pname h2{font-size:22px}}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -705,7 +746,7 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
  <section class="view on" id="mapv">
   <div class="mapwin win">
    <div class="tbar"><span id="tico"></span><span class="ttl">MAP.EXE — Appalachia</span>
-    <div class="seg" role="group" aria-label="Map style"><button id="stPx" class="on" aria-pressed="true" title="Pixel map in the site palette">Pixel</button><button id="stPc" aria-pressed="false" title="Pixel satellite map with real colors">Pixel color</button><button id="stDt" aria-pressed="false" title="Normal detailed map">Detailed</button></div><div class="seg mtools" role="group" aria-label="Map tools"><button id="areaBtn" aria-pressed="true" title="Show or hide the red border of the Appalachian states">▭ Border</button><button id="locBtn" aria-pressed="false" title="Show my location (only you can see it)">📍 Me</button><button id="liveBtn" title="Start a live stream from your location">● Go live</button><button id="admLocBtn" hidden aria-pressed="false" title="Admin: show or hide everyone's shared location">👥 Users</button></div></div>
+    <div class="seg" role="group" aria-label="Map style"><button id="stPx" class="on" aria-pressed="true" title="Pixel map in the site palette">Pixel</button><button id="stPc" aria-pressed="false" title="Pixel satellite map with real colors">Pixel color</button><button id="stDt" aria-pressed="false" title="Normal detailed map">Detailed</button></div><div class="seg mtools" role="group" aria-label="Map tools"><button id="areaBtn" aria-pressed="true" title="Show or hide the red border of the Appalachian states">▭ Border</button><button id="locBtn" aria-pressed="false" title="Show my location">Me</button><button id="liveBtn" title="Start a live stream from your location">● Go live</button><button id="admLocBtn" hidden aria-pressed="false" title="Admin: show or hide everyone's shared location">Users</button></div></div>
    <div class="chips" id="chips"></div>
    <div class="mapbox sunken"><div id="map"></div><div id="hint"></div></div>
    <div class="status sunken"><span><b>●</b> <span id="cnt">0</span> reports in view</span><span id="zm">Zoom 7</span></div>
@@ -760,7 +801,7 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.cpick')) list.hidden = true;
 });
 // ---------- pixel sprites (12x12) ----------
-const SPR_C = {O:'#10141A',F:'#E4EAF0',S:'#8798AA',B:'#C0505B',G:'#84977A',K:'#232A33',Y:'#d9c27a'};
+const SPR_C = {O:'#10141A',F:'#E4EAF0',S:'#8798AA',B:'#C0505B',G:'#84977A',K:'#232A33',Y:'#d9c27a',U:'#6f9fd8',R:'#e0434f'};
 const SPR = {
   moon:['....OOOO....','..OOYYYYO...','.OYYYYYOO...','.OYYYYO.....','OYYYYO......','OYYYYO......','OYYYYO......','OYYYYYO.....','.OYYYYYOOO..','.OOYYYYYYYO.','..OOYYYYOO..','....OOOO....'],
   pin:['....OOOO....','..OOBBBBOO..','.OBBBBBBBBO.','.OBBBOOBBBO.','OBBBOFFOBBBO','OBBBOFFOBBBO','.OBBBOOBBBO.','.OBBBBBBBBO.','..OBBBBBBO..','...OBBBBO...','....OBBO....','.....OO.....'],
@@ -778,6 +819,32 @@ const SPR = {
   ufo:['............','....OOOO....','...OSFFSO...','..OSSSSSSO..','.OOOOOOOOOO.','OSYSSYSSYSSO','.OOOOOOOOOO.','...OGGGGO...','..OGGGGGGO..','.OGGGGGGGGO.','OGGGGGGGGGGO','OOOOOOOOOOOO'],
   house:['.....OO.....','....OSSO....','...OSSSSO...','..OSSSSSSO..','.OSSSSSSSSO.','OOOOOOOOOOOO','.OKKKKKKKKO.','.OKOOKKBOKO.','.OKOOKKOOKO.','.OKKKKOOKKO.','.OKKKKOOKKO.','.OOOOOOOOOO.'],
   paw:['............','..OO....OO..','.OGGO..OGGO.','.OGGO..OGGO.','..OO.OO.OO..','....OGGO....','..OOGGGGOO..','.OGGGGGGGGO.','.OGGGGGGGGO.','..OGGGGGGO..','...OOOOOO...','............'],
+  lock:['...OOOOOO...','..OSSSSSSO..','..OSO..OSO..','..OSO..OSO..','.OOOOOOOOOO.','.OYYYYYYYYO.','.OYYYOOYYYO.','.OYYYOOYYYO.','.OYYYYOYYYO.','.OYYYYYYYYO.','.OOOOOOOOOO.','............'],
+  shield:['.OOOOOOOOOO.','.OUUUUUFFFO.','.OUUUUUFFFO.','.OUUUUUFFFO.','.OUUUUUFFFO.','.OUUUUUFFFO.','..OUUUUFFO..','..OUUUUFFO..','...OUUUFO...','....OUFO....','.....OO.....','............'],
+  people:['..OOO.......','.OFFFO..OOO.','.OFFFO.OSSSO','.OFFFO.OSSSO','..OOO...OOO.','.OOOOO.OOOOO','OFFFFFOSSSSO','OFFFFFOSSSSO','OFFFFFOSSSSO','OOOOOOOOOOOO','............','............'],
+  mail:['............','............','OOOOOOOOOOOO','OFOFFFFFFOFO','OFFOFFFFOFFO','OFFFOFFOFFFO','OFFFFOOFFFFO','OFFFFFFFFFFO','OFFFFFFFFFFO','OOOOOOOOOOOO','............','............'],
+  noentry:['....OOOO....','..OORRRROO..','.ORRRRRRRRO.','.ORRRRRRRRO.','ORRRRRRRRRRO','ORFFFFFFFFRO','ORFFFFFFFFRO','ORRRRRRRRRRO','.ORRRRRRRRO.','.ORRRRRRRRO.','..OORRRROO..','....OOOO....'],
+  key:['............','..OOOO......','.OYYYYO.....','OYYOOYYO....','OYO..OYO....','OYYOOYYOOOOO','.OYYYYYYYYYO','..OOOOOYOYOO','......OYOYO.','.......O.O..','............','............'],
+  scroll:['OOOOOOOOOOOO','OYYYYYYYYYYO','.OYKKKKKKYO.','.OYYYYYYYYO.','.OYKKKKKYYO.','.OYYYYYYYYO.','.OYKKKKKKYO.','.OYYYYYYYYO.','.OYKKKKYYYO.','.OYYYYYYYYO.','OYYYYYYYYYYO','OOOOOOOOOOOO'],
+  doc:['.OOOOOOO....','.OFFFFFOO...','.OFFFFFOFO..','.OFFFFFOOOO.','.OFKKKKKKFO.','.OFFFFFFFFO.','.OFKKKKKKFO.','.OFFFFFFFFO.','.OFKKKKKFFO.','.OFFFFFFFFO.','.OOOOOOOOOO.','............'],
+  pencil:['........OOO.','.......OBBBO','......OYOBBO','.....OYYYOO.','....OYYYO...','...OYYYO....','..OYYYO.....','.OFYYO......','.OFFO.......','OKFO........','OOO.........','............'],
+  siren:['O....OO....O','.O..ORRO..O.','...ORRFRO...','...ORRFRO...','..ORRRRRRO..','..ORRRRRRO..','..ORRRRRRO..','.OOOOOOOOOO.','.OSSSSSSSSO.','.OOOOOOOOOO.','............','............'],
+  chat:['............','.OOOOOOOOOO.','OFFFFFFFFFFO','OFFFFFFFFFFO','OFFKFFKFFKFO','OFFFFFFFFFFO','OFFFFFFFFFFO','.OOOFFOOOOO.','...OFO......','...OO.......','............','............'],
+  link:['............','.......OOOO.','......OSSSSO','.....OSOOOSO','..OOOSO..OSO','.OSSSOOOOSO.','OSOOOSSSSO..','OSO..OSOOO..','OSOOOSO.....','.OSSSSO.....','..OOOO......','............'],
+  mic:['....OOOO....','...OSSSSO...','...OSKKSO...','...OSSSSO...','...OSKKSO...','.O.OSSSSO.O.','.OO.OSSO.OO.','..OO.OO.OO..','...OOOOOO...','.....OO.....','...OOOOOO...','............'],
+  flip:['............','...OOOOO.O..','..OSSSSSOSO.','.OSO...OSSO.','.OSO..OSSSO.','.OO...OOOOO.','.OOOOO...OO.','.OSSSO..OSO.','.OSSO...OSO.','.OSOSSSSSO..','..O.OOOOO...','............'],
+  rec:['............','............','....OOOO....','...ORRRRO...','..ORFRRRRO..','..ORRRRRRO..','..ORRRRRRO..','..ORRRRRRO..','...ORRRRO...','....OOOO....','............','............'],
+  robot:['.....OO.....','.....OO.....','..OOOOOOOO..','.OSSSSSSSSO.','.OSUUSSUUSO.','OOSUUSSUUSOO','OOSSSSSSSSOO','.OSSOOOOSSO.','.OSSSSSSSSO.','..OOOOOOOO..','...OS..SO...','...OO..OO...'],
+  bolt:['......OOOO..','.....OYYYO..','....OYYYO...','...OYYYO....','..OYYYYOOOO.','.OYYYYYYYYO.','.OOOOYYYYO..','....OYYYO...','...OYYYO....','..OYYO......','.OYO........','.OO.........'],
+  warn:['.....OO.....','....OYYO....','....OYYO....','...OYOOYO...','...OYOOYO...','..OYYOOYYO..','..OYYOOYYO..','.OYYYYYYYYO.','.OYYYOOYYYO.','OYYYYOOYYYYO','OYYYYYYYYYYO','OOOOOOOOOOOO'],
+  hourglass:['OOOOOOOOOOOO','.OFFFFFFFFO.','..OYYYYYYO..','...OYYYYO...','....OYYO....','.....OO.....','....OFYO....','...OFFYFO...','..OFFYYYFO..','.OFYYYYYYFO.','.OYYYYYYYYO.','OOOOOOOOOOOO'],
+  flag:['.OO.........','.OSOOOOOOO..','.OSORRRRRRO.','.OSORRRRRRRO','.OSORRRRRRO.','.OSORRRRRO..','.OSOOOOOOOO.','.OSO........','.OSO........','.OSO........','OOSOO.......','OOOOO.......'],
+  plus:['............','....OOOO....','....OFFO....','....OFFO....','.OOOOFFOOOO.','.OFFFFFFFFO.','.OFFFFFFFFO.','.OOOOFFOOOO.','....OFFO....','....OFFO....','....OOOO....','............'],
+  door:['.OOOOOOOOOO.','.OKKKKKKKKO.','.OKSSSSSSKO.','.OKSSSSSSKO.','.OKSSSSSSKO.','.OKSSSSOYKO.','.OKSSSSOYKO.','.OKSSSSSSKO.','.OKSSSSSSKO.','.OKSSSSSSKO.','.OKSSSSSSKO.','OOOOOOOOOOOO'],
+  trash:['....OOOO....','.OOOOOOOOOO.','.OSSSSSSSSO.','.OOOOOOOOOO.','..OSKSKSKO..','..OSKSKSKO..','..OSKSKSKO..','..OSKSKSKO..','..OSKSKSKO..','..OSKSKSKO..','..OSSSSSSO..','...OOOOOO...'],
+  calendar:['..O....O....','.OOOOOOOOOO.','.ORRRRRRRRO.','.OOOOOOOOOO.','.OFFFFFFFFO.','.OFKFKFKFFO.','.OFFFFFFFFO.','.OFKFKFKFFO.','.OFFFFFFFFO.','.OFKFKFFFFO.','.OFFFFFFFFO.','.OOOOOOOOOO.'],
+  check:['............','..........OO','.........OGO','........OGO.','.OO....OGO..','OGGO..OGO...','.OGGOOGO....','..OGGGO.....','...OGO......','....O.......','............','............'],
+  heart:['............','.OOO...OOO..','OBBBO.OBBBO.','OBFBBOBBBBO.','OBBBBBBBBBO.','OBBBBBBBBBO.','.OBBBBBBBO..','..OBBBBBO...','...OBBBO....','....OBO.....','.....O......','............'],
   mark:['...OOOOOO...','..OYYYYYYO..','.OYYOOOOYYO.','.OYO....OYO.','..O....OYYO.','......OYYO..','.....OYYO...','.....OYO....','.....OOO....','.....OYO....','.....OYO....','.....OOO....'],
 };
 const sprCache = {};
@@ -790,6 +857,8 @@ const sprite = (name, size = 24) => {
   }
   return `<svg class="spr" viewBox="0 0 12 12" width="${size}" height="${size}" shape-rendering="crispEdges" aria-hidden="true">${sprCache[key]}</svg>`;
 };
+setTimeout(() => { const sb = (id, ic, txt) => { const b = document.getElementById(id); if (b) b.innerHTML = sprite(ic, 16) + ' ' + txt; };
+  sb('locBtn', 'pin', 'Me'); if (!isAdmin()) sb('admLocBtn', 'people', 'Users'); }, 0);
 const sprOf = k => ({cryptid: 'shadow', ufo: 'ufo', paranormal: 'eye', haunted: 'moon', strange: 'mark', other: 'pin', ab_house: 'house', ab_hospital: 'hosp', ab_school: 'school', ab_factory: 'factory',
   ab_mine: 'pick', ab_church: 'church', ab_rail: 'train', ab_town: 'town', ab_other: 'barrier'}[k] || 'mark');
 const catIco = (k, size) => sprite(sprOf(k), size);
@@ -1017,21 +1086,40 @@ $('#chips').onclick = e => { const c = e.target.closest('.chip'); if (!c) return
 function render() {
   cluster.clearLayers();
   data.filter(s => !filter || (filter === 'abandoned' ? isAb(s.category) : s.category === filter)).forEach(s => {
-    L.marker([s.lat, s.lon], {icon: L.divIcon({className: '', html: `<div class="mk${s.id === selId ? ' sel' : ''}">${catIco(s.category, 32)}</div>`, iconSize: [40, 40]}), title: s.title})
+    L.marker([s.lat, s.lon], {icon: L.divIcon({className: '', html: `<div class="mk${s.id === selId ? ' sel' : ''}">${catIco(s.category, 32)}${s.priv ? '<i class="mkpriv" title="Private property">' + sprite('barrier', 14) + '</i>' : ''}</div>`, iconSize: [40, 40]}), title: s.title})
       .on('click', () => showSighting(s)).addTo(cluster);
   });
   $('#cnt').textContent = data.length;
 }
 let selId = null;
-async function loadSightings() {
-  const b = map.getBounds();
-  try {
-    const snap = await getDocs(query(collection(db, 'sightings'), where('lat', '>', b.getSouth()), where('lat', '<', b.getNorth()), limit(300)));
-    data = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(x => x.lon > b.getWest() && x.lon < b.getEast() && okItem(x.authorID, x.id));
-    data.forEach(x => seen.set(x.id, x));
-    render();
-  } catch (e) { console.error(e); }
+// Reports are cached for the whole visit: each 1° latitude band is downloaded once,
+// later only reports created since the newest one we have are fetched (every 5 min or after posting).
+const BAND = 1, bandsLoaded = new Set(), scache = new Map(), sessionT0 = Date.now();
+let maxCreated = 0, lastDelta = 0;
+const putS = d => { const x = {id: d.id, ...d.data()}; scache.set(x.id, x); seen.set(x.id, x);
+  const t = x.createdAt?.toMillis ? x.createdAt.toMillis() : 0; if (t > maxCreated) maxCreated = t; };
+async function loadBand(i) {
+  bandsLoaded.add(i);
+  try { (await getDocs(query(collection(db, 'sightings'), where('lat', '>=', i * BAND), where('lat', '<', (i + 1) * BAND), limit(1000)))).docs.forEach(putS); }
+  catch (e) { bandsLoaded.delete(i); throw e; }
 }
+async function syncNew() {
+  lastDelta = Date.now();
+  const since = maxCreated || sessionT0 - 300000;
+  (await getDocs(query(collection(db, 'sightings'), where('createdAt', '>', Timestamp.fromMillis(since)), limit(200)))).docs.forEach(putS);
+}
+const forgetSighting = id => { scache.delete(id); seen.delete(id); };
+async function loadSightings(fresh = false) {
+  const b = map.getBounds(), lo = Math.floor(b.getSouth() / BAND), hi = Math.floor(b.getNorth() / BAND), need = [];
+  for (let i = lo; i <= hi && need.length < 40; i++) if (!bandsLoaded.has(i)) need.push(i);
+  try {
+    if (need.length) { await Promise.all(need.map(loadBand)); if (!lastDelta) lastDelta = Date.now(); }
+    if (fresh || Date.now() - lastDelta > 300000) await syncNew();
+  } catch (e) { console.error(e); }
+  data = [...scache.values()].filter(x => x.lat > b.getSouth() && x.lat < b.getNorth() && x.lon > b.getWest() && x.lon < b.getEast() && okItem(x.authorID, x.id));
+  render();
+}
+setInterval(() => { if (gateOpened && !document.hidden) loadSightings(true); }, 300000);
 map.on('moveend', () => { clearTimeout(timer); timer = setTimeout(loadSightings, 500); $('#zm').textContent = 'Zoom ' + map.getZoom(); wxSoon(); });
 const showLL = ll => { $('#clat').textContent = `${Math.abs(ll.lat).toFixed(5)}° ${ll.lat >= 0 ? 'N' : 'S'}`; $('#clon').textContent = `${Math.abs(ll.lng).toFixed(5)}° ${ll.lng >= 0 ? 'E' : 'W'}`; };
 map.on('mousemove', e => showLL(e.latlng)); map.on('move', () => { if (!matchMedia('(hover: hover)').matches) showLL(map.getCenter()); });
@@ -1098,7 +1186,7 @@ map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
     const c = parseCoords(text);
     if (c) {
       last = {s: new Map(), p: [], c};
-      res.innerHTML = inArea(c) ? `<div class="qh">Coordinates</div><div class="qi" data-t="c">📌 ${c.lat.toFixed(5)}, ${c.lon.toFixed(5)}</div>`
+      res.innerHTML = inArea(c) ? `<div class="qh">Coordinates</div><div class="qi" data-t="c">${sprite('pin', 14)} ${c.lat.toFixed(5)}, ${c.lon.toFixed(5)}</div>`
         : '<div class="qi meta">These coordinates are outside the Appalachian states (the red dashed border on the map).</div>';
       return;
     }
@@ -1120,7 +1208,7 @@ map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
     last = {s: found, p: places, c: null};
     const reps = [...found.values()].slice(0, 8);
     res.innerHTML = (reps.length ? '<div class="qh">Reports</div>' + reps.map(x => `<div class="qi" data-t="s" data-id="${esc(x.id)}">${catIco(x.category, 18)}<span>${esc(x.title)}</span></div>`).join('') : '')
-      + (places.length ? '<div class="qh">Places</div>' + places.map((x, i) => `<div class="qi" data-t="p" data-i="${i}">📍 ${esc(x.display_name)}</div>`).join('') : '')
+      + (places.length ? '<div class="qh">Places</div>' + places.map((x, i) => `<div class="qi" data-t="p" data-i="${i}">${sprite('pin', 14)} ${esc(x.display_name)}</div>`).join('') : '')
       || '<div class="qi meta">Nothing found. Try another name or coordinates like 37.5, -80.5 (places are searched within Appalachia).</div>';
   };
   q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); q.blur(); doSearch(); } });
@@ -1150,14 +1238,15 @@ function resize(file) {
 function addSheet(ll) {
   if (!canPlaceAt(ll.lat, ll.lng)) { toast('Reports can only be placed in the Appalachian states (inside the red dashed border on the map).'); return; }
   sheet(`<h3>New report</h3>
-   ${catPicker()}<p class="meta" id="warn" style="display:none">⚠️ Abandoned places can be dangerous and are often private property. Never trespass, and don’t post addresses of occupied homes.</p>
+   ${catPicker()}<p class="meta" id="warn" style="display:none">${sprite('warn', 14)} Abandoned places can be dangerous and are often private property. Never trespass, and don’t post addresses of occupied homes.</p>
+   <label class="ck" id="privw" style="display:none"><input type="checkbox" id="priv"><span>${sprite('barrier', 14)} This place is on <b>private property</b> (no trespassing)</span></label>
    <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
    <input id="f" type="file" accept="image/*"><div id="pv"></div>
    <p class="meta">${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</p>
-   <label class="ck"><input type="checkbox" id="fuzz"> 🛡️ Hide the exact spot (moves the marker ~300–600 m) — use it if this is near your home. Only the site administrator sees the exact spot.</label><p class="err" id="e"></p>
+   <p class="err" id="e"></p>
    <button class="b" id="go">Post</button><button class="b s" id="cx">Cancel</button>`);
   let photo = null;
-  $('#cat').onchange = () => { $('#warn').style.display = isAb($('#cat').value) ? 'block' : 'none'; };
+  $('#cat').onchange = () => { const ab = isAb($('#cat').value); $('#warn').style.display = ab ? 'block' : 'none'; $('#privw').style.display = ab ? 'flex' : 'none'; };
   $('#f').onchange = async e => { const f = e.target.files[0]; if (!f) return; photo = await resize(f); $('#pv').innerHTML = `<img class="photo" src="${photo}">`; };
   $('#cx').onclick = closeSheet;
   $('#go').onclick = async () => {
@@ -1166,13 +1255,11 @@ function addSheet(ll) {
     $('#go').disabled = true;
     try {
       const ref = doc(collection(db, 'sightings'));
-      let [plat, plon] = [ll.lat, ll.lng];
-      if ($('#fuzz').checked) { for (let k = 0; k < 8; k++) { const [a, b] = jitter(ll.lat, ll.lng, 300, 600); if (canPlaceAt(a, b)) { [plat, plon] = [a, b]; break; } } }
+      const [plat, plon] = [ll.lat, ll.lng];
       await setDoc(ref, {title, details: $('#d').value.trim().slice(0, 1000), category: $('#cat').value, lat: plat, lon: plon,
-        authorID: user.uid, authorName: user.displayName || 'User', hasPhoto: !!photo, createdAt: serverTimestamp()});
+        authorID: user.uid, authorName: user.displayName || 'User', hasPhoto: !!photo, ...(isAb($('#cat').value) && $('#priv').checked ? {priv: true} : {}), createdAt: serverTimestamp()});
       if (photo) await setDoc(doc(db, 'photos', ref.id), {data: photo, authorID: user.uid});
-      if (plat !== ll.lat) setDoc(doc(db, 'exact', ref.id), {kind: 'sighting', owner: user.uid, lat: ll.lat, lng: ll.lng}).catch(() => {});
-      closeSheet(); loadSightings(); sfx('success');
+      closeSheet(); loadSightings(true); sfx('success');
     } catch (e) { $('#e').textContent = 'Could not save. Try again.'; $('#go').disabled = false; }
   };
 }
@@ -1200,7 +1287,9 @@ function canCreate(what) { if (!canPost()) return false; if (isAdmin() || accoun
 const jitter = (lat, lon, minM, maxM) => { const d = minM + Math.random() * (maxM - minM), a = Math.random() * Math.PI * 2;
   return [lat + (d * Math.cos(a)) / 111320, lon + (d * Math.sin(a)) / (111320 * Math.cos(lat * Math.PI / 180))]; };
 function safetySheet(onOk) {
-  sheet(`<h3>🧭 Before you meet up</h3><ul class="safelist">
+  let shown = false; try { shown = localStorage.getItem('safeMemo') === '1'; } catch {}
+  if (shown) { onOk(); return false; }
+  sheet(`<h3>${sprite('shield', 18)} Before you meet up</h3><ul class="safelist">
     <li>Meet in a <b>public place</b> first — a trailhead parking lot, a diner, never at someone's home.</li>
     <li>Tell a parent or friend <b>where you're going, with whom and when you'll be back.</b></li>
     <li>Go with people you know. <b>Don't get into a car</b> with someone you only met online.</li>
@@ -1208,7 +1297,8 @@ function safetySheet(onOk) {
     <li>Abandoned places are often private and dangerous — never trespass, never go alone.</li>
     <li>If anyone makes you uncomfortable: leave, <b>block and report</b> them.</li></ul>
     <button class="b" id="sok">I understand — join</button><button class="b s" id="cx">Cancel</button>`);
-  $('#cx').onclick = closeSheet; $('#sok').onclick = () => { closeSheet(); onOk(); };
+  $('#cx').onclick = closeSheet; $('#sok').onclick = () => { try { localStorage.setItem('safeMemo', '1'); } catch {} closeSheet(); onOk(); };
+  return true;
 }
 const wide = () => matchMedia('(min-width: 1000px)').matches;
 const panel = html => { if (wide()) { $('#obsBody').innerHTML = html; $('#obs').classList.add('open'); setTimeout(() => map.invalidateSize(), 50); } else sheet(html); };
@@ -1219,11 +1309,11 @@ async function showSighting(s) {
   selId = s.id; render(); sfx('select');
   $('#obsT').textContent = 'OBSERVATION';
   panel(`<div class="obs-head"><div class="obs-ico sunken">${catIco(s.category, 40)}</div><div style="min-width:0">
-     <span class="tag${isAb(s.category) ? ' ab' : ''}">${esc(c[1])}</span><h3>${esc(s.title)}</h3><p class="meta">${plink(s.authorID, s.authorName)} · ${fmt(s.createdAt)}</p></div></div>
+     <span class="tag${isAb(s.category) ? ' ab' : ''}">${esc(c[1])}</span>${s.priv ? '<span class="privsign">PRIVATE PROPERTY · NO TRESPASSING</span>' : ''}<h3>${esc(s.title)}</h3><p class="meta">${plink(s.authorID, s.authorName)} · ${fmt(s.createdAt)}</p></div></div>
    <div id="ph"></div><div id="exa"></div>
    ${s.details ? `<p style="white-space:pre-wrap;line-height:1.55">${esc(s.details)}</p>` : ''}
    <div class="grid2 sunken"><div><span>Coordinates</span><b>${(+s.lat).toFixed(5)}, ${(+s.lon).toFixed(5)}</b></div><div><span>Weather now</span><b id="owx">…</b></div></div>
-   ${isAb(s.category) ? '<p class="meta">⚠️ Abandoned places can be dangerous and are often private property. Never trespass.</p>' : ''}
+   ${isAb(s.category) ? '<p class="meta">' + sprite('warn', 14) + ' Abandoned places can be dangerous and are often private property. Never trespass.</p>' : ''}
    <div class="row"><button class="b" id="gpb">Go here together</button><button class="b s" id="dir">Directions</button></div>
    ${mine ? '<button class="b d" id="del">Delete report</button>' : '<div class="row"><button class="b d" id="rep">Report post</button><button class="b d" id="blk">Block user</button></div>'}
    ${wide() ? '' : '<button class="b s" id="cl">Close</button>'}`);
@@ -1231,9 +1321,9 @@ async function showSighting(s) {
   $('#gpb').onclick = () => { if (canPost()) newGroupSheet({place: s.title, lat: s.lat, lon: s.lon}); };
   $('#dir').onclick = () => window.open(`https://www.google.com/maps/dir/?api=1&destination=${(+s.lat).toFixed(6)},${(+s.lon).toFixed(6)}`, '_blank', 'noopener');
   if (isAdmin()) getDoc(doc(db, 'exact', s.id)).then(e => { if (!e.exists() || !$('#exa')) return; const v = e.data();
-    $('#exa').innerHTML = `<p class="meta" style="color:#ff6a6a">🛡️ ADMIN · exact spot: <u style="cursor:pointer" id="exgo">${v.lat.toFixed(5)}, ${v.lng.toFixed(5)}</u></p>`;
+    $('#exa').innerHTML = `<p class="meta" style="color:#ff6a6a">${sprite('shield', 14)} ADMIN · exact spot: <u style="cursor:pointer" id="exgo">${v.lat.toFixed(5)}, ${v.lng.toFixed(5)}</u></p>`;
     $('#exgo').onclick = () => { admLog('sighting', v.owner, s.authorName, s.id); map.setView([v.lat, v.lng], 16); L.circleMarker([v.lat, v.lng], {radius: 7, color: '#ff2a2a'}).addTo(map).bindTooltip('exact spot (admin)').openTooltip(); }; }).catch(() => {});
-  if (mine) $('#del').onclick = async () => { deleteDoc(doc(db, 'exact', s.id)).catch(() => {}); await deleteDoc(doc(db, 'sightings', s.id)); if (s.hasPhoto) deleteDoc(doc(db, 'photos', s.id)).catch(() => {}); closePanel(); loadSightings(); };
+  if (mine) $('#del').onclick = async () => { deleteDoc(doc(db, 'exact', s.id)).catch(() => {}); await deleteDoc(doc(db, 'sightings', s.id)); if (s.hasPhoto) deleteDoc(doc(db, 'photos', s.id)).catch(() => {}); forgetSighting(s.id); closePanel(); loadSightings(); };
   else { $('#rep').onclick = () => { closePanel(); report('sighting', s.id); loadSightings(); }; $('#blk').onclick = () => { block(s.authorID); closePanel(); loadSightings(); }; }
   getWx(+s.lat, +s.lon).then(w => { const o = $('#owx'); if (o && selId === s.id) o.textContent = w ? `${w.t}°F · ${w.d}` : '—'; });
   if (s.hasPhoto) { const p = await getDoc(doc(db, 'photos', s.id)); const u = p.exists() && p.data().data;
@@ -1256,7 +1346,7 @@ const LEGAL_DATE = 'November 16, 2026';
 const legalLinks = () => `<p class="meta legal"><a href="#" data-doc="rules">Community rules</a> · <a href="#" data-doc="terms">Terms of Use</a> · <a href="#" data-doc="privacy">Privacy Policy</a></p>`;
 document.addEventListener('click', e => { const a = e.target.closest('[data-doc]'); if (!a) return; e.preventDefault(); e.stopPropagation();
   ({rules: siteRules, terms: termsDoc, privacy: privacyDoc})[a.dataset.doc]?.(); }, true);
-function siteRules() { infoModal('📜 COMMUNITY RULES', `<ol>
+function siteRules() { infoModal(sprite('scroll', 16) + ' COMMUNITY RULES', `<ol>
     <li><b>Be decent.</b> No harassment, threats, hate, bullying or stalking. Argue about cryptids, not about people.</li>
     <li><b>Protect privacy.</b> Never post anyone's home address, phone, school, full name or photos of private people without consent. Use “Hide the exact spot” when a report is near a home.</li>
     <li><b>No adult or violent content.</b> No sexual content, gore or shock pictures anywhere — reports, chats, profiles or streams.</li>
@@ -1264,18 +1354,18 @@ function siteRules() { infoModal('📜 COMMUNITY RULES', `<ol>
     <li><b>No trespassing.</b> Don't encourage breaking into private, closed or dangerous places. Respect “No trespassing” signs and the law.</li>
     <li><b>Honest reports.</b> Post what you actually saw. Fakes for fun are fine only in clearly marked threads. No spam, ads or scams.</li>
     <li><b>Live streams.</b> Don't film people who didn't agree to it, and don't stream anything that breaks these rules.</li>
-    <li><b>See something wrong? Report it.</b> If someone breaks these rules — or you just feel that something is off, even if you're not sure — send a report with the <b>⚑ Report</b> button on the post, profile or message, and block them if you need to. You won't get in trouble for a report made in good faith. The moderator reviews every report and can hide posts or ban accounts for a while or forever.</li>
+    <li><b>See something wrong? Report it.</b> If someone breaks these rules — or you just feel that something is off, even if you're not sure — send a report with the <b>${sprite('flag', 14)} Report</b> button on the post, profile or message, and block them if you need to. You won't get in trouble for a report made in good faith. The moderator reviews every report and can hide posts or ban accounts for a while or forever.</li>
    </ol>
-   <p><b>🚨 Someone in danger or a crime happening right now? Call 911 first</b>, then report it here. Serious crimes are reported to the authorities.</p>
-   <p class="meta">Exact locations of live streams and hidden-spot reports are visible only to the site administrator, for emergencies. You must be 13 or older to use the site.</p>`); }
-function privacyDoc() { infoModal('🔒 PRIVACY POLICY', `<p class="meta">Last updated: ${LEGAL_DATE}</p>
+   <p><b>${sprite('siren', 16)} Someone in danger or a crime happening right now? Call 911 first</b>, then report it here. Serious crimes are reported to the authorities.</p>
+   <p class="meta">Exact locations of live streams and of members sharing their position are visible only to the site administrator, for emergencies. You must be 13 or older to use the site.</p>`); }
+function privacyDoc() { infoModal(sprite('lock', 16) + ' PRIVACY POLICY', `<p class="meta">Last updated: ${LEGAL_DATE}</p>
   <p>Appalachia Anomalies is a free, non-commercial hobby project run by an independent developer (“we”). This policy explains what we collect, why, who can see it and how to delete it. <b>We don't sell your data, show ads or use tracking/analytics.</b></p>
   <h4>What we collect</h4><ul>
    <li><b>Account:</b> your email address, display name and password. Passwords are handled by Google Firebase Authentication — we never see them.</li>
    <li><b>Profile (optional):</b> avatar, banner, “about me”, links, profile style and who may see your details.</li>
    <li><b>What you post:</b> reports with their map location, photos, forum threads and replies, group and stream chat messages, friend lists and requests, game invites, and reports you send about other users.</li>
    <li><b>Online status:</b> when you were last active on the site, shown according to your privacy setting.</li>
-   <li><b>Location (only if you turn it on):</b> when you use “📍 Me”, your device's location is shown to you; while it's on it is saved so that only you and the site administrator can see it, and it is deleted after 24 hours. When you go live, other members see only an approximate area (1–2 km off); the exact spot is visible only to the site administrator, for emergencies, and is deleted when the stream ends. If you tick “Hide the exact spot” on a report, other members see a point moved 300–600 m; the exact spot is visible only to the site administrator.</li>
+   <li><b>Location (only if you turn it on):</b> when you use “Me” (the location button), your device's location is shown to you; while it's on it is saved so that only you and the site administrator can see it, and it is deleted after 24 hours. You can also choose to share it with <b>your friends</b>; if you tick “Hide my exact location”, they see only an area of about 1 km. Turning it off removes it for everyone. When you go live, other members see only an approximate area (1–2 km off); the exact spot is visible only to the site administrator, for emergencies, and is deleted when the stream ends. Report markers are placed exactly where you put them, so don't mark your own home.</li>
    <li><b>Settings on your device:</b> things like sound on/off, map options and hidden posts are kept in your browser's local storage. We don't use advertising or tracking cookies.</li></ul>
   <h4>Why we use it</h4><p>Only to run the site: show your posts and profile, let you chat and play with others, keep the community safe (moderation, bans, abuse reports) and answer your messages.</p>
   <h4>Who can see it</h4><ul>
@@ -1288,13 +1378,13 @@ function privacyDoc() { infoModal('🔒 PRIVACY POLICY', `<p class="meta">Last u
   <h4>Your choices and rights</h4><p>You can see and edit your profile, change who sees your details, delete your own posts, turn location off and delete your account at any time. You can also ask us for a copy of your data or for its deletion by email. We don't sell or “share” personal information for advertising, so there's nothing to opt out of. We don't respond to “Do Not Track” signals because we don't track you.</p>
   <h4>Children</h4><p>The site is not for children under 13. We don't knowingly collect data from them; if we learn that a user is under 13, we delete the account and its data. Parents can contact us at the address below.</p>
   <h4>Security</h4><p>Data is protected by Google Firebase security rules and sent over encrypted connections (HTTPS). No system is perfectly secure, so please don't post things that should stay private.</p>
-  <h4>Changes and contact</h4><p>If we change this policy we'll update the date above and show a notice for important changes. Questions or requests: <a href="mailto:${FEEDBACK_TO}">${FEEDBACK_TO}</a> or the “✉️ Send feedback” form.</p>`); }
-function termsDoc() { infoModal('📄 TERMS OF USE', `<p class="meta">Last updated: ${LEGAL_DATE}</p>
+  <h4>Changes and contact</h4><p>If we change this policy we'll update the date above and show a notice for important changes. Questions or requests: <a href="mailto:${FEEDBACK_TO}">${FEEDBACK_TO}</a> or the “Send feedback” form.</p>`); }
+function termsDoc() { infoModal(sprite('doc', 16) + ' TERMS OF USE', `<p class="meta">Last updated: ${LEGAL_DATE}</p>
   <p>By creating an account or using Appalachia Anomalies (“the site”) you agree to these terms, the <a href="#" data-doc="rules">community rules</a> and the <a href="#" data-doc="privacy">Privacy Policy</a>. If you don't agree, please don't use the site.</p>
   <h4>1. Who can use it</h4><p>You must be at least 13 years old. If you are under 18 (or the age of majority where you live), you need a parent's or guardian's permission. One person — one account; keep your password private. You're responsible for what happens on your account.</p>
   <h4>2. Your content</h4><p>You keep ownership of what you post. By posting, you allow us to store and show it on the site to other members, as the site's features require. Only post content you have the right to share — your own photos and words. You can delete your posts at any time.</p>
   <h4>3. What's not allowed</h4><p>Everything the <a href="#" data-doc="rules">community rules</a> prohibit, plus: breaking the law, impersonating others, spam and scams, collecting other users' data, attacking or overloading the site, or trying to get around bans, blocks and security rules.</p>
-  <h4>4. Moderation</h4><p>We may remove content and limit, suspend or ban accounts — for a time or permanently — when the rules or these terms are broken, or to protect someone's safety. We can't review everything before it's posted, so please report problems with the ⚑ Report button. We cooperate with law enforcement and may report illegal activity and share related information with the authorities, as described in the <a href="#" data-doc="privacy">Privacy Policy</a>.</p>
+  <h4>4. Moderation</h4><p>We may remove content and limit, suspend or ban accounts — for a time or permanently — when the rules or these terms are broken, or to protect someone's safety. We can't review everything before it's posted, so please report problems with the ${sprite('flag', 14)} Report button. We cooperate with law enforcement and may report illegal activity and share related information with the authorities, as described in the <a href="#" data-doc="privacy">Privacy Policy</a>.</p>
   <p><b>This site is not an emergency service.</b> If someone is in danger, call 911 (or your local emergency number) first.</p>
   <h4>5. Your safety is your responsibility</h4><p><b>Reports on the map are posted by members and are not checked or confirmed by us.</b> Places shown may be private property, closed to the public or dangerous (unstable buildings, mines, wildlife, weather). Never trespass and follow the law and posted signs. If you go anywhere or meet anyone because of the site, you do it at your own risk — meet in public, tell someone where you're going and never go alone.</p>
   <h4>6. Copyright</h4><p>If you believe something on the site infringes your copyright, email us with a link to it and proof that you own the work, and we'll remove it. Accounts that repeatedly infringe will be banned.</p>
@@ -1335,7 +1425,7 @@ function verifySheet(sent) {
 }
 handleActionLink();
 onAuthStateChanged(auth, u => { user = u; if (u) deletionGate(u).then(g => { if (!g) banCheck(); }); else banCheck(); mapAccessSync(); profile(); watchInvites(); liveAuthChanged(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); gateSync(); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
-const pPanel = (title, body, extra = '') => `<section class="panel win"${extra}><div class="tbar"><span>${title}</span></div><div class="pad">${body}</div></section>`;
+const pPanel = (title, body, extra = '', ic = '') => `<section class="panel win${/^ADMIN/.test(title) ? ' adm' : ''}"${extra}><div class="tbar">${ic ? sprite(ic, 14) : ''}<span>${title}</span></div><div class="pad">${body}</div></section>`;
 // ---------- access gate: the site is only for signed-in users with a verified email ----------
 let gateOpened = false;
 function gateSync() {
@@ -1363,17 +1453,17 @@ function profile() {
   if (!user) {
     el.innerHTML = `<div class="pwrap">${profileCard(null, 'Guest', {title: 'PROFILE'})}<div class="pgrid">
       ${pPanel('SIGN IN', '<p>Browsing is open to everyone. A verified email is required to post reports, join groups and add friends.</p><button class="b" id="si">Sign in or create account</button>')}
-      ${pPanel('CONTACT', discordBtn() + '<button class="b s" id="fb-open">✉️ Send feedback</button>')}</div>${links()}</div>`;
+      ${pPanel('CONTACT', discordBtn() + '<button class="b s" id="fb-open">' + sprite('mail', 16) + ' Send feedback</button>')}</div>${links()}</div>`;
     $('#si').onclick = () => authSheet(); return;
   }
   const since = user.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : '—';
-  el.innerHTML = `<div class="pwrap"><div id="myp"></div><div class="pgrid">
-    ${pPanel('FRIENDS', '<div id="fpanel"><p class="meta">Loading…</p></div>', ' style="grid-row:span 2"')}
-    ${pPanel('ACCOUNT', `<div class="kv"><span>Email</span><b>${esc(user.email)}</b></div><p class="meta">🔒 Private — only you and the admin can see it.</p>
-      <div class="kv"><span>Status</span><b>${user.emailVerified ? '<span class="ok">✔ Verified</span>' : '<span class="err">Not verified</span>'}</b></div><div class="kv"><span>Member since</span><b>${esc(since)}</b></div>
-      ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<div class="row"><button class="b s" id="so">Sign out</button><button class="b s" id="bl">🚫 Blocked users</button><button class="b d" id="da">Delete account</button></div>`)}
-    ${pPanel('CONTACT', discordBtn() + '<button class="b s" id="fb-open">✉️ Send feedback</button>')}
-    ${isAdmin() ? pPanel('ADMIN · REPORTS', '<div id="adm"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"') + pPanel('ADMIN · BANNED USERS', '<div id="admb"><p class="meta">Loading…</p></div>') + pPanel('ADMIN · ACCOUNT DELETIONS', '<div id="admd"><p class="meta">Loading…</p></div>') + pPanel('ADMIN · LOCATIONS', '<div id="adml"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"') : ''}
+  el.innerHTML = `<div class="pwrap"><div id="myp"></div><div class="pgrid pme">
+    ${pPanel('FRIENDS', '<div id="fpanel"><p class="meta">Loading…</p></div>', ' style="grid-row:span 2"', 'people')}
+    ${pPanel('ACCOUNT', `<div class="kv"><span>${sprite('mail', 14)} Email</span><b>${esc(user.email)}</b></div><p class="meta kvnote">${sprite('lock', 12)} Private — only you and the admin can see it.</p>
+      <div class="kv"><span>${sprite('check', 14)} Status</span><b>${user.emailVerified ? '<span class="ok">Verified</span>' : '<span class="err">Not verified</span>'}</b></div><div class="kv"><span>${sprite('calendar', 14)} Member since</span><b>${esc(since)}</b></div>
+      ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<div class="accbtns"><button class="b s" id="so">${sprite('door', 16)} Sign out</button><button class="b s" id="bl">${sprite('noentry', 16)} Blocked users</button><button class="b d" id="da">${sprite('trash', 16)} Delete account</button></div>`, '', 'lock')}
+    ${pPanel('CONTACT', discordBtn() + '<button class="b s" id="fb-open">' + sprite('mail', 16) + ' Send feedback</button>', '', 'mail')}
+    ${isAdmin() ? `<div class="admhead">${sprite('shield', 18)}<span>ADMIN CONSOLE</span><i></i></div>` + pPanel('ADMIN · REPORTS', '<div id="adm"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"', 'flag') + pPanel('ADMIN · BANNED USERS', '<div id="admb"><p class="meta">Loading…</p></div>', '', 'noentry') + pPanel('ADMIN · ACCOUNT DELETIONS', '<div id="admd"><p class="meta">Loading…</p></div>', '', 'trash') + pPanel('ADMIN · LOCATIONS', '<div id="adml"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"', 'pin') : ''}
   </div>${links()}</div>`;
   if (!user.emailVerified) $('#vf').onclick = () => verifySheet();
   syncPrivate();
@@ -1383,7 +1473,7 @@ function profile() {
   $('#so').onclick = () => signOut(auth);
   $('#bl').onclick = async () => {
     const ids = [...blocked]; const prs = await Promise.all(ids.map(id => getProfile(id).catch(() => null)));
-    sheet(`<h3>🚫 Blocked users</h3>${ids.length ? ids.map((id, i) => `<div class="item"><b>${esc(prs[i]?.name || 'User')}</b> <u data-ub="${esc(id)}" style="cursor:pointer;color:var(--acc);margin-left:8px">unblock</u></div>`).join('') : '<p class="meta">You haven’t blocked anyone.</p>'}<button class="b s" id="cx">Close</button>`);
+    sheet(`<h3>${sprite('noentry', 18)} Blocked users</h3>${ids.length ? ids.map((id, i) => `<div class="item"><b>${esc(prs[i]?.name || 'User')}</b> <u data-ub="${esc(id)}" style="cursor:pointer;color:var(--acc);margin-left:8px">unblock</u></div>`).join('') : '<p class="meta">You haven’t blocked anyone.</p>'}<button class="b s" id="cx">Close</button>`);
     $('#cx').onclick = closeSheet; $('#sheetBody').onclick = async e => { const u = e.target.closest('[data-ub]'); if (u) { await unblock(u.dataset.ub); u.closest('.item').remove(); } };
   };
   $('#da').onclick = () => { sheet(`<h3>Delete account?</h3><p>Your profile disappears right away and you are signed out. The account, friends list and your map reports are <b>deleted after 48 hours</b>.</p>
@@ -1541,14 +1631,18 @@ const profileCard = (p, fallbackName, opt = {}) => {
   const name = esc(p?.name || fallbackName || 'User');
   const pre = p && bgUrl(p.bg);
   const ban = p && typeof p.banner === 'string' && JPEG.test(p.banner) ? `<img alt="" src="${p.banner}">` : pre ? `<img alt="" src="${pre}" style="image-rendering:pixelated">` : sprite('ghost', 96);
-  const lk = p && p.links && typeof p.links === 'object' ? NETS.map(([k, label]) => { const u = safeUrl(p.links[k]); return u ? `<a class="chip" href="${esc(u)}" target="_blank" rel="noopener nofollow ugc">${esc(label)}</a>` : ''; }).join('') : '';
-  const badges = (opt.admin ? '<span class="badge blood">ADMIN</span>' : '') + (p ? '<span class="badge">✔ VERIFIED</span>' : '');
-  return `<div class="pcard win"><div class="tbar">${sprite('ghost', 14)}<span>${opt.title || 'PROFILE'}</span></div><div class="pban">${ban}</div>
-    <div class="phead">${avatarHtml(p)}<div class="pname"><h2>${name}</h2><div class="badges">${badges}</div></div>${opt.action || ''}</div>
-    <div class="pbody">${p?.bio ? `<p class="pbio">${esc(p.bio)}</p>` : `<p class="meta">${opt.self ? 'Add a few words about yourself in Edit profile.' : 'No description yet.'}</p>`}
-    ${lk ? `<div class="plinks">${lk}</div>` : ''}<div class="pstats" id="${opt.statsId || 'pstats'}">${opt.stats || ''}</div><div id="pextra"></div></div></div>`;
+  const lk = p && p.links && typeof p.links === 'object' ? NETS.map(([k, label]) => { const u = safeUrl(p.links[k]); return u ? `<a class="chip" href="${esc(u)}" target="_blank" rel="noopener nofollow ugc">${esc(label)} ↗</a>` : ''; }).join('') : '';
+  const adm = opt.admin || p?.admin === true;
+  const badges = (adm ? `<span class="badge blood">${sprite('shield', 10)} ADMIN</span>` : '') + (p && !p.locked ? '<span class="badge">✔ VERIFIED</span>' : '') + (p?.locked ? `<span class="badge">${sprite('lock', 10)} PRIVATE</span>` : '');
+  const pres = opt.presId ? `<div class="ppres" id="${opt.presId}"><span class="pres"><i></i>…</span></div>` : opt.pres ? `<div class="ppres">${opt.pres}</div>` : '';
+  const bio = p?.bio ? `<p class="pbio${p.locked ? ' locked' : ''}">${p.locked ? sprite('lock', 14) + ' ' : ''}${esc(p.bio)}</p>` : `<p class="meta">${opt.self ? 'Add a few words about yourself in Edit profile.' : 'No description yet.'}</p>`;
+  return `<div class="pcard win pc2"><div class="tbar">${sprite('ghost', 14)}<span>${opt.title || 'PROFILE'}</span></div><div class="pban">${ban}<i class="pfade"></i></div>
+    <div class="phead">${avatarHtml(p)}<div class="pname"><h2${adm ? ' class="adminname"' : ''}>${name}</h2><div class="badges">${badges}</div>${pres}</div>${opt.action ? `<div class="pact">${opt.action}</div>` : ''}</div>
+    <div class="pbody pcols"><div class="pabout"><div class="plabel">ABOUT</div>${bio}${lk ? `<div class="plinks">${lk}</div>` : ''}</div>
+    <div class="pstats" id="${opt.statsId || 'pstats'}">${opt.stats || ''}</div></div><div id="pextra"></div></div>`;
 };
-const statCell = (n, label) => `<div class="stat sunken"><b>${n}</b><span>${label}</span></div>`;
+const statCell = (n, label) => { const ic = /^Report/.test(label) ? 'pin' : /^Group/.test(label) ? 'people' : 'ghost';
+  return `<div class="stat sunken st-${ic}">${sprite(ic, 18)}<b>${n}</b><span>${label}</span></div>`; };
 const countReports = async uid => { try { return (await getDocs(query(collection(db, 'sightings'), where('authorID', '==', uid), limit(500)))).size; } catch { return '—'; } };
 // keep the admin-only email copy in sync (readable only by its owner and the admin)
 let privSynced = null;
@@ -1560,8 +1654,8 @@ const ensureProfile = async () => {
   try {
     if ((await getDoc(doc(db, 'deletion', user.uid)).catch(() => null))?.exists()) return; // account waiting for deletion: keep the profile hidden
     const p = await getProfile(user.uid, true), name = (p?.name || user.displayName || 'User').slice(0, 30);
-    if (p && p.nameLower === name.toLowerCase()) return;
-    await setDoc(doc(db, 'users', user.uid), {name, nameLower: name.toLowerCase(), updatedAt: serverTimestamp()}, {merge: true});
+    if (p && p.nameLower === name.toLowerCase() && (!isAdmin() || p.admin === true)) return;
+    await setDoc(doc(db, 'users', user.uid), {name, nameLower: name.toLowerCase(), ...(isAdmin() ? {admin: true} : {}), updatedAt: serverTimestamp()}, {merge: true});
     profCache.delete(user.uid);
   } catch {}
 };
@@ -1595,13 +1689,13 @@ async function openProfile(uid) {
   sheet('<p class="meta">Loading profile…</p>');
   const p0 = await getProfile(uid, true), vis = p0?.vis || 'all';
   const canSee = isAdmin() || vis === 'all' || (vis === 'friends' && (await friendState(uid)) === 'friend');
-  const p = canSee || !p0 ? p0 : {name: p0.name, avatar: p0.avatar, frame: p0.frame, bio: '🔒 This member keeps their profile private.'};
+  const p = canSee || !p0 ? p0 : {name: p0.name, avatar: p0.avatar, frame: p0.frame, bio: 'This member keeps their profile private.', locked: true};
   let fcount = '—'; if (canSee) { try { fcount = (await getDocs(collection(db, `users/${uid}/friends`))).size; } catch {} }
   const rcount = await countReports(uid);
-  sheet(profileCard(p, 'User', {title: 'USER PROFILE', stats: statCell(rcount, 'Reports') + statCell(fcount, fcount === 1 ? 'Friend' : 'Friends')}) + `<div class="presrow" id="pres1"><span class="pres"><i></i>…</span></div><div id="fbtn"></div><div id="adm1"></div><div id="adm2"></div><button class="b s" id="cx">Close</button>`);
+  sheet(profileCard(p, 'User', {title: 'USER PROFILE', presId: 'pres1', stats: statCell(rcount, 'Reports') + statCell(fcount, fcount === 1 ? 'Friend' : 'Friends')}) + `<div id="fbtn"></div><div id="adm1"></div><div id="adm2"></div><button class="b s" id="cx">Close</button>`);
   if (isAdmin()) adminBanBox(uid, p?.name || 'User');
   presenceOf(uid).then(pr => { const e = $('#pres1'); if (e) e.innerHTML = canSee || pr ? presenceHtml(pr) : ''; });
-  $('#adm1').insertAdjacentHTML('beforebegin', `<div class="row" id="blkrow">${blocked.has(uid) ? '<button class="b s" id="ubk">Unblock</button>' : '<button class="b s" id="bk2">🚫 Block</button>'}<button class="b s" id="rp2">⚑ Report</button></div>`);
+  $('#adm1').insertAdjacentHTML('beforebegin', `<div class="row" id="blkrow">${blocked.has(uid) ? '<button class="b s" id="ubk">Unblock</button>' : '<button class="b s" id="bk2">' + sprite('noentry', 16) + ' Block</button>'}<button class="b s" id="rp2">${sprite('flag', 16)} Report</button></div>`);
   if ($('#bk2')) $('#bk2').onclick = async () => { await block(uid); toast('Blocked. They can no longer see your status, invite you, send friend requests or watch your streams.'); };
   if ($('#ubk')) $('#ubk').onclick = async () => { await unblock(uid); openProfile(uid); };
   $('#rp2').onclick = () => report('user', uid);
@@ -1630,7 +1724,7 @@ async function openProfile(uid) {
   draw();
   if (isAdmin()) {
     try { const pv = await getDoc(doc(db, 'private', uid)); const a = $('#adm1');
-      if (a) a.innerHTML = `<div class="adminbox">🔒 Admin only · email: <b>${esc(pv.exists() ? pv.data().email : 'not recorded yet')}</b><br><span class="meta">User ID: ${esc(uid)}</span></div>`; } catch {}
+      if (a) a.innerHTML = `<div class="adminbox">${sprite('lock', 14)} Admin only · email: <b>${esc(pv.exists() ? pv.data().email : 'not recorded yet')}</b><br><span class="meta">User ID: ${esc(uid)}</span></div>`; } catch {}
   }
 }
 
@@ -1638,7 +1732,7 @@ async function myProfileSection() {
   const box = $('#myp'); if (!box || !user) return;
   const p = await getProfile(user.uid, true);
   pageBg($('#profile'), p?.pbg);
-  box.innerHTML = profileCard(p, user.displayName, {self: true, admin: isAdmin(), title: 'MY PROFILE', statsId: 'mystats', action: '<button class="b" id="ep">✏️ Edit profile</button>'}) + '<div class="presrow"><span class="pres on"><i></i>Online</span><span class="meta">Others see when you were last online.</span></div>';
+  box.innerHTML = profileCard(p, user.displayName, {self: true, admin: isAdmin(), title: 'MY PROFILE', statsId: 'mystats', action: '<button class="b" id="ep">' + sprite('pencil', 16) + ' Edit profile</button>', pres: '<span class="pres on"><i></i>Online</span><span class="meta">Others see when you were last online.</span>'});
   const fp = $('#fpanel'); if (!fp) return;
   fp.innerHTML = `
     <div class="search sunken" style="max-width:none;margin:6px 0"><svg viewBox="0 0 8 8" width="16" height="16" fill="#8798AA" aria-hidden="true" shape-rendering="crispEdges"><path d="M1 0h4v1h-4zM0 1h1v1h-1zM5 1h1v1h-1zM0 2h1v1h-1zM5 2h1v1h-1zM0 3h1v1h-1zM5 3h1v1h-1zM1 4h4v1h-4zM5 5h1v1h-1zM6 6h1v1h-1zM7 7h1v1h-1z"/></svg><input id="fsq" maxlength="30" placeholder="Find people by nickname…" aria-label="Find people by nickname" autocomplete="off" enterkeyhint="search"></div>
@@ -1693,7 +1787,7 @@ function editProfile(p0) {
    <span class="lbl">Background</span><div class="bgs" id="bgs"><label><input type="radio" name="bg" value=""${!bgUrl(p.bg) ? ' checked' : ''}><span class="bgt none">${sprite('ghost', 20)}</span>None</label>${BGS.map(([k, label]) => `<label><input type="radio" name="bg" value="${k}"${k === p.bg ? ' checked' : ''}><span class="bgt"><img alt="" src="${bgUrl(k)}"></span>${esc(label)}</label>`).join('')}</div>
    <span class="lbl">Page background</span><div class="bgs pbgs" id="pbgs">${PBGS.map(([k, label]) => `<label><input type="radio" name="pbg" value="${k}"${k === (p.pbg || 'graphite') ? ' checked' : ''}><span class="bgt pbt" style="background-image:url(${pbgUrl(k)})"></span>${esc(label)}</label>`).join('')}</div>
    <span class="lbl">Own banner image (replaces the background)</span><div id="bnp" class="pban sunken" style="height:90px"></div><input type="file" id="pbn" accept="image/*" aria-label="Choose banner"><button class="b s" id="pbr" style="width:auto">Remove own banner</button>
-   <label class="lbl" for="pvis">🛡️ Who can see my details (about me, links, friends) and when I'm online</label>
+   <label class="lbl" for="pvis">${sprite('shield', 14)} Who can see my details (about me, links, friends) and when I'm online</label>
    <select id="pvis" class="sunken"><option value="all"${(p.vis || 'all') === 'all' ? ' selected' : ''}>Everyone signed in</option><option value="friends"${p.vis === 'friends' ? ' selected' : ''}>Only my friends</option><option value="nobody"${p.vis === 'nobody' ? ' selected' : ''}>Nobody</option></select>
    <span class="lbl">Links (full https:// addresses)</span>
    ${NETS.map(([k, label]) => `<label class="lbl" for="l_${k}">${esc(label)}</label><input id="l_${k}" type="url" inputmode="url" maxlength="200" placeholder="https://" value="${esc((p.links && p.links[k]) || '')}">`).join('')}
@@ -1719,6 +1813,7 @@ function editProfile(p0) {
     data.vis = ['all', 'friends', 'nobody'].includes($('#pvis').value) ? $('#pvis').value : 'all'; myVis = data.vis; heartbeat();
     $('#go').disabled = true;
     try {
+      if (isAdmin()) data.admin = true;
       await setDoc(doc(db, 'users', user.uid), data);
       if (name !== user.displayName) await updateProfile(user, {displayName: name});
       profCache.delete(user.uid); closeSheet(); sfx('success'); profile();
@@ -1764,7 +1859,7 @@ async function deletionGate(u) {
     catch { await signOut(auth).catch(() => {}); toast('Could not finish deleting the account. Sign in again to retry.'); }
     return true;
   }
-  sheet(`<h3>♻️ Restore your account?</h3><p>Your account is scheduled to be deleted on <b>${esc(fmtWhen(at + GRACE_MS))}</b>
+  sheet(`<h3>${sprite('flip', 18)} Restore your account?</h3><p>Your account is scheduled to be deleted on <b>${esc(fmtWhen(at + GRACE_MS))}</b>
     (in ${Math.max(1, Math.round(left / 3600000))} h). You can still get it back with your profile, friends and reports.</p>
     <p class="err" id="e"></p><button class="b" id="rs">Restore my account</button><button class="b s" id="kp">Keep it deleted</button>`, true);
   $('#rs').onclick = async () => {
@@ -1779,7 +1874,7 @@ async function deletionGate(u) {
 // ---------- password reset: email with a one-time code (link) → new password set right here ----------
 const parseOob = t => { t = String(t || '').trim(); try { const u = new URL(t); return u.searchParams.get('oobCode') || (u.searchParams.get('link') ? new URL(u.searchParams.get('link')).searchParams.get('oobCode') : ''); } catch { return t.replace(/\s+/g, ''); } };
 function resetSheet(email = '', note = '') {
-  sheet(`<h3>🔑 Reset password</h3><p class="meta">Enter the email of your account. We'll send a reset email with a one-time code (link). Open it or paste it below, then choose a new password.</p>
+  sheet(`<h3>${sprite('key', 18)} Reset password</h3><p class="meta">Enter the email of your account. We'll send a reset email with a one-time code (link). Open it or paste it below, then choose a new password.</p>
     <input id="rem" type="email" autocomplete="email" placeholder="Email" value="${esc(email)}"><button class="b" id="rsend">Send reset code</button><p class="ok" id="rmsg">${esc(note)}</p>
     <div style="height:1px;background:var(--lo);margin:12px 0"></div>
     <input id="rcode" placeholder="Paste the link or code from the email" autocomplete="one-time-code">
@@ -1805,7 +1900,7 @@ async function handleActionLink() {
   history.replaceState(null, '', location.pathname + location.hash);
   if (mode === 'resetPassword') {
     let em = ''; try { em = await verifyPasswordResetCode(auth, code); } catch { toast('This reset link has expired or was already used. Request a new one.'); return; }
-    sheet(`<h3>🔑 New password</h3><p>Account: <b>${esc(em)}</b></p><input id="rp1" type="password" autocomplete="new-password" placeholder="New password (min 6)">
+    sheet(`<h3>${sprite('key', 18)} New password</h3><p>Account: <b>${esc(em)}</b></p><input id="rp1" type="password" autocomplete="new-password" placeholder="New password (min 6)">
       <input id="rp2" type="password" autocomplete="new-password" placeholder="Repeat new password"><p class="err" id="e"></p><button class="b" id="rset">Save new password</button>`);
     $('#rset').onclick = () => applyReset(code, $('#rp1').value, $('#rp2').value);
   } else if (mode === 'verifyEmail') {
@@ -1821,10 +1916,10 @@ const banText = b => b.forever ? 'permanently' : `until ${fmtWhen(b.until.toDate
 async function banCheck() {
   myBan = null; const bar = $('#banbar');
   if (user) { try { const d = await getDoc(doc(db, 'bans', user.uid)); if (d.exists() && banActive(d.data())) myBan = d.data(); } catch {} }
-  if (bar) { bar.hidden = !myBan; if (myBan) bar.innerHTML = `⛔ You are banned ${esc(banText(myBan))}${myBan.reason ? ` — ${esc(myBan.reason)}` : ''}. You can browse but can't post.`; }
+  if (bar) { bar.hidden = !myBan; if (myBan) bar.innerHTML = `${sprite('noentry', 14)} You are banned ${esc(banText(myBan))}${myBan.reason ? ` — ${esc(myBan.reason)}` : ''}. You can browse but can't post.`; }
 }
 function banSheet(uid, name) {
-  sheet(`<h3>⛔ Ban ${esc(name)}</h3>
+  sheet(`<h3>${sprite('noentry', 18)} Ban ${esc(name)}</h3>
     <label>Duration<select class="sunken" id="bd"><option value="1">1 hour</option><option value="6">6 hours</option><option value="24" selected>1 day</option><option value="72">3 days</option>
       <option value="168">7 days</option><option value="720">30 days</option><option value="custom">Until a date…</option><option value="forever">Forever</option></select></label>
     <label id="bcl" hidden>Banned until<input class="sunken" id="bc" type="datetime-local"></label>
@@ -1846,8 +1941,8 @@ async function adminBanBox(uid, name) {
   const box = $('#adm2'); if (!box || !isAdmin() || uid === user?.uid) return;
   let b = null; try { const d = await getDoc(doc(db, 'bans', uid)); if (d.exists()) b = d.data(); } catch {}
   const on = banActive(b);
-  box.innerHTML = `<div class="adminbox">🔒 Moderation · ${on ? `<b class="err">Banned ${esc(banText(b))}</b>${b.reason ? ` — ${esc(b.reason)}` : ''}` : 'Not banned'}
-    <div class="row" style="margin-top:6px">${on ? '<button class="b s" id="ubn">Unban</button><button class="b d" id="bn">Change ban</button>' : '<button class="b d" id="bn">⛔ Ban user</button>'}</div></div>`;
+  box.innerHTML = `<div class="adminbox">${sprite('lock', 14)} Moderation · ${on ? `<b class="err">Banned ${esc(banText(b))}</b>${b.reason ? ` — ${esc(b.reason)}` : ''}` : 'Not banned'}
+    <div class="row" style="margin-top:6px">${on ? '<button class="b s" id="ubn">Unban</button><button class="b d" id="bn">Change ban</button>' : '<button class="b d" id="bn">' + sprite('noentry', 16) + ' Ban user</button>'}</div></div>`;
   $('#bn').onclick = () => banSheet(uid, name);
   if ($('#ubn')) $('#ubn').onclick = async () => { try { await deleteDoc(doc(db, 'bans', uid)); sfx('success'); adminBanBox(uid, name); } catch { toast('Could not unban.'); } };
 }
@@ -1979,12 +2074,12 @@ async function openThread(t) {
 }
 
 // ---------- presence: online status + last seen (Firestore heartbeat; online = seen in the last 2.5 min) ----------
-const PRES_TTL = 150000;
+const PRES_TTL = 270000;
 async function heartbeat(off = false) {
   if (!user || !user.emailVerified || (document.hidden && !off)) return;
   try { await setDoc(doc(db, 'presence', user.uid), {t: serverTimestamp(), off, vis: myVis}); } catch {}
 }
-setInterval(() => heartbeat(), 90000);
+setInterval(() => heartbeat(), 180000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) heartbeat(); });
 addEventListener('pagehide', () => heartbeat(true));
 async function presenceOf(uid) { try { const d = await getDoc(doc(db, 'presence', uid)); if (!d.exists()) return null; const v = d.data(); return {t: v.t?.toDate ? v.t.toDate().getTime() : null, off: !!v.off}; } catch { return null; } }
@@ -1999,7 +2094,12 @@ const presenceHtml = pr => isOnline(pr) ? '<span class="pres on"><i></i>Online</
   : `<span class="pres"><i></i>${pr?.t ? `Last seen ${seenAgo(pr.t)}` : 'Last seen: unknown'}</span>`;
 
 // ---------- my location: visible only to me (and stored for the site admin while sharing is on) ----------
-let locWatch = null, locMk = null, locCirc = null, locLast = null, locCentered = false;
+let locWatch = null, locMk = null, locCirc = null, locLast = null, locCentered = false, flLast = null;
+const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+const locShare = () => lsGet('locShare', '0') === '1', locFuzz = () => lsGet('locFuzz', '1') === '1';
+// approximate position for friends: the centre of a ~1 km grid cell (stable, so it can't be averaged out)
+const fuzzLL = ll => [Math.floor(ll[0] / 0.01) * 0.01 + 0.005, Math.floor(ll[1] / 0.01) * 0.01 + 0.005];
 const locIcon = L.divIcon({className: '', html: '<div class="medot"><i></i></div>', iconSize: [22, 22]});
 function locConsent() { try { return localStorage.getItem('locConsent') === '1'; } catch { return false; } }
 function locSetBtn() { const b = $('#locBtn'); if (b) { b.classList.toggle('on', !!locWatch); b.setAttribute('aria-pressed', !!locWatch); } }
@@ -2020,23 +2120,51 @@ async function locSave(ll, acc) {
   const now = Date.now(); if (locLast && now - locLast.t < 60000 && map.distance(ll, locLast.ll) < 100) return;
   locLast = {t: now, ll};
   try { await setDoc(doc(db, 'userloc', user.uid), {lat: ll[0], lng: ll[1], acc: Math.round(acc), name: myName(), t: serverTimestamp()}); } catch {}
+  friendLocSave(ll);
+}
+async function friendLocSave(ll) {
+  if (!user || !user.emailVerified) return;
+  if (!locShare() || !myFriends.size) { if (flLast !== 'off') { flLast = 'off'; deleteDoc(doc(db, 'friendloc', user.uid)).catch(() => {}); } return; }
+  const fz = locFuzz(), p = fz ? fuzzLL(ll) : ll, key = p.map(v => v.toFixed(fz ? 3 : 4)).join() + fz;
+  if (flLast && flLast.key === key && Date.now() - flLast.t < 600000) return;      // same cell: refresh at most every 10 min
+  flLast = {key, t: Date.now()};
+  try { await setDoc(doc(db, 'friendloc', user.uid), {lat: p[0], lng: p[1], fuzz: fz, name: myName(), to: [...myFriends].slice(0, 200), t: serverTimestamp()}); } catch {}
 }
 async function locStop(silent) {
   if (locWatch !== null) navigator.geolocation.clearWatch(locWatch); locWatch = null; locLast = null;
   if (locMk) { map.removeLayer(locMk); map.removeLayer(locCirc); locMk = locCirc = null; }
   try { localStorage.setItem('locOn', '0'); } catch {} locSetBtn();
-  if (user && user.emailVerified) { try { await deleteDoc(doc(db, 'userloc', user.uid)); } catch {} }
+  if (user && user.emailVerified) { flLast = 'off'; deleteDoc(doc(db, 'friendloc', user.uid)).catch(() => {}); try { await deleteDoc(doc(db, 'userloc', user.uid)); } catch {} }
 }
 function locToggle() {
   if (locWatch !== null) { locStop(); return; }
-  if (locConsent()) { locStart(); return; }
-  sheet(`<h2>📍 Show my location</h2><p>Your position appears on the map <b>only for you</b> — other users can't see it.</p>
-    <p class="meta">While this is on and you are signed in, your last position is also saved for the <b>site administrator</b> (for safety on expeditions). Turning it off removes it.</p>
+  sheet(`<h2>${sprite('pin', 20)} Show my location</h2><p>Your position appears on your map. Other members don't see it unless you share it with your friends.</p>
+    <label class="ck"><input type="checkbox" id="lsh"${locShare() ? ' checked' : ''}><span>Share with <b>my friends</b>${myFriends.size ? ` (${myFriends.size})` : ' — you have no friends added yet'}</span></label>
+    <label class="ck" id="lfzw" style="margin-left:22px${locShare() ? '' : ';opacity:.45'}"><input type="checkbox" id="lfz"${locFuzz() ? ' checked' : ''}${locShare() ? '' : ' disabled'}><span>Hide my exact location — friends see only an area of about 1 km</span></label>
+    <p class="meta">While this is on, your exact position is also saved for the <b>site administrator</b> (for safety on expeditions). Turning it off removes it for everyone.</p>
     <div class="row"><button class="b" id="locOk">Turn on</button><button class="b s" id="cx">Cancel</button></div>`);
   $('#cx').onclick = closeSheet;
-  $('#locOk').onclick = () => { try { localStorage.setItem('locConsent', '1'); } catch {} closeSheet(); locStart(); };
+  $('#lsh').onchange = () => { const on = $('#lsh').checked; $('#lfz').disabled = !on; $('#lfzw').style.opacity = on ? 1 : .45; };
+  $('#locOk').onclick = () => { lsSet('locConsent', '1'); lsSet('locShare', $('#lsh').checked ? '1' : '0'); lsSet('locFuzz', $('#lfz').checked ? '1' : '0'); flLast = null; closeSheet(); locStart(); };
 }
 function locRestore() { let on = false; try { on = localStorage.getItem('locOn') === '1'; } catch {} if (on && locConsent() && locWatch === null) locStart(); }
+
+// ---------- friends who share their location with me ----------
+const friendLayer = L.layerGroup().addTo(map);
+let flUnsub = null;
+function friendLocWatch() {
+  if (flUnsub) { flUnsub(); flUnsub = null; } friendLayer.clearLayers();
+  if (!user || !user.emailVerified) return;
+  flUnsub = onSnapshot(query(collection(db, 'friendloc'), where('to', 'array-contains', user.uid)), snap => {
+    friendLayer.clearLayers();
+    snap.forEach(d => { const v = d.data(), t = v.t?.toDate ? v.t.toDate().getTime() : Date.now();
+      if (blocked.has(d.id) || typeof v.lat !== 'number' || Date.now() - t > 6 * 3600000) return;
+      const tip = `<b>${esc(v.name || 'Friend')}</b><br><small>${v.fuzz ? 'approximate area · ' : ''}updated ${seenAgo(t)}</small>`;
+      if (v.fuzz) L.circle([v.lat, v.lng], {radius: 800, color: '#7fc8a9', weight: 1, dashArray: '4 4', fillOpacity: .08, interactive: false}).addTo(friendLayer);
+      L.marker([v.lat, v.lng], {icon: L.divIcon({className: '', html: `<div class="frdot${v.fuzz ? ' fz' : ''}">${sprite('ghost', 14)}<span>${esc((v.name || '').slice(0, 14))}</span></div>`, iconSize: [24, 24], iconAnchor: [12, 12]}), zIndexOffset: 900})
+        .bindTooltip(tip).on('click', () => openProfile(d.id)).addTo(friendLayer); });
+  }, () => {});
+}
 
 // ---------- admin: everyone's shared locations (can be hidden when there are too many) ----------
 const admLayer = L.markerClusterGroup({maxClusterRadius: 40, iconCreateFunction: c => L.divIcon({className: '', html: `<div class="ulclus">${c.getChildCount()}</div>`, iconSize: [34, 34]})});
@@ -2047,7 +2175,7 @@ function admLocSync() {
   b.hidden = !isAdmin();
   const want = isAdmin() && admLocOn();
   b.classList.toggle('on', want); b.setAttribute('aria-pressed', want);
-  b.innerHTML = `👥 Users${want ? ` <b>${admCount}</b>` : ''}`;
+  b.innerHTML = `${sprite('people', 16)} Users${want ? ` <b>${admCount}</b>` : ''}`;
   if (want && !admUnsub) {
     admLayer.addTo(map);
     admUnsub = onSnapshot(collection(db, 'userloc'), snap => {
@@ -2058,7 +2186,7 @@ function admLocSync() {
         L.marker([v.lat, v.lng], {icon: L.divIcon({className: '', html: `<div class="ulmk${old ? ' old' : ''}" title="${esc(v.name || 'User')}">${esc((v.name || '?').slice(0, 1).toUpperCase())}</div>`, iconSize: [26, 26]}), title: v.name})
           .bindPopup(`<b>${esc(v.name || 'User')}</b><br><span class="meta">updated ${seenAgo(t)} · ±${v.acc || '?'} m</span><br><button class="b" style="margin-top:6px" data-prof="${esc(d.id)}">Open profile</button>`)
           .addTo(admLayer); });
-      const bb = $('#admLocBtn'); if (bb && admLocOn()) bb.innerHTML = `👥 Users <b>${admCount}</b>`;
+      const bb = $('#admLocBtn'); if (bb && admLocOn()) bb.innerHTML = `${sprite('people', 16)} Users <b>${admCount}</b>`;
     }, () => {});
   } else if (!want && admUnsub) { admUnsub(); admUnsub = null; admLayer.clearLayers(); map.removeLayer(admLayer); }
 }
@@ -2078,7 +2206,7 @@ function liveWatch() {
       L.marker([s.lat, s.lng], {icon: L.divIcon({className: '', html: `<div class="livemk"><span>LIVE</span></div>`, iconSize: [46, 22]}), zIndexOffset: 900, title: s.title})
         .bindTooltip(`${esc(s.title)} — ${esc(s.name)}<br><small>approximate area${s.aud === 'friends' ? ' · friends only' : ''}</small>`).on('click', () => liveOpen(d.id)).addTo(liveLayer);
       if (isAdmin()) getDoc(doc(db, 'exact', d.id)).then(e => { if (!e.exists()) return; const v = e.data();
-        L.circleMarker([v.lat, v.lng], {radius: 6, color: '#ff2a2a', weight: 2, fillOpacity: .6}).bindTooltip(`🛡️ exact spot (admin) — ${esc(s.name)}`).addTo(liveLayer); }).catch(() => {}); });
+        L.circleMarker([v.lat, v.lng], {radius: 6, color: '#ff2a2a', weight: 2, fillOpacity: .6}).bindTooltip(`${sprite('shield', 12)} exact spot (admin) — ${esc(s.name)}`).addTo(liveLayer); }).catch(() => {}); });
   }, () => {});
 }
 function liveUnwatch() { if (liveUnsub) { liveUnsub(); liveUnsub = null; } liveLayer.clearLayers(); }
@@ -2103,19 +2231,19 @@ function liveChat(sid, box) {
 }
 const liveShell = (title, sub, role) => `<div class="tbar blood"><span class="lrec">● LIVE</span><span class="ttl">${esc(title)}</span><button class="x raised" id="lvx" aria-label="Close">✕</button></div>
   <div class="lbody"><div class="lvid sunken"><video id="lvv" playsinline autoplay ${role === 'host' ? 'muted' : ''}></video><div class="lstat" id="lvs">${esc(sub)}</div>
-  <div class="lbadge" id="lvn">👁 0</div></div>
-  ${role === 'host' ? '<div class="row lctl"><button class="b s" id="lvmic">🎙 Mic on</button><button class="b s" id="lvflip">🔄 Camera</button><button class="b danger" id="lvend">■ End stream</button></div>' : ''}
+  <div class="lbadge" id="lvn">${sprite('eye', 14)} 0</div></div>
+  ${role === 'host' ? '<div class="row lctl"><button class="b s" id="lvmic">' + sprite('mic', 16) + ' Mic on</button><button class="b s" id="lvflip">' + sprite('flip', 16) + ' Camera</button><button class="b danger" id="lvend">■ End stream</button></div>' : ''}
   <div class="lchatbox"><div class="lchat sunken"></div><form class="lform"><input class="sunken" maxlength="300" placeholder="Write in the stream chat…" aria-label="Chat message"><button class="b">Send</button></form></div></div>`;
 function goLiveSheet() {
   if (!canCreate('live streams')) return;
   if (LIVE) { toast('You are already in a stream.'); return; }
   if (!navigator.mediaDevices?.getUserMedia) { toast('Live video is not supported in this browser.'); return; }
-  sheet(`<h2>🔴 Go live</h2><p class="meta">Stream video from where you are. Everyone signed in sees a <b>LIVE</b> marker on the map and can watch and chat. Up to ${LIVE_MAX} viewers at once.</p>
+  sheet(`<h2>${sprite('rec', 20)} Go live</h2><p class="meta">Stream video from where you are. Everyone signed in sees a <b>LIVE</b> marker on the map and can watch and chat. Up to ${LIVE_MAX} viewers at once.</p>
     <label>Title<input class="sunken" id="lvt" maxlength="80" placeholder="e.g. Strange lights over the ridge"></label>
     <label>Place on the map<select class="sunken" id="lvp"><option value="me">My current location</option><option value="map">Center of the map view</option></select></label>
     <label>Camera<select class="sunken" id="lvc"><option value="environment">Back camera</option><option value="user">Front camera</option></select></label>
     <label>Who can watch<select class="sunken" id="lva"><option value="friends">Only my friends</option><option value="all">Everyone signed in</option></select></label>
-    <p class="meta">🛡️ For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot. Only the site administrator can see the exact spot (for emergencies).</p>
+    <p class="meta">${sprite('shield', 14)} For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot. Only the site administrator can see the exact spot (for emergencies).</p>
     <div class="row"><button class="b" id="lvgo">Start streaming</button><button class="b s" id="cx">Cancel</button></div>`);
   $('#cx').onclick = closeSheet;
   $('#lvgo').onclick = async () => {
@@ -2141,7 +2269,7 @@ async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null
   LIVE.hbT = setInterval(() => updateDoc(doc(db, 'streams', sid), {hb: serverTimestamp()}).catch(() => {}), 30000);
   // answer every viewer that asks to watch
   LIVE.unsubs.push(onSnapshot(collection(db, `streams/${sid}/peers`), snap => {
-    $('#lvn') && ($('#lvn').textContent = `👁 ${snap.size}`);
+    $('#lvn') && ($('#lvn').innerHTML = `${sprite('eye', 14)} ${snap.size}`);
     snap.docChanges().forEach(async ch => {
       const vid = ch.doc.id, d = ch.doc.data();
       if (ch.type === 'removed') { LIVE?.pcs.get(vid)?.close(); LIVE?.pcs.delete(vid); return; }
@@ -2155,7 +2283,7 @@ async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null
     });
   }, () => {}));
   $('#lvx').onclick = $('#lvend').onclick = () => liveEnd();
-  $('#lvmic').onclick = () => { const a = LIVE.stream.getAudioTracks()[0]; if (!a) return; a.enabled = !a.enabled; $('#lvmic').textContent = a.enabled ? '🎙 Mic on' : '🔇 Mic off'; };
+  $('#lvmic').onclick = () => { const a = LIVE.stream.getAudioTracks()[0]; if (!a) return; a.enabled = !a.enabled; $('#lvmic').innerHTML = sprite('mic', 16) + (a.enabled ? ' Mic on' : ' Mic off'); };
   $('#lvflip').onclick = async () => {
     const facing = LIVE.facing === 'user' ? 'environment' : 'user';
     try { const ns = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing}}); const nt = ns.getVideoTracks()[0], ot = LIVE.stream.getVideoTracks()[0];
@@ -2205,7 +2333,7 @@ async function liveOpen(sid) {
 $('#locBtn').onclick = locToggle; $('#liveBtn').onclick = goLiveSheet;
 $('#admLocBtn').onclick = () => { try { localStorage.setItem('admLoc', admLocOn() ? '0' : '1'); } catch {} admLocSync(); };
 let locRestored = false;
-function liveAuthChanged() { (async () => { if (user && user.emailVerified) { try { const p = await getProfile(user.uid, true); myVis = ['all', 'friends', 'nobody'].includes(p?.vis) ? p.vis : 'all'; } catch {} } await Promise.all([syncBlocks(), syncFriends()]); heartbeat(); })(); admLocSync(); if (user && user.emailVerified) liveWatch(); else liveUnwatch(); if (!locRestored) { locRestored = true; locRestore(); } }
+function liveAuthChanged() { (async () => { if (user && user.emailVerified) { try { const p = await getProfile(user.uid, true); myVis = ['all', 'friends', 'nobody'].includes(p?.vis) ? p.vis : 'all'; } catch {} } await Promise.all([syncBlocks(), syncFriends()]); heartbeat(); friendLocWatch(); if (locWatch !== null && locLast) friendLocSave(locLast.ll); })(); admLocSync(); if (user && user.emailVerified) liveWatch(); else liveUnwatch(); if (!locRestored) { locRestored = true; locRestore(); } }
 
 // ---------- HAUNT card game: rules engine (pure, JSON state) ----------
 const HC = {r: ['Blood', '#b84a55'], g: ['Moss', '#7f9a6e'], b: ['Steel', '#5f86ad'], y: ['Bone', '#cdb36a']};
@@ -2287,7 +2415,7 @@ const H = {
   },
   // ---- BOO! (last-card call) ----
   norm(s) { if (s.boo && (s.hands[s.boo.p]?.length !== 1 || s.out.includes(s.boo.p) || s.winner)) s.boo = null; return s; },
-  booPress(s0, p) { const s = H.clone(s0); if (!s.boo || s.boo.p !== p) return s0; s.boo = null; s.booed = (s.booed || 0) + 1; s.log = `${s.names[p]} shouted BOO! 👻`; return s; },
+  booPress(s0, p) { const s = H.clone(s0); if (!s.boo || s.boo.p !== p) return s0; s.boo = null; s.booed = (s.booed || 0) + 1; s.log = `${s.names[p]} shouted BOO!`; return s; },
   booPenalty(s0, now = Date.now()) { if (!s0.boo || now < s0.boo.until) return s0; const s = H.clone(s0), p = s.boo.p; s.boo = null;
     if (s.hands[p]?.length === 1 && !s.winner) { H.give(s, p, 2); s.log = `${s.names[p]} forgot to shout BOO! — draws 2`; s.pen = (s.pen || 0) + 1; } return s; },
   botBoo(s) { if (!s.boo) return false; const lv = s.bots[s.boo.p]; if (!lv) return false; const chance = lv === 'easy' ? 65 : lv === 'normal' ? 88 : 100; return ((s.moves * 7919 + s.boo.until) % 100) < chance; },
@@ -2435,7 +2563,7 @@ function gamesHome() {
   el.innerHTML = `<div class="pwrap"><div class="pcard win"><div class="tbar">${sprite('ghost', 14)}<span>MINI GAMES</span></div>
     <div class="pad ghero"><div class="glogo">${cardHtml('wF', 'big tilt1')}${cardHtml('r7', 'big tilt2')}${cardHtml('back', 'big tilt3')}</div>
       <div class="grow"><h2 class="hlogo">HAUNT</h2><p class="meta">A spooky shedding card game for 2–4 players. Match the colour or the symbol, curse your neighbours with Skips and +2s, and be the first to empty your hand. Down to one card? The table hears a <b>BOO!</b></p>
-      <div class="row hbtns"><button class="b" id="hbot">🤖 Play vs bots</button><button class="b s" id="hqm">⚡ Quick match</button><button class="b s" id="hfr">👥 Play with friends</button></div>
+      <div class="row hbtns"><button class="b" id="hbot">${sprite('robot', 16)} Play vs bots</button><button class="b s" id="hqm">${sprite('bolt', 16)} Quick match</button><button class="b s" id="hfr">${sprite('people', 16)} Play with friends</button></div>
       <button class="lnk" id="hcode">Join by room code</button> · <button class="lnk" id="hrules">How to play</button></div></div></div>
     <div class="pgrid"><section class="panel win"><div class="tbar"><span>INVITES</span></div><div class="pad" id="hinv"><p class="meta">${user ? 'No invites right now.' : 'Sign in to play online with friends.'}</p></div></section>
     <section class="panel win"><div class="tbar"><span>MORE GAMES</span></div><div class="pad"><p class="meta">More mini games are on the way. Ideas? Send feedback from your profile.</p></div></section></div></div>`;
@@ -2819,7 +2947,7 @@ function fwReact(prev, s) {
     if (f === me) setFw(k === 1 ? 'love' : 'happy', `You take ${H.ord(k)} place!`, 4000); else setFw('excited', `${nm(f)} takes ${H.ord(k)} place! Now: fight for ${H.ord(k + 1)}!`, 4000); return; }
   if (s.winner && !prev.winner) { s.winner === me ? setFw('love', 'You win!! The spirits adore you ♥', 7000) : setFw(fwPick(['smug', 'cry']), `${nm(s.winner)} takes the whole pot!`, 7000); return; }
   if ((s.pen || 0) > (prev.pen || 0)) { setFw(fwPick(['laugh', 'angry']), 'Too slow! No BOO — draw 2!'); return; }
-  if ((s.booed || 0) > (prev.booed || 0)) { setFw('laugh', 'BOOOOO! 👻'); return; }
+  if ((s.booed || 0) > (prev.booed || 0)) { setFw('laugh', 'BOOOOO!'); return; }
   if (s.out.length > prev.out.length) { setFw('sad', 'Aww… someone left my table.'); return; }
   if (s.last && JSON.stringify(s.last) !== JSON.stringify(prev.last)) {
     const v = s.last.card[1], n = s.last.n || 1;
@@ -3054,7 +3182,7 @@ function renderLobby() {
     <p class="meta">${r.public ? (seats.length >= 2 ? `Starting in <b id="hcd">${wait}</b>s or when the table is full.` : 'Looking for more players… you can also fill the table with bots.') : 'Invite friends, add bots, then start when ready (2–4 seats).'}</p>
     <div class="seats">${[0, 1, 2, 3].map(i => { const p = seats[i]; if (!p) return '<div class="lseat empty sunken">empty seat</div>';
       return `<div class="lseat raised">${isBotId(p) ? botAv(p, 30) : `<span class="hav" data-av="${esc(p)}">${avatarHtml(profCache.get(p), true)}</span>`}<b>${esc(r.names[p] || 'Player')}</b>${p === r.host ? '<span class="badge">HOST</span>' : ''}${host && isBotId(p) ? `<button class="lnk red" data-rb="${esc(p)}">remove</button>` : ''}</div>`; }).join('')}</div>
-    <div class="row hbtns">${host ? `<button class="b" id="hstart" ${seats.length >= 2 ? '' : 'disabled'}>▶ Start game</button>${seats.length < 4 ? '<button class="b s" id="haddbot">🤖 Add bot</button>' : ''}` : '<span class="meta">The host will start the game.</span>'}<button class="b d" id="hlv">Leave</button></div>
+    <div class="row hbtns">${host ? `<button class="b" id="hstart" ${seats.length >= 2 ? '' : 'disabled'}>▶ Start game</button>${seats.length < 4 ? '<button class="b s" id="haddbot">' + sprite('robot', 16) + ' Add bot</button>' : ''}` : '<span class="meta">The host will start the game.</span>'}<button class="b d" id="hlv">Leave</button></div>
     ${!r.public ? `<label class="lbl" for="hlink">Invite link (room code ${esc(G.rid)})</label><div class="fl"><input id="hlink" readonly value="${esc(link)}" class="grow"><button class="b s" id="hcopy" style="width:auto">Copy</button></div>` : ''}
     </div></div>${!r.public ? '<section class="panel win"><div class="tbar"><span>INVITE FRIENDS</span></div><div class="pad" id="hfriends"><p class="meta">Loading friends…</p></div></section>' : ''}</div>`;
   seats.filter(p => !isBotId(p)).forEach(async p => { const pr = await getProfile(p); document.querySelectorAll(`.hav[data-av="${CSS.escape(p)}"]`).forEach(n => n.innerHTML = avatarHtml(pr, true)); });
@@ -3171,7 +3299,7 @@ async function acceptInvite(rid) {
 // ---------- Discord / feedback ----------
 const DISCORD = 'https://discord.gg/MUftwFDjW', FEEDBACK_TO = 'danrabbit333@gmail.com';
 const discordBtn = () => `<a class="discord" href="${DISCORD}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg><span><b>Join our Discord</b><br>Come in, chat and find new friends!</span></a>`;
-const contact = () => `<h3 style="margin-top:24px">Contact</h3>${discordBtn()}<button class="b s" id="fb-open">✉️ Send feedback</button>`;
+const contact = () => `<h3 style="margin-top:24px">Contact</h3>${discordBtn()}<button class="b s" id="fb-open">${sprite('mail', 16)} Send feedback</button>`;
 document.addEventListener('click', e => { if (e.target.closest('#fb-open')) feedbackSheet(); });
 function feedbackSheet() {
   sheet(`<h3>Send feedback</h3><input id="fn" maxlength="60" placeholder="Your name" value="${esc(user?.displayName || '')}">
@@ -3222,7 +3350,7 @@ const dayLabel = ts => { const d = ts?.toDate ? ts.toDate() : new Date(), t = ne
 const hhmm = ts => ts?.toDate ? ts.toDate().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '…';
 const groupCard = (g, mine) => `<button class="gcard raised" data-id="${esc(g.id)}"><span class="gico sunken">${sprite(g.private ? 'shadow' : 'ghost', 30)}</span>
   <span class="tmain"><b>${esc(g.name)}</b><span class="tmeta">${g.private ? `<span class="badge blood">${pxi('lock', 9)} PRIVATE</span>` : '<span class="badge">PUBLIC</span>'}${g.place ? `<span>${pxi('pin', 10)} ${esc(g.place)}</span>` : ''}${g.when ? `<span>${pxi('cal', 10)} ${esc(g.when)}</span>` : ''}</span>
-  <span class="tmeta">by ${esc(g.authorName || 'User')}</span>${mine ? `<span class="qchat" data-chat="${esc(g.id)}" role="button">💬 Open chat</span>` : ''}</span><span class="tcount sunken"><b data-mc="${esc(g.id)}">·</b><small>members</small></span></button>`;
+  <span class="tmeta">by ${esc(g.authorName || 'User')}</span>${mine ? `<span class="qchat" data-chat="${esc(g.id)}" role="button">${sprite('chat', 14)} Open chat</span>` : ''}</span><span class="tcount sunken"><b data-mc="${esc(g.id)}">·</b><small>members</small></span></button>`;
 const fillMemberCounts = list => list.slice(0, 60).forEach(async g => { try { const c = await getCountFromServer(collection(db, `groups/${g.id}/members`));
   document.querySelectorAll(`[data-mc="${CSS.escape(g.id)}"]`).forEach(b => b.textContent = c.data().count); } catch {} });
 const byNew = (a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
@@ -3232,7 +3360,7 @@ async function groupList() {
   const el = $('#groups');
   el.innerHTML = `<div class="pwrap"><div class="pcard win"><div class="tbar">${sprite('ghost', 14)}<span>EXPEDITION BOARD</span></div>
     <div class="pad fhead"><div class="grow"><h2 style="margin:0">Groups &amp; Chats</h2><p class="meta">Find people to visit a place together, plan the trip and chat in real time.</p></div>
-    <div class="row" style="flex:0 1 auto"><button class="b" id="ng" style="width:auto">＋ New group</button><button class="b s" id="jc" style="width:auto">🔑 Join by invite</button></div></div></div>
+    <div class="row" style="flex:0 1 auto"><button class="b" id="ng" style="width:auto">${sprite('plus', 16)} New group</button><button class="b s" id="jc" style="width:auto">${sprite('key', 16)} Join by invite</button></div></div></div>
     <div id="mg"></div><h3 class="sech">Public groups</h3><div id="gl" class="tlist"><p class="meta">Loading…</p></div>
     ${isAdmin() ? '<h3 class="sech">Admin · all groups (incl. private)</h3><div id="ag" class="tlist"><p class="meta">Loading…</p></div>' : ''}
     <div style="margin-top:16px">${discordBtn()}</div></div>`;
@@ -3273,7 +3401,7 @@ function newGroupSheet(pre = {}) {
   sheet(`<h3>New group</h3><input id="gn" maxlength="60" placeholder="Group name (e.g. Saturday hike)">
    <input id="gpl" maxlength="100" placeholder="Place" value="${esc(pre.place || '')}"><input id="gw" maxlength="60" placeholder="When (e.g. Sat, Nov 21, 10:00)">
    <textarea id="gd" maxlength="500" placeholder="Plans, meeting point, difficulty, what to bring…"></textarea>
-   <label class="ck"><input type="checkbox" id="gpv">🔒 Private group (hidden from the list, join by invite link only)</label>
+   <label class="ck"><input type="checkbox" id="gpv"><span>${sprite('lock', 14)} Private group (hidden from the list, join by invite link only)</span></label>
    <p class="meta">Meet in public places and tell someone where you’re going. Group chats may be reviewed by the site administrator to enforce the rules.</p><p class="err" id="e"></p>
    <button class="b" id="go">Create</button><button class="b s" id="cx">Cancel</button>`);
   $('#cx').onclick = closeSheet;
@@ -3306,7 +3434,7 @@ async function joinByCode(raw) {
   if (!user) { pendingJoin = id; authSheet('Sign in or create an account to join the group.'); return; }
   if (!user.emailVerified) { pendingJoin = id; verifySheet(); return; }
   try {
-    await new Promise((res, rej) => { safetySheet(res); const c = $('#cx'); if (c) c.onclick = () => { closeSheet(); rej(0); }; });
+    await new Promise((res, rej) => { if (safetySheet(res)) { const c = $('#cx'); if (c) c.onclick = () => { closeSheet(); rej(0); }; } });
   } catch { return; }
   try {
     await joinGroup(id);
@@ -3332,13 +3460,13 @@ async function openGroup(g) {
    <div class="kv"><span>${pxi('pin', 11)} Place</span><b>${esc(g.place || '—')}</b></div><div class="kv"><span>${pxi('cal', 11)} When</span><b>${esc(g.when || '—')}</b></div><div class="kv"><span>Organizer</span><b>${plink(g.authorID, g.authorName)}</b></div>
    ${g.description ? `<p class="pbody2">${esc(g.description)}</p>` : ''}
    <div class="row gacts">
-   ${member || adm ? `<button class="b" id="oc">💬 Open group chat</button>` : ''}
+   ${member || adm ? `<button class="b" id="oc">${sprite('chat', 16)} Open group chat</button>` : ''}
    ${!member && !adm ? '<button class="b" id="jn">＋ Join group</button>' : ''}
-   ${g.private && (member || adm) ? '<button class="b s" id="iv">🔗 Invite link</button>' : ''}
+   ${g.private && (member || adm) ? '<button class="b s" id="iv">' + sprite('link', 16) + ' Invite link</button>' : ''}
    ${typeof g.lat === 'number' ? '<button class="b s" id="sm">Show on map</button>' : ''}
    </div>
    <div class="acts">${member && !owner ? '<button class="lnk" id="lv">Leave group</button>' : ''}${owner || adm ? '<button class="lnk red" id="dg">Delete group</button>' : '<button class="lnk" id="rg">Report group</button>'}</div>
-   ${g.private ? '<p class="meta">🔒 Private group. Chats may be reviewed by the site administrator to enforce the rules.</p>' : ''}</div></div>
+   ${g.private ? '<p class="meta">' + sprite('lock', 14) + ' Private group. Chats may be reviewed by the site administrator to enforce the rules.</p>' : ''}</div></div>
    <section class="panel win"><div class="tbar"><span>MEMBERS · ${shown.length}</span></div><div class="pad"><div class="fgrid" id="mem">${shown.map((m, i) => `<div class="fcard raised"><a href="#" class="prof" data-uid="${esc(m.id)}" style="border:0;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:100%">${avatarHtml(mprof[i], true)}<span>${esc(mprof[i]?.name || m.name)}</span></a>${m.id === g.authorID ? '<span class="badge">ORGANIZER</span>' : ''}${(owner || adm) && m.id !== g.authorID ? `<button class="lnk red" data-kick="${esc(m.id)}">remove</button>` : ''}</div>`).join('') || '<p class="meta">—</p>'}</div></div></section></div>`;
   $('#bk').onclick = groupList;
   $('#mem').onclick = async e => { const k = e.target.closest('[data-kick]'); if (!k) return;
@@ -3423,7 +3551,7 @@ async function fillAtt(gid, n) {
     if (n.dataset.kind === 'image' && /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(d)) { const im = new Image(); im.src = d; n.replaceChildren(im); }
     else if (n.dataset.kind === 'audio' && /^data:audio\/[a-z0-9.+-]+(;codecs=[a-z0-9.,-]+)?;base64,[A-Za-z0-9+\/=]+$/i.test(d)) { const a = document.createElement('audio'); a.controls = true; a.src = d; a.style.width = '100%'; n.replaceChildren(a); }
     else throw 0;
-  } catch { n.textContent = '⚠️ attachment unavailable'; }
+  } catch { n.innerHTML = sprite('warn', 14) + ' attachment unavailable'; }
 }
 
 function mountChat(box, g, readonly) {
@@ -3443,8 +3571,8 @@ function mountChat(box, g, readonly) {
     d.className = 'mrow' + (me ? ' me' : '') + (cont ? ' cont' : ''); d.id = 'm_' + m.id; if (a) d.dataset.att = '1';
     let body = m.text ? `<div class="mtext">${esc(m.text)}</div>` : '';
     if (a) body += a.kind === 'file'
-      ? `<button class="dl filechip" data-mid="${esc(m.id)}" data-name="${esc(a.name)}">📄 <span>${esc(a.name)}</span><small>${Math.max(1, Math.round((a.size || 0) / 1024))} KB</small></button>`
-      : `<div class="att" data-mid="${esc(m.id)}" data-kind="${esc(a.kind)}">⏳ ${a.kind === 'audio' ? 'Voice message…' : 'Photo…'}</div>`;
+      ? `<button class="dl filechip" data-mid="${esc(m.id)}" data-name="${esc(a.name)}">${sprite('doc', 14)} <span>${esc(a.name)}</span><small>${Math.max(1, Math.round((a.size || 0) / 1024))} KB</small></button>`
+      : `<div class="att" data-mid="${esc(m.id)}" data-kind="${esc(a.kind)}">${sprite('hourglass', 14)} ${a.kind === 'audio' ? 'Voice message…' : 'Photo…'}</div>`;
     const acts = `${me || isAdmin() ? `<u data-a="del" data-id="${esc(m.id)}">delete</u>` : ''}${me ? '' : `<u data-a="rep" data-id="${esc(m.id)}">report</u>`}`;
     d.innerHTML = `${me ? '' : `<span class="mav" data-av="${esc(m.authorID)}">${cont ? '' : avatarHtml(profCache.get(m.authorID), true)}</span>`}
       <div class="bubble">${me || cont ? '' : `<div class="mname">${plink(m.authorID, m.authorName)}</div>`}${body}<div class="mfoot"><span class="t">${hhmm(m.createdAt)}</span><span class="macts">${acts}</span></div></div>`;
@@ -3549,7 +3677,7 @@ function admShow(lat, lng, label) {
 let admLocTab = 'me';
 async function loadAdmLocs() {
   const box = $('#adml'); if (!box) return;
-  const tabs = [['me', '📍 Me'], ['live', '● Live streams'], ['hid', '🛡️ Hidden spots'], ['log', '📜 View log']];
+  const tabs = [['me', sprite('pin', 16) + ' Me'], ['live', sprite('rec', 16) + ' Live streams'], ['log', sprite('scroll', 16) + ' View log']];
   const head = `<div class="row admtabs">${tabs.map(([k, t]) => `<button class="b ${admLocTab === k ? '' : 's'}" data-alt="${k}">${t}</button>`).join('')}</div>
     <p class="meta">Current data only — no movement history. Opening an exact location is recorded in the view log.</p>`;
   box.innerHTML = head + '<div id="admlb"><p class="meta">Loading…</p></div>';
@@ -3557,7 +3685,7 @@ async function loadAdmLocs() {
     const t = e.target.closest('[data-alt]'); if (t) { admLocTab = t.dataset.alt; loadAdmLocs(); return; }
     const u = e.target.closest('u[data-act]'); if (!u) return; const d = u.dataset;
     if (d.act === 'prof') openProfile(d.uid);
-    if (d.act === 'show') { admLog(d.kind, d.uid, d.name, d.ref); admShow(+d.lat, +d.lng, `🛡️ ${d.name} — ${d.kind === 'me' ? 'shared location' : d.kind === 'stream' ? 'stream, exact' : 'report, exact'}`); }
+    if (d.act === 'show') { admLog(d.kind, d.uid, d.name, d.ref); admShow(+d.lat, +d.lng, `${sprite('shield', 12)} ${d.name} — ${d.kind === 'me' ? 'shared location' : d.kind === 'stream' ? 'stream, exact' : 'report, exact'}`); }
     if (d.act === 'del') { try { await deleteDoc(doc(db, d.col, d.id)); u.closest('.item').remove(); } catch { toast('Could not delete.'); } }
   };
   const b = $('#admlb'), H = 3600000, ago = ms => seenAgo(ms);
@@ -3575,7 +3703,7 @@ async function loadAdmLocs() {
           meta: `updated ${ago(t)}${v.acc ? ` · ±${Math.round(v.acc)} m` : ''}${Date.now() - t > H ? ' · outdated' : ''}`}); });
       rows.sort((a, c) => c.t - a.t);
       b.innerHTML = rows.length ? rows.map(row).join('') : '<p class="meta">Nobody is sharing their location right now.</p>';
-    } else if (admLocTab === 'live' || admLocTab === 'hid') {
+    } else if (admLocTab === 'live') {
       const kind = admLocTab === 'live' ? 'stream' : 'sighting';
       const snap = await getDocs(query(collection(db, 'exact'), where('kind', '==', kind))); const raw = [];
       await Promise.all(snap.docs.map(async d => { const v = d.data();
@@ -3603,7 +3731,7 @@ async function loadReports() {
   try {
     const snap = await getDocs(query(collection(db, 'reports'), orderBy('createdAt', 'desc'), limit(50)));
     box.innerHTML = snap.docs.length ? snap.docs.map(d => { const r = d.data();
-      return `<div class="item"><b>${esc(r.kind)}</b> <span class="meta">${esc(r.targetID)} · ${fmt(r.createdAt)}</span><br>${r.kind === 'group' ? `<u data-open="${esc(r.targetID)}" style="cursor:pointer;color:var(--acc)">open</u> · ` : ''}<u data-dis="${esc(d.id)}" style="cursor:pointer;color:var(--red)">dismiss</u></div>`; }).join('') : '<p class="meta">No reports 🎉</p>';
+      return `<div class="item"><b>${esc(r.kind)}</b> <span class="meta">${esc(r.targetID)} · ${fmt(r.createdAt)}</span><br>${r.kind === 'group' ? `<u data-open="${esc(r.targetID)}" style="cursor:pointer;color:var(--acc)">open</u> · ` : ''}<u data-dis="${esc(d.id)}" style="cursor:pointer;color:var(--red)">dismiss</u></div>`; }).join('') : '<p class="meta">No reports ' + sprite('ghost', 14) + '</p>';
     box.onclick = async e => { const u = e.target.closest('u'); if (!u) return;
       if (u.dataset.dis) { await deleteDoc(doc(db, 'reports', u.dataset.dis)); loadReports(); }
       if (u.dataset.open) { try { const gs = await getDoc(doc(db, 'groups', u.dataset.open)); if (!gs.exists()) throw 0; showView('groups'); openGroup({id: gs.id, ...gs.data()}); } catch { toast('Group no longer exists.'); } } };
