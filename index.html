@@ -698,6 +698,50 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
 .cpbody #mi{font-size:14.5px;padding:8px 6px}
 .cpbody .chint{text-align:center}
 .jump[hidden]{display:none!important}.ghbody .grow{flex:1;min-width:240px}.ghart>.spr{animation:btfloat 1.6s steps(2) infinite}.ghart .gh2{right:2px;top:2px;bottom:auto}
+
+/* ================= phones ================= */
+#hint.pick{display:flex;flex-direction:column;gap:8px;align-items:stretch;text-align:center;max-width:min(420px,calc(100% - 24px));width:max-content}
+#hint .pkrow{display:flex;gap:6px}#hint .pkrow .b{margin:0;flex:1;min-height:38px;padding:6px 10px;white-space:nowrap}
+@supports (height:100dvh){#app{height:100dvh}}
+@media (max-width:760px){
+  /* one-row header: logo · search · sound · weather */
+  #top{flex-wrap:nowrap;gap:6px;padding:6px 8px;padding-top:calc(6px + env(safe-area-inset-top))}
+  .brand{flex:none}.brand>div{display:none}.brand img{width:32px;height:32px}
+  .search{order:0;flex:1 1 auto;min-width:0;height:40px;max-width:none}
+  #snd{order:0;flex:none;width:40px;height:40px}
+  #wx{order:0;flex:none;height:40px;padding:0 8px;gap:4px;font-size:17px}#wx svg{width:16px;height:16px}
+  /* no zoom-in when tapping a text field on iPhone */
+  input,select,textarea,.search input,.cpbody #mi{font-size:16px}
+  .b{min-height:44px}
+  /* map: as much map as possible, tools float over it */
+  #mapv{padding:0}
+  .mapwin{position:relative;height:100%;border:0;box-shadow:none}
+  .mapwin>.tbar{padding:4px 6px;gap:6px;min-height:0;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+  .mapwin>.tbar::-webkit-scrollbar{display:none}
+  .mapwin>.tbar #tico{display:none}
+  .mapwin>.tbar .seg:not(.mtools){margin-left:0;flex:1}.mapwin>.tbar .seg:not(.mtools) button{flex:1;padding:7px 8px;font-size:12.5px}
+  .mtools{position:absolute;right:10px;bottom:14px;z-index:900;flex-direction:column;gap:8px;margin:0}
+  .mtools button{width:58px;height:58px;padding:5px 0 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10.5px;line-height:1;background:rgba(35,42,51,.94);color:var(--ink);box-shadow:inset 1px 1px 0 var(--hi),inset -1px -1px 0 var(--lo),3px 3px 0 rgba(0,0,0,.45)}
+  .mtools button .spr{margin:0}.mtools button.on{background:rgba(151,64,72,.95)}
+  .mtools button[hidden]{display:none}
+  .chips{padding:6px;gap:6px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}.chip{padding:6px 10px;min-height:34px}
+  #hint{bottom:auto;top:10px;font-size:14px}
+  #hint.pick{left:10px;right:80px;transform:none;width:auto;max-width:none}
+  /* bottom navigation */
+  #rail{gap:3px;padding:5px 5px calc(5px + env(safe-area-inset-bottom))}
+  #rail button{min-height:54px;font-size:10.5px;gap:3px}
+  #rail button.on{box-shadow:inset 0 -3px 0 var(--sag),inset 1px 1px 0 var(--lo)}
+  /* pages */
+  .view{padding:0 8px 16px}.view[data-title]::before{margin:0 -8px 8px}
+  .pwrap .pcard,.pwrap .panel{margin-left:0;margin-right:0}
+  #sheetBody{max-height:92%;padding:0 14px 14px;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  #sheetBody .row{flex-wrap:wrap}#sheetBody .row .b{flex:1 1 140px}
+  .ghero2 .ghbody{gap:12px;padding:12px}.ghart{width:64px;height:64px}.ghero2 h2{font-size:22px}
+  .ghbtns{flex-direction:row}.ghbtns .b{flex:1;padding:8px 6px}
+  .gcard{padding:10px 10px 10px 14px;gap:10px}.gcard .tcount{min-width:52px}
+  .macts{opacity:1}
+}
+@media (max-width:380px){#wx small,#wx svg{display:none}.mtools button{width:52px;height:52px}}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -888,6 +932,7 @@ const SPR = {
   calendar:['..O....O....','.OOOOOOOOOO.','.ORRRRRRRRO.','.OOOOOOOOOO.','.OFFFFFFFFO.','.OFKFKFKFFO.','.OFFFFFFFFO.','.OFKFKFKFFO.','.OFFFFFFFFO.','.OFKFKFFFFO.','.OFFFFFFFFO.','.OOOOOOOOOO.'],
   check:['............','..........OO','.........OGO','........OGO.','.OO....OGO..','OGGO..OGO...','.OGGOOGO....','..OGGGO.....','...OGO......','....O.......','............','............'],
   heart:['............','.OOO...OOO..','OBBBO.OBBBO.','OBFBBOBBBBO.','OBBBBBBBBBO.','OBBBBBBBBBO.','.OBBBBBBBO..','..OBBBBBO...','...OBBBO....','....OBO.....','.....O......','............'],
+  frame:['OOOO....OOOO','ORRO....ORRO','OR........RO','OO........OO','............','............','............','............','OO........OO','OR........RO','ORRO....ORRO','OOOO....OOOO'],
   mark:['...OOOOOO...','..OYYYYYYO..','.OYYOOOOYYO.','.OYO....OYO.','..O....OYYO.','......OYYO..','.....OYYO...','.....OYO....','.....OOO....','.....OYO....','.....OYO....','.....OOO....'],
 };
 const sprCache = {};
@@ -902,7 +947,9 @@ const sprite = (name, size = 24) => {
   return `<svg class="spr" viewBox="0 0 12 12" width="${size}" height="${size}" shape-rendering="crispEdges" aria-hidden="true">${sprCache[key]}</svg>`;
 };
 setTimeout(() => { const sb = (id, ic, txt) => { const b = document.getElementById(id); if (b) b.innerHTML = sprite(ic, 16) + ' ' + txt; };
-  sb('locBtn', 'pin', 'Me'); if (!isAdmin()) sb('admLocBtn', 'people', 'Users'); }, 0);
+  const lb = (id, ic, txt) => { const b = document.getElementById(id); if (b) b.innerHTML = sprite(ic, 24) + '<span>' + txt + '</span>'; };
+  if (matchMedia('(max-width:760px)').matches) { const q = document.getElementById('q'); if (q) q.placeholder = 'Search…'; }
+  lb('locBtn', 'pin', 'Me'); lb('liveBtn', 'rec', 'Go live'); lb('areaBtn', 'frame', 'Border'); if (!isAdmin()) lb('admLocBtn', 'people', 'Users'); }, 0);
 const sprOf = k => ({cryptid: 'shadow', ufo: 'ufo', paranormal: 'eye', haunted: 'moon', strange: 'mark', other: 'pin', ab_house: 'house', ab_hospital: 'hosp', ab_school: 'school', ab_factory: 'factory',
   ab_mine: 'pick', ab_church: 'church', ab_rail: 'train', ab_town: 'town', ab_other: 'barrier'}[k] || 'mark');
 const catIco = (k, size) => sprite(sprOf(k), size);
@@ -1182,14 +1229,26 @@ const wxSoon = () => { clearTimeout(wxTimer); wxTimer = setTimeout(async () => {
   if (w) { $('#wxt').textContent = w.t + '°F'; $('#wxd').textContent = w.d; } }, 1200); };
 wxSoon();
 
-const hint = t => { $('#hint').textContent = t; $('#hint').style.display = t ? 'block' : 'none'; };
+const hint = t => { $('#hint').classList.remove('pick'); $('#hint').textContent = t; $('#hint').style.display = t ? 'block' : 'none'; };
 function canPost() {
   if (!user) { authSheet(); return false; }
   if (!user.emailVerified) { verifySheet(); return false; }
   if (banActive(myBan)) { toast(`You are banned ${banText(myBan)}${myBan.reason ? ' — ' + myBan.reason : ''}.`); return false; }
   return true;
 }
-$('#fab').onclick = () => { if (!canPost()) return; picking = !picking; hint(picking ? 'Tap the map to choose the location' : ''); };
+$('#fab').onclick = () => { if (!canPost()) return; picking = !picking; picking ? pickHint() : hint(''); };
+function pickHint() {
+  if (!$('#mapv').classList.contains('on')) document.querySelector('#rail [data-v="mapv"]')?.click();
+  const h = $('#hint'); h.innerHTML = `<b>${sprite('pin', 12)} Tap the map where it happened</b><div class="pkrow"><button class="b s" id="pkMe">${sprite('ghost', 12)} Use my location</button><button class="b s" id="pkX">Cancel</button></div>`; h.style.display = 'block'; h.classList.add('pick');
+  $('#pkX').onclick = e => { e.stopPropagation(); picking = false; hint(''); };
+  $('#pkMe').onclick = e => { e.stopPropagation();
+    if (!navigator.geolocation) { toast('Location is not supported on this device.'); return; }
+    $('#pkMe').disabled = true; $('#pkMe').lastChild.textContent = ' Locating…';
+    navigator.geolocation.getCurrentPosition(pos => { picking = false; hint(''); const ll = {lat: pos.coords.latitude, lng: pos.coords.longitude};
+      map.setView([ll.lat, ll.lng], Math.max(map.getZoom(), 13)); addSheet(ll); },
+      () => { const b = $('#pkMe'); if (b) { b.disabled = false; b.lastChild.textContent = ' Use my location'; } toast('Could not get your location. Tap the map instead.'); },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 30000}); };
+}
 map.on('click', e => { if (picking) { picking = false; hint(''); addSheet(e.latlng); } });
 map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
 
