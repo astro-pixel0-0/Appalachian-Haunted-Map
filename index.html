@@ -539,8 +539,75 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 .presrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0}
 .pres{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--mut,#8798AA)}.pres i{width:10px;height:10px;background:#5c6e78;border:1px solid #10141A}.pres.on{color:#a8c49a}.pres.on i{background:#84d36a;box-shadow:0 0 6px #84d36a}
 @media (max-width:760px){.mtools button{padding-left:6px;padding-right:6px}}
+#boot{position:fixed;inset:0;z-index:99999;background:#0a0d11;display:flex;align-items:center;justify-content:center;color:#AAB8C5;font-family:'VT323',monospace;transition:opacity .6s steps(6)}
+#boot.out{opacity:0;pointer-events:none}
+#boot .bt-scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px),radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.6));animation:btflick 3s steps(2) infinite}
+@keyframes btflick{50%{opacity:.85}}
+#boot .bt-box{width:min(640px,92vw);padding:18px 20px;border:2px solid #232A33;box-shadow:inset 0 0 0 2px #10141A,0 0 40px rgba(132,151,122,.12);background:#10141A}
+#boot .bt-logo{display:flex;align-items:center;gap:14px;margin-bottom:14px}#boot .bt-logo svg{filter:drop-shadow(0 0 6px rgba(170,184,197,.6));animation:btfloat 1.6s steps(2) infinite}
+@keyframes btfloat{50%{transform:translateY(-3px)}}
+#boot .bt-logo b{display:block;font:24px 'Silkscreen',monospace;letter-spacing:4px;color:#E4EAF0}#boot .bt-logo span{font:12px 'Silkscreen',monospace;letter-spacing:8px;color:#84977A}
+#boot .bt-log{margin:0;min-height:9.6em;font:19px/1.2 'VT323',monospace;color:#AAB8C5;white-space:pre-wrap;text-shadow:0 0 4px rgba(170,184,197,.35)}
+#boot .bt-log em{font-style:normal;color:#84d36a}
+#boot .bt-log::after{content:'█';color:#84977A;animation:blink 1s steps(2) infinite}
+#boot .bt-bar{height:14px;margin-top:12px;border:2px solid #3a4552;padding:2px;background:#0a0d11}#boot .bt-bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#84977A 0 8px,#5c6e52 8px 10px);transition:width .1s steps(2)}
+#boot .bt-press{margin-top:12px;text-align:center;font:13px 'Silkscreen',monospace;letter-spacing:3px;color:#E4EAF0;opacity:0}#boot .bt-press.on{opacity:1;animation:blink 1s steps(2) infinite}
+@media (max-width:520px){#boot .bt-log{font-size:15px}#boot .bt-logo b{font-size:18px}}
+#banbar{position:fixed;left:0;right:0;top:0;z-index:2000;background:#974048;color:#fff;text-align:center;padding:6px 10px;font-size:14px;box-shadow:0 2px 0 #10141A}
 </style></head>
-<body><div id="app">
+<body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
+  <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
+    <div><b>APPALACHIA</b><span>ANOMALIES</span></div></div>
+  <pre class="bt-log" id="btlog"></pre>
+  <div class="bt-bar"><i id="btbar"></i></div>
+  <div class="bt-press" id="btpress">PRESS ANY KEY</div>
+</div></div>
+<script>
+(() => {
+  const B = document.getElementById('boot'); if (!B) return;
+  let seen = false; try { seen = sessionStorage.getItem('booted') === '1'; } catch {}
+  const deep = /[#?](chat|haunt|join)=|[?&]oobCode=/.test(location.href);
+  if (seen || deep) { B.remove(); return; }
+  try { sessionStorage.setItem('booted', '1'); } catch {}
+  let soundOn = true; try { soundOn = localStorage.getItem('sfx') !== 'off'; } catch {}
+  const fast = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow = innerWidth < 560, pad = t => t + ' ' + '.'.repeat(Math.max(2, (narrow ? 24 : 34) - t.length));
+  const LINES = [
+    [narrow ? 'AA BIOS v2.6 — HAUNTED Y2K' : 'APPALACHIA ANOMALIES BIOS v2.6 — HAUNTED Y2K EDITION', ''],
+    [pad('MEMORY TEST'), '640K OK'], [pad('LOADING TOPO TILES'), 'OK'], [pad('EMF SENSOR'), 'OK'], [pad('SPIRIT RADIO 13.13'), 'OK'],
+    [pad('SCANNING THE RIDGES'), narrow ? '3 FOUND' : '3 ANOMALIES'], [pad('WAKING FLATWOODS'), 'OK'], [pad('MOUNTING /MAP'), 'READY'],
+  ];
+  const log = document.getElementById('btlog'), bar = document.getElementById('btbar'), press = document.getElementById('btpress');
+  let ac = null;
+  const audio = () => { if (!soundOn) return null; try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === 'suspended') ac.resume(); return ac.state === 'running' ? ac : null; } catch { return null; } };
+  const tone = (a, t, f, d, type = 'square', v = 0.05) => { const o = a.createOscillator(), g = a.createGain(), lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+    o.type = type; o.frequency.setValueAtTime(f, t); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(lp).connect(g).connect(a.destination); o.start(t); o.stop(t + d + 0.05); };
+  const tick = () => { const a = audio(); if (!a) return; tone(a, a.currentTime, 1800 + Math.random() * 400, 0.025, 'square', 0.012); };
+  let chimed = false;
+  const chime = () => { if (chimed) return; const a = audio(); if (!a) return; chimed = true; const t = a.currentTime + 0.02;
+    // soft retro boot jingle: arpeggio up, gentle echo, warm pad underneath
+    [[523.25, 0], [659.25, 0.09], [783.99, 0.18], [1046.5, 0.27], [987.77, 0.42], [1318.5, 0.52]].forEach(([f, d]) => { tone(a, t + d, f, 0.32, 'square', 0.035); tone(a, t + d + 0.16, f, 0.28, 'square', 0.012); });
+    [261.63, 329.63, 392].forEach(f => tone(a, t + 0.5, f, 1.2, 'triangle', 0.04)); };
+  let li = 0, ci = 0, done = false, closed = false;
+  const total = LINES.reduce((n, l) => n + l[0].length + 1, 0); let typed = 0;
+  const step = () => {
+    if (closed) return;
+    if (li >= LINES.length) { done = true; bar.style.width = '100%'; press.classList.add('on'); setTimeout(close, 1400); return; }
+    const [txt, res] = LINES[li];
+    if (ci < txt.length) { const n = fast ? txt.length : Math.min(txt.length - ci, 3); log.insertAdjacentText('beforeend', txt.slice(ci, ci + n)); ci += n; typed += n; if (ci % 6 < 3) tick(); }
+    else { if (res) { const em = document.createElement('em'); em.textContent = ' ' + res; log.appendChild(em); } log.insertAdjacentText('beforeend', '\n'); li++; ci = 0; typed++; }
+    bar.style.width = Math.round(typed / total * 100) + '%';
+    setTimeout(step, ci === 0 ? 70 : 14);
+  };
+  function close() { if (closed) return; closed = true; B.classList.add('out'); setTimeout(() => B.remove(), 650); }
+  const wake = () => { chime(); if (done) setTimeout(close, 450); };
+  addEventListener('pointerdown', wake, {once: true, capture: true}); addEventListener('keydown', wake, {once: true, capture: true});
+  B.onclick = () => { if (done) close(); };
+  setTimeout(() => { if (audio()) chime(); step(); }, 120);
+})();
+</script>
+<div id="banbar" hidden></div><div id="app">
 <header id="top" class="raised">
  <div class="brand"><img src="favicon-64.png?v=3" alt=""><div><b>APPALACHIA</b><span>ANOMALIES</span></div></div>
  <div class="search sunken"><svg viewBox="0 0 8 8" width="16" height="16" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges" style="color:#8798AA"><path d="M1 0h4v1h-4zM0 1h1v1h-1zM5 1h1v1h-1zM0 2h1v1h-1zM5 2h1v1h-1zM0 3h1v1h-1zM5 3h1v1h-1zM1 4h4v1h-4zM5 5h1v1h-1zM6 6h1v1h-1zM7 7h1v1h-1z"/></svg><input id="q" type="text" enterkeyhint="search" placeholder="Search place, report or coordinates…" autocomplete="off" aria-label="Search places, reports or coordinates"><button id="qx" aria-label="Clear">✕</button><div id="qres" class="win"></div></div>
@@ -587,8 +654,8 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 import * as cfg from './config.js';
 const firebaseConfig = cfg.firebaseConfig;
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, updateProfile, deleteUser } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch, getCountFromServer, runTransaction, updateDoc, query, where, orderBy, limit, limitToLast, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, updateProfile, deleteUser, confirmPasswordReset, verifyPasswordResetCode, applyActionCode } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch, getCountFromServer, runTransaction, updateDoc, query, where, orderBy, limit, limitToLast, serverTimestamp, Timestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
 const $ = s => document.querySelector(s);
@@ -882,6 +949,7 @@ const hint = t => { $('#hint').textContent = t; $('#hint').style.display = t ? '
 function canPost() {
   if (!user) { authSheet(); return false; }
   if (!user.emailVerified) { verifySheet(); return false; }
+  if (banActive(myBan)) { toast(`You are banned ${banText(myBan)}${myBan.reason ? ' — ' + myBan.reason : ''}.`); return false; }
   return true;
 }
 $('#fab').onclick = () => { if (!canPost()) return; picking = !picking; hint(picking ? 'Tap the map to choose the location' : ''); };
@@ -1035,15 +1103,15 @@ $('#obsBody').innerHTML = `<div class="empty">${sprite('ghost', 48)}<p>Select a 
 if (wide()) { $('#obs').classList.add('open'); setTimeout(() => map.invalidateSize(), 50); }
 
 // ---------- auth ----------
-function authSheet(msg = '') {
-  let signup = true;
+function authSheet(msg = '', signup0 = true) {
+  let signup = signup0;
   const draw = () => { sheet(`<div class="tabs"><button class="b ${signup ? '' : 's'}" id="t1">Create account</button><button class="b ${signup ? 's' : ''}" id="t2">Sign in</button></div>
    ${signup ? '<input id="n" maxlength="30" placeholder="Display name">' : ''}
    <input id="em" type="email" autocomplete="email" placeholder="Email"><input id="pw" type="password" autocomplete="${signup ? 'new' : 'current'}-password" placeholder="Password (min 6)">
    <p class="err" id="e"></p><p class="ok">${esc(msg)}</p><button class="b" id="go">${signup ? 'Create account' : 'Sign in'}</button>
    ${signup ? '' : '<button class="b s" id="fp">Forgot password?</button>'}<button class="b s" id="cx">Close</button>`);
    $('#t1').onclick = () => { signup = true; draw(); }; $('#t2').onclick = () => { signup = false; draw(); }; $('#cx').onclick = closeSheet;
-   if (!signup) $('#fp').onclick = async () => { try { await sendPasswordResetEmail(auth, $('#em').value.trim()); $('#e').textContent = ''; msg = 'Password reset email sent.'; draw(); } catch (e) { $('#e').textContent = e.code; } };
+   if (!signup) $('#fp').onclick = () => resetSheet($('#em').value.trim());
    $('#go').onclick = async () => {
      const em = $('#em').value.trim(), pw = $('#pw').value;
      try {
@@ -1062,7 +1130,8 @@ function verifySheet(sent) {
   $('#rf').onclick = async () => { await user.reload(); await user.getIdToken(true); user = auth.currentUser;
     if (user.emailVerified) { closeSheet(); profile(); } else $('#m').textContent = 'Not verified yet.'; };
 }
-onAuthStateChanged(auth, u => { user = u; mapAccessSync(); profile(); watchInvites(); liveAuthChanged(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
+handleActionLink();
+onAuthStateChanged(auth, u => { user = u; if (u) deletionGate(u).then(g => { if (!g) banCheck(); }); else banCheck(); mapAccessSync(); profile(); watchInvites(); liveAuthChanged(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
 const pPanel = (title, body, extra = '') => `<section class="panel win"${extra}><div class="tbar"><span>${title}</span></div><div class="pad">${body}</div></section>`;
 function profile() {
   const el = $('#profile'); pageBg(el, null);
@@ -1079,21 +1148,19 @@ function profile() {
       <div class="kv"><span>Status</span><b>${user.emailVerified ? '<span class="ok">✔ Verified</span>' : '<span class="err">Not verified</span>'}</b></div><div class="kv"><span>Member since</span><b>${esc(since)}</b></div>
       ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<div class="row"><button class="b s" id="so">Sign out</button><button class="b d" id="da">Delete account</button></div>`)}
     ${pPanel('CONTACT', discordBtn() + '<button class="b s" id="fb-open">✉️ Send feedback</button>')}
-    ${isAdmin() ? pPanel('ADMIN · REPORTS', '<div id="adm"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"') : ''}
+    ${isAdmin() ? pPanel('ADMIN · REPORTS', '<div id="adm"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"') + pPanel('ADMIN · BANNED USERS', '<div id="admb"><p class="meta">Loading…</p></div>') + pPanel('ADMIN · ACCOUNT DELETIONS', '<div id="admd"><p class="meta">Loading…</p></div>') : ''}
   </div>${links()}</div>`;
   if (!user.emailVerified) $('#vf').onclick = () => verifySheet();
   syncPrivate();
   if (user.emailVerified) myProfileSection();
   else { $('#myp').innerHTML = profileCard(null, user.displayName, {self: true}); $('#fpanel').innerHTML = '<p class="meta">Verify your email to customise your profile and add friends.</p>'; }
-  if (isAdmin()) loadReports();
+  if (isAdmin()) { loadReports(); loadBans(); }
   $('#so').onclick = () => signOut(auth);
-  $('#da').onclick = () => { sheet(`<h3>Delete account?</h3><p>This removes your account, your profile, friends list and your map reports.</p><button class="b d" id="y">Delete</button><button class="b s" id="n">Cancel</button>`);
+  $('#da').onclick = () => { sheet(`<h3>Delete account?</h3><p>Your profile disappears right away and you are signed out. The account, friends list and your map reports are <b>deleted after 48 hours</b>.</p>
+      <p class="meta">Changed your mind? Just sign in within 48 hours and choose <b>Restore</b>.</p><button class="b d" id="y">Delete in 48 hours</button><button class="b s" id="n">Cancel</button>`);
     $('#n').onclick = closeSheet;
-    $('#y').onclick = async () => { try {
-      const snap = await getDocs(query(collection(db, 'sightings'), where('authorID', '==', user.uid)));
-      for (const d of snap.docs) { await deleteDoc(d.ref); await deleteDoc(doc(db, 'photos', d.id)).catch(() => {}); }
-      await deleteMyProfileData(); await deleteUser(user); closeSheet();
-    } catch (e) { toast('For security, sign out and sign in again, then retry.'); } }; };
+    $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
+      catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
 const links = () => `<p class="meta" style="margin-top:24px">Map: USGS The National Map, © OpenStreetMap contributors. Interface sounds by Atelier Magicae. Card sounds by JDSherbert (jdsherbert.itch.io). Typing sound: original. Community reports are unverified. <a href="#" id="tm" onclick="return false">Rules</a></p>`;
 document.addEventListener('click', e => { if (e.target.id === 'tm') terms(false); });
@@ -1261,6 +1328,7 @@ const syncPrivate = () => { if (!user || !user.email || privSynced === user.uid)
 // every verified user gets a public profile doc so others can find them by nickname
 const ensureProfile = async () => {
   try {
+    if ((await getDoc(doc(db, 'deletion', user.uid)).catch(() => null))?.exists()) return; // account waiting for deletion: keep the profile hidden
     const p = await getProfile(user.uid, true), name = (p?.name || user.displayName || 'User').slice(0, 30);
     if (p && p.nameLower === name.toLowerCase()) return;
     await setDoc(doc(db, 'users', user.uid), {name, nameLower: name.toLowerCase(), updatedAt: serverTimestamp()}, {merge: true});
@@ -1298,7 +1366,8 @@ async function openProfile(uid) {
   const p = await getProfile(uid, true);
   let fcount = 0; try { fcount = (await getDocs(collection(db, `users/${uid}/friends`))).size; } catch {}
   const rcount = await countReports(uid);
-  sheet(profileCard(p, 'User', {title: 'USER PROFILE', stats: statCell(rcount, 'Reports') + statCell(fcount, fcount === 1 ? 'Friend' : 'Friends')}) + `<div class="presrow" id="pres1"><span class="pres"><i></i>…</span></div><div id="fbtn"></div><div id="adm1"></div><button class="b s" id="cx">Close</button>`);
+  sheet(profileCard(p, 'User', {title: 'USER PROFILE', stats: statCell(rcount, 'Reports') + statCell(fcount, fcount === 1 ? 'Friend' : 'Friends')}) + `<div class="presrow" id="pres1"><span class="pres"><i></i>…</span></div><div id="fbtn"></div><div id="adm1"></div><div id="adm2"></div><button class="b s" id="cx">Close</button>`);
+  if (isAdmin()) adminBanBox(uid, p?.name || 'User');
   presenceOf(uid).then(pr => { const e = $('#pres1'); if (e) e.innerHTML = presenceHtml(pr); });
   if (p) pageBg($('#sheetBody'), p.pbg);
   $('#cx').onclick = closeSheet;
@@ -1425,6 +1494,148 @@ async function deleteMyProfileData() {
   try { const rq = await getDocs(collection(db, `requests/${uid}/in`)); for (const d of rq.docs) await deleteDoc(d.ref).catch(() => {}); } catch {}
   await deleteDoc(doc(db, 'users', uid)).catch(() => {});
   await deleteDoc(doc(db, 'private', uid)).catch(() => {});
+}
+
+// ---------- account: 48-hour deletion grace period ----------
+const GRACE_MS = 48 * 3600 * 1000;
+async function scheduleDeletion() {
+  const uid = user.uid;
+  let prof = null; try { const p = await getDoc(doc(db, 'users', uid)); if (p.exists()) prof = p.data(); } catch {}
+  await setDoc(doc(db, 'deletion', uid), {at: serverTimestamp(), name: myName(), email: user.email || '', profile: prof});
+  await deleteDoc(doc(db, 'users', uid)).catch(() => {});   // profile disappears for everyone right away
+  await deleteDoc(doc(db, 'userloc', uid)).catch(() => {});
+  await signOut(auth);
+}
+async function finalDeletion(u) {
+  const snap = await getDocs(query(collection(db, 'sightings'), where('authorID', '==', u.uid)));
+  for (const d of snap.docs) { await deleteDoc(d.ref).catch(() => {}); await deleteDoc(doc(db, 'photos', d.id)).catch(() => {}); }
+  await deleteMyProfileData();
+  await deleteDoc(doc(db, 'presence', u.uid)).catch(() => {});
+  await deleteDoc(doc(db, 'deletion', u.uid)).catch(() => {});
+  await deleteUser(u);
+}
+const fmtWhen = ms => new Date(ms).toLocaleString([], {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
+async function deletionGate(u) {
+  let d; try { d = await getDoc(doc(db, 'deletion', u.uid)); } catch { return false; }
+  if (!d.exists()) return false;
+  const v = d.data(), at = v.at?.toDate ? v.at.toDate().getTime() : Date.now(), left = at + GRACE_MS - Date.now();
+  if (left <= 0) {
+    sheet('<h3>Deleting your account…</h3><p class="meta">The 48-hour restore period is over.</p>', true);
+    try { await finalDeletion(u); sheet('<h3>Account deleted</h3><p>Your account and your data have been removed.</p><button class="b" id="cx">OK</button>'); $('#cx').onclick = closeSheet; }
+    catch { await signOut(auth).catch(() => {}); toast('Could not finish deleting the account. Sign in again to retry.'); }
+    return true;
+  }
+  sheet(`<h3>♻️ Restore your account?</h3><p>Your account is scheduled to be deleted on <b>${esc(fmtWhen(at + GRACE_MS))}</b>
+    (in ${Math.max(1, Math.round(left / 3600000))} h). You can still get it back with your profile, friends and reports.</p>
+    <p class="err" id="e"></p><button class="b" id="rs">Restore my account</button><button class="b s" id="kp">Keep it deleted</button>`, true);
+  $('#rs').onclick = async () => {
+    $('#rs').disabled = true;
+    try { if (v.profile) await setDoc(doc(db, 'users', u.uid), v.profile); await deleteDoc(doc(db, 'deletion', u.uid)); closeSheet(); toast('Welcome back! Your account has been restored.'); profile(); }
+    catch { $('#e').textContent = 'Could not restore. Try again.'; $('#rs').disabled = false; }
+  };
+  $('#kp').onclick = async () => { closeSheet(); await signOut(auth); };
+  return true;
+}
+
+// ---------- password reset: email with a one-time code (link) → new password set right here ----------
+const parseOob = t => { t = String(t || '').trim(); try { const u = new URL(t); return u.searchParams.get('oobCode') || (u.searchParams.get('link') ? new URL(u.searchParams.get('link')).searchParams.get('oobCode') : ''); } catch { return t.replace(/\s+/g, ''); } };
+function resetSheet(email = '', note = '') {
+  sheet(`<h3>🔑 Reset password</h3><p class="meta">Enter the email of your account. We'll send a reset email with a one-time code (link). Open it or paste it below, then choose a new password.</p>
+    <input id="rem" type="email" autocomplete="email" placeholder="Email" value="${esc(email)}"><button class="b" id="rsend">Send reset code</button><p class="ok" id="rmsg">${esc(note)}</p>
+    <div style="height:1px;background:var(--lo);margin:12px 0"></div>
+    <input id="rcode" placeholder="Paste the link or code from the email" autocomplete="one-time-code">
+    <input id="rp1" type="password" autocomplete="new-password" placeholder="New password (min 6)"><input id="rp2" type="password" autocomplete="new-password" placeholder="Repeat new password">
+    <p class="err" id="e"></p><button class="b" id="rset">Set new password</button><button class="b s" id="cx">Back</button>`);
+  $('#cx').onclick = () => authSheet();
+  $('#rsend').onclick = async () => {
+    const em = $('#rem').value.trim(); if (!em) { $('#e').textContent = 'Enter your email.'; return; }
+    try { await sendPasswordResetEmail(auth, em, {url: location.origin + location.pathname}); $('#e').textContent = ''; $('#rmsg').textContent = `Sent to ${em}. Check your inbox (and spam).`; }
+    catch (e) { $('#e').textContent = ({'auth/invalid-email': 'Invalid email.', 'auth/user-not-found': 'No account with this email.', 'auth/too-many-requests': 'Too many attempts. Try again later.'})[e.code] || 'Could not send the email.'; }
+  };
+  $('#rset').onclick = () => applyReset(parseOob($('#rcode').value), $('#rp1').value, $('#rp2').value);
+}
+async function applyReset(code, p1, p2) {
+  const e = $('#e'); if (!code) { e.textContent = 'Paste the code or link from the email.'; return; }
+  if (p1.length < 6) { e.textContent = 'Password must be at least 6 characters.'; return; } if (p1 !== p2) { e.textContent = 'Passwords do not match.'; return; }
+  try { const em = await verifyPasswordResetCode(auth, code); await confirmPasswordReset(auth, code, p1); sfx('success'); authSheet(`Password changed for ${em}. Sign in with the new password.`, false); }
+  catch (er) { e.textContent = ({'auth/expired-action-code': 'This code has expired — send a new one.', 'auth/invalid-action-code': 'This code is invalid or was already used.', 'auth/weak-password': 'Password is too weak.'})[er.code] || 'Could not change the password.'; }
+}
+// links from Firebase emails (when the action URL points to this site)
+async function handleActionLink() {
+  const sp = new URLSearchParams(location.search), mode = sp.get('mode'), code = sp.get('oobCode'); if (!mode || !code) return;
+  history.replaceState(null, '', location.pathname + location.hash);
+  if (mode === 'resetPassword') {
+    let em = ''; try { em = await verifyPasswordResetCode(auth, code); } catch { toast('This reset link has expired or was already used. Request a new one.'); return; }
+    sheet(`<h3>🔑 New password</h3><p>Account: <b>${esc(em)}</b></p><input id="rp1" type="password" autocomplete="new-password" placeholder="New password (min 6)">
+      <input id="rp2" type="password" autocomplete="new-password" placeholder="Repeat new password"><p class="err" id="e"></p><button class="b" id="rset">Save new password</button>`);
+    $('#rset').onclick = () => applyReset(code, $('#rp1').value, $('#rp2').value);
+  } else if (mode === 'verifyEmail') {
+    try { await applyActionCode(auth, code); if (auth.currentUser) { await auth.currentUser.reload(); user = auth.currentUser; profile(); } toast('Your email is verified. Welcome!'); }
+    catch { toast('This verification link has expired. Send a new one from your profile.'); }
+  }
+}
+
+// ---------- bans (set by the admin; enforced by the database rules) ----------
+let myBan = null;
+const banActive = b => !!b && (b.forever || (b.until?.toDate && b.until.toDate().getTime() > Date.now()));
+const banText = b => b.forever ? 'permanently' : `until ${fmtWhen(b.until.toDate().getTime())}`;
+async function banCheck() {
+  myBan = null; const bar = $('#banbar');
+  if (user) { try { const d = await getDoc(doc(db, 'bans', user.uid)); if (d.exists() && banActive(d.data())) myBan = d.data(); } catch {} }
+  if (bar) { bar.hidden = !myBan; if (myBan) bar.innerHTML = `⛔ You are banned ${esc(banText(myBan))}${myBan.reason ? ` — ${esc(myBan.reason)}` : ''}. You can browse but can't post.`; }
+}
+function banSheet(uid, name) {
+  sheet(`<h3>⛔ Ban ${esc(name)}</h3>
+    <label>Duration<select class="sunken" id="bd"><option value="1">1 hour</option><option value="6">6 hours</option><option value="24" selected>1 day</option><option value="72">3 days</option>
+      <option value="168">7 days</option><option value="720">30 days</option><option value="custom">Until a date…</option><option value="forever">Forever</option></select></label>
+    <label id="bcl" hidden>Banned until<input class="sunken" id="bc" type="datetime-local"></label>
+    <label>Reason (shown to the user)<input class="sunken" id="br" maxlength="200" placeholder="e.g. spam, harassment"></label>
+    <p class="err" id="e"></p><div class="row"><button class="b d" id="bgo">Ban</button><button class="b s" id="cx">Cancel</button></div>`);
+  $('#cx').onclick = () => openProfile(uid);
+  $('#bd').onchange = () => { $('#bcl').hidden = $('#bd').value !== 'custom'; };
+  $('#bgo').onclick = async () => {
+    const v = $('#bd').value; let until = null, forever = false;
+    if (v === 'forever') forever = true;
+    else if (v === 'custom') { const t = new Date($('#bc').value).getTime(); if (!t || t <= Date.now()) { $('#e').textContent = 'Choose a date in the future.'; return; } until = t; }
+    else until = Date.now() + (+v) * 3600000;
+    try { await setDoc(doc(db, 'bans', uid), {forever, until: until ? Timestamp.fromMillis(until) : null, reason: $('#br').value.trim().slice(0, 200), name: String(name).slice(0, 30), at: serverTimestamp()});
+      sfx('success'); openProfile(uid); }
+    catch { $('#e').textContent = 'Could not ban (publish the latest database rules).'; }
+  };
+}
+async function adminBanBox(uid, name) {
+  const box = $('#adm2'); if (!box || !isAdmin() || uid === user?.uid) return;
+  let b = null; try { const d = await getDoc(doc(db, 'bans', uid)); if (d.exists()) b = d.data(); } catch {}
+  const on = banActive(b);
+  box.innerHTML = `<div class="adminbox">🔒 Moderation · ${on ? `<b class="err">Banned ${esc(banText(b))}</b>${b.reason ? ` — ${esc(b.reason)}` : ''}` : 'Not banned'}
+    <div class="row" style="margin-top:6px">${on ? '<button class="b s" id="ubn">Unban</button><button class="b d" id="bn">Change ban</button>' : '<button class="b d" id="bn">⛔ Ban user</button>'}</div></div>`;
+  $('#bn').onclick = () => banSheet(uid, name);
+  if ($('#ubn')) $('#ubn').onclick = async () => { try { await deleteDoc(doc(db, 'bans', uid)); sfx('success'); adminBanBox(uid, name); } catch { toast('Could not unban.'); } };
+}
+async function loadBans() {
+  const box = $('#admb'); if (!box) return;
+  try {
+    const snap = await getDocs(collection(db, 'bans'));
+    const rows = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(banActive);
+    box.innerHTML = rows.length ? rows.map(b => `<div class="item"><b>${esc(b.name || b.id)}</b> <span class="meta">${esc(banText(b))}${b.reason ? ' · ' + esc(b.reason) : ''}</span><br>
+      <u data-prof="${esc(b.id)}" style="cursor:pointer;color:var(--acc)">profile</u> · <u data-unban="${esc(b.id)}" style="cursor:pointer;color:var(--acc)">unban</u></div>`).join('') : '<p class="meta">Nobody is banned.</p>';
+    box.onclick = async e => { const u = e.target.closest('u'); if (!u) return;
+      if (u.dataset.prof) openProfile(u.dataset.prof);
+      if (u.dataset.unban) { try { await deleteDoc(doc(db, 'bans', u.dataset.unban)); loadBans(); } catch { toast('Could not unban.'); } } };
+  } catch { box.innerHTML = '<p class="err">Could not load bans (publish the latest rules).</p>'; }
+  // accounts waiting for deletion
+  const pd = $('#admd'); if (!pd) return;
+  try {
+    const snap = await getDocs(collection(db, 'deletion'));
+    pd.innerHTML = snap.docs.length ? snap.docs.map(d => { const v = d.data(), at = v.at?.toDate ? v.at.toDate().getTime() : Date.now(), left = at + GRACE_MS - Date.now();
+      return `<div class="item"><b>${esc(v.name || d.id)}</b> <span class="meta">${left > 0 ? `deletes in ${Math.ceil(left / 3600000)} h` : 'restore period over'}</span>${left <= 0 ? `<br><u data-purge="${esc(d.id)}" style="cursor:pointer;color:var(--acc)">remove their data now</u>` : ''}</div>`; }).join('')
+      : '<p class="meta">No accounts waiting for deletion.</p>';
+    pd.onclick = async e => { const u = e.target.closest('u[data-purge]'); if (!u) return; const id = u.dataset.purge;
+      try { const s2 = await getDocs(query(collection(db, 'sightings'), where('authorID', '==', id)));
+        for (const d of s2.docs) { await deleteDoc(d.ref).catch(() => {}); await deleteDoc(doc(db, 'photos', d.id)).catch(() => {}); }
+        await deleteDoc(doc(db, 'users', id)).catch(() => {}); await deleteDoc(doc(db, 'deletion', id)); toast('Their data was removed. Delete the login itself in Firebase → Authentication.'); loadBans(); }
+      catch { toast('Could not remove the data.'); } };
+  } catch { pd.innerHTML = '<p class="err">Could not load (publish the latest rules).</p>'; }
 }
 
 // ---------- forums ----------
