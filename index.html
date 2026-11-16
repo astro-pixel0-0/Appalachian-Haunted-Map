@@ -1260,10 +1260,9 @@ function pickHint() {
   $('#pkMe').onclick = e => { e.stopPropagation();
     if (!navigator.geolocation) { toast('Location is not supported on this device.'); return; }
     $('#pkMe').disabled = true; $('#pkMe').lastChild.textContent = ' Locating…';
-    navigator.geolocation.getCurrentPosition(pos => { picking = false; hint(''); const ll = {lat: pos.coords.latitude, lng: pos.coords.longitude};
+    getPos().then(pos => { picking = false; hint(''); const ll = {lat: pos.coords.latitude, lng: pos.coords.longitude};
       map.setView([ll.lat, ll.lng], Math.max(map.getZoom(), 13)); addSheet(ll); },
-      () => { const b = $('#pkMe'); if (b) { b.disabled = false; b.lastChild.textContent = ' Use my location'; } toast('Could not get your location. Tap the map instead.'); },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 30000}); };
+      e => { const b = $('#pkMe'); if (b) { b.disabled = false; b.lastChild.textContent = ' Use my location'; } toast(geoErr(e) + ' You can tap the map instead.'); }); };
 }
 map.on('click', e => { if (picking) { picking = false; hint(''); addSheet(e.latlng); } });
 map.on('contextmenu', e => { if (canPost()) addSheet(e.latlng); });
@@ -1601,7 +1600,7 @@ function profile() {
     $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
       catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
-const BUILD = '2026-11-16 · build 6';
+const BUILD = '2026-11-16 · build 7';
 console.log('Appalachia Anomalies', BUILD);
 const links = () => legalLinks() + `<p class="meta" style="margin-top:24px">Version ${BUILD}. Map: USGS The National Map, © OpenStreetMap contributors. Interface sounds by Atelier Magicae. Card sounds by JDSherbert (jdsherbert.itch.io). Typing sound: original. Community reports are unverified. <a href="#" id="tm" onclick="return false">Rules</a></p>`;
 document.addEventListener('click', e => { if (e.target.id === 'tm') terms(false); });
@@ -2376,6 +2375,17 @@ const liveShell = (title, sub, role) => `<div class="tbar blood" title="Drag to 
   ${role === 'host' ? '<div class="row lctl"><button class="b s" id="lvmic">' + sprite('mic', 16) + ' Mic on</button><button class="b s on" id="lvns" title="Noise suppression">' + sprite('mic', 16) + ' Noise: on</button><button class="b s" id="lvflip">' + sprite('flip', 16) + ' Camera</button><button class="b danger" id="lvend">■ End stream</button></div>' : ''}
   ${role === 'viewer' && isAdmin() ? '<div class="row lctl"><button class="b danger" id="lvkill">' + sprite('noentry', 16) + ' End this stream (admin)</button></div>' : ''}
   <div class="lchatbox"><div class="lchat sunken"></div><form class="lform"><input class="sunken" maxlength="300" placeholder="Write in the stream chat…" aria-label="Chat message"><button class="b">Send</button></form></div></div>`;
+// location with a fallback: precise first, then a quicker network-based fix (PCs have no GPS)
+const getPos = () => new Promise((res, rej) => {
+  if (!navigator.geolocation) return rej({code: 0});
+  navigator.geolocation.getCurrentPosition(res, e1 => { if (e1.code === 1) return rej(e1);
+    navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: false, timeout: 20000, maximumAge: 600000}); },
+    {enableHighAccuracy: true, timeout: 8000, maximumAge: 60000});
+});
+const geoErr = e => e?.code === 1 ? 'Location access is blocked for this site. Click the lock icon next to the address bar → Site settings → Location → Allow, then reload the page.'
+  : e?.code === 2 ? 'Your device could not determine its location. On a computer this often happens without Wi-Fi or with location services turned off in the system settings (Windows: Settings → Privacy → Location).'
+  : e?.code === 3 ? 'Finding your location took too long. Try again outdoors or with Wi-Fi turned on.'
+  : 'Location is not supported in this browser.';
 function goLiveSheet() {
   if (!canCreate('live streams')) return;
   if (LIVE) { toast('You are already in a stream.'); return; }
@@ -2385,21 +2395,27 @@ function goLiveSheet() {
     <label>Camera<select class="sunken" id="lvc"><option value="environment">Back camera</option><option value="user">Front camera</option></select></label>
     <label>Who can watch<select class="sunken" id="lva"><option value="friends">Only my friends</option><option value="all">Everyone signed in</option></select></label>
     <p class="meta">${sprite('shield', 14)} The LIVE marker follows <b>where you really are</b> while you stream, but for your safety it is always shown <b>1–2 km away</b> from you, never your exact spot. Location access is required. Only the site administrator can see the exact spot and the route you move along during the stream (for emergencies); they are deleted 24 hours after the stream ends.</p>
-    <div class="row"><button class="b" id="lvgo">Start streaming</button><button class="b s" id="cx">Cancel</button></div>`);
+    <div id="lverr"></div><div class="row"><button class="b" id="lvgo">Start streaming</button><button class="b s" id="cx">Cancel</button></div>`);
   $('#cx').onclick = closeSheet;
   $('#lvgo').onclick = async () => {
     const title = $('#lvt').value.trim() || 'Live from the field', facing = $('#lvc').value, aud = $('#lva').value === 'all' ? 'all' : 'friends';
     $('#lvgo').disabled = true; $('#lvgo').textContent = 'Getting your location…';
-    let ll;
-    try { const p = await new Promise((res, rej) => navigator.geolocation ? navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: true, timeout: 15000, maximumAge: 20000}) : rej()); ll = [p.coords.latitude, p.coords.longitude]; }
-    catch { $('#lvgo').disabled = false; $('#lvgo').textContent = 'Start streaming'; toast('Your location is needed to go live — allow location access in the browser and try again.'); return; }
+    let ll, track = true;
+    try { const p = await getPos(); ll = [p.coords.latitude, p.coords.longitude]; }
+    catch (e) {
+      if ($('#lvgo')) { $('#lvgo').disabled = false; $('#lvgo').textContent = 'Start streaming'; }
+      const box = $('#lverr'); if (box) box.innerHTML = `<p class="err">${sprite('warn', 12)} ${esc(geoErr(e))}</p>${isAdmin() ? '<button class="b s" id="lvctr">Admin test: use the center of the map</button>' : ''}`;
+      if ($('#lvctr')) $('#lvctr').onclick = () => { $('#lverr').dataset.ctr = '1'; $('#lvgo').click(); };
+      if (!(isAdmin() && $('#lverr')?.dataset.ctr === '1')) return;
+      const c = map.getCenter(); ll = [c.lat, c.lng]; track = false;
+    }
     let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: {noiseSuppression: true, echoCancellation: true, autoGainControl: true}}); }
     catch { toast('Camera or microphone access was denied.'); return; }
     if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the red dashed border on the map).'); return; }
     // one fixed random shift (1–2 km) for the whole stream: the marker moves with the streamer but never shows the real spot
     const exact = ll; let off = [0, 0];
     for (let k = 0; k < 12; k++) { const j = jitter(ll[0], ll[1], 1000, 2000); if (canPlaceAt(j[0], j[1])) { off = [j[0] - ll[0], j[1] - ll[1]]; ll = j; break; } }
-    closeSheet(); liveHost(title, ll, stream, facing, aud, exact, true, off);
+    closeSheet(); liveHost(title, ll, stream, facing, aud, exact, track, off);
   };
 }
 async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null, track = false, off = [0, 0]) {
