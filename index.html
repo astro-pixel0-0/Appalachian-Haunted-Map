@@ -583,28 +583,35 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
   const tone = (a, t, f, d, type = 'square', v = 0.05) => { const o = a.createOscillator(), g = a.createGain(), lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
     o.type = type; o.frequency.setValueAtTime(f, t); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
     o.connect(lp).connect(g).connect(a.destination); o.start(t); o.stop(t + d + 0.05); };
-  const tick = () => { const a = audio(); if (!a) return; tone(a, a.currentTime, 1800 + Math.random() * 400, 0.025, 'square', 0.012); };
+  const tick = () => { const a = audio(); if (!a) return; tone(a, a.currentTime, 1800 + Math.random() * 400, 0.025, 'square', 0.02); };
   let chimed = false;
   const chime = () => { if (chimed) return; const a = audio(); if (!a) return; chimed = true; const t = a.currentTime + 0.02;
     // soft retro boot jingle: arpeggio up, gentle echo, warm pad underneath
-    [[523.25, 0], [659.25, 0.09], [783.99, 0.18], [1046.5, 0.27], [987.77, 0.42], [1318.5, 0.52]].forEach(([f, d]) => { tone(a, t + d, f, 0.32, 'square', 0.035); tone(a, t + d + 0.16, f, 0.28, 'square', 0.012); });
-    [261.63, 329.63, 392].forEach(f => tone(a, t + 0.5, f, 1.2, 'triangle', 0.04)); };
-  let li = 0, ci = 0, done = false, closed = false;
+    [[523.25, 0], [659.25, 0.09], [783.99, 0.18], [1046.5, 0.27], [987.77, 0.42], [1318.5, 0.52]].forEach(([f, d]) => { tone(a, t + d, f, 0.34, 'square', 0.06); tone(a, t + d + 0.16, f, 0.3, 'square', 0.02); });
+    [261.63, 329.63, 392].forEach(f => tone(a, t + 0.5, f, 1.3, 'triangle', 0.06)); };
+  // power-on sound: low hum swell + a short "disk seek" crackle
+  const powerOn = () => { const a = audio(); if (!a) return; const t = a.currentTime + 0.01;
+    tone(a, t, 55, 0.9, 'sawtooth', 0.05); tone(a, t, 110, 0.7, 'triangle', 0.05); tone(a, t + 0.05, 880, 0.08, 'square', 0.04); tone(a, t + 0.14, 1320, 0.1, 'square', 0.035);
+    for (let k = 0; k < 6; k++) tone(a, t + 0.3 + k * 0.05, 140 + Math.random() * 80, 0.03, 'square', 0.03); };
+  let li = 0, ci = 0, done = false, closed = false, started = false;
   const total = LINES.reduce((n, l) => n + l[0].length + 1, 0); let typed = 0;
   const step = () => {
     if (closed) return;
-    if (li >= LINES.length) { done = true; bar.style.width = '100%'; press.classList.add('on'); setTimeout(close, 1400); return; }
+    if (li >= LINES.length) { done = true; bar.style.width = '100%'; chime(); setTimeout(close, soundOn ? 1500 : 900); return; }
     const [txt, res] = LINES[li];
     if (ci < txt.length) { const n = fast ? txt.length : Math.min(txt.length - ci, 3); log.insertAdjacentText('beforeend', txt.slice(ci, ci + n)); ci += n; typed += n; if (ci % 6 < 3) tick(); }
-    else { if (res) { const em = document.createElement('em'); em.textContent = ' ' + res; log.appendChild(em); } log.insertAdjacentText('beforeend', '\n'); li++; ci = 0; typed++; }
+    else { if (res) { const em = document.createElement('em'); em.textContent = ' ' + res; log.appendChild(em); const a = audio(); if (a) tone(a, a.currentTime, res === 'READY' ? 1568 : 1046.5, 0.07, 'square', 0.03); } log.insertAdjacentText('beforeend', '\n'); li++; ci = 0; typed++; }
     bar.style.width = Math.round(typed / total * 100) + '%';
-    setTimeout(step, ci === 0 ? 70 : 14);
+    setTimeout(step, ci === 0 ? 90 : 16);
   };
   function close() { if (closed) return; closed = true; B.classList.add('out'); setTimeout(() => B.remove(), 650); }
-  const wake = () => { chime(); if (done) setTimeout(close, 450); };
-  addEventListener('pointerdown', wake, {once: true, capture: true}); addEventListener('keydown', wake, {once: true, capture: true});
-  B.onclick = () => { if (done) close(); };
-  setTimeout(() => { if (audio()) chime(); step(); }, 120);
+  const start = () => { if (started) { if (done) close(); return; } started = true; press.classList.remove('on'); press.textContent = 'BOOTING…'; press.style.opacity = '.6'; powerOn(); setTimeout(step, 250); };
+  if (soundOn) {
+    // browsers only allow sound after a tap or key press, so the boot waits for one
+    press.textContent = '▶ PRESS ANY KEY TO START'; press.classList.add('on');
+    addEventListener('pointerdown', start, {capture: true}); addEventListener('keydown', start, {capture: true});
+    B.onclick = start;
+  } else { started = true; setTimeout(step, 120); B.onclick = () => { if (done) close(); }; }
 })();
 </script>
 <div id="banbar" hidden></div><div id="app">
