@@ -6,9 +6,28 @@
 <link rel="manifest" href="manifest.json"><link rel="icon" href="favicon.ico?v=3" sizes="any"><link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=3"><link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#10141A"><meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Pixelify+Sans:wght@500;700&family=Silkscreen:wght@400;700&family=VT323&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+<script>
+// Map library with fallbacks: some networks (e.g. Cloudflare throttling in Russia) cut off one CDN, so try the next one.
+window.LEAFLET_READY = (() => {
+  const SRC = [
+    ['https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/', 'https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/', 'leaflet.js', 'leaflet.css', 'leaflet.markercluster.js', 'MarkerCluster.css', 'MarkerCluster.Default.css'],
+    ['https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/', 'leaflet.min.js', 'leaflet.min.css', 'leaflet.markercluster.min.js', 'MarkerCluster.min.css', 'MarkerCluster.Default.min.css'],
+    ['https://unpkg.com/leaflet@1.9.4/dist/', 'https://unpkg.com/leaflet.markercluster@1.5.3/dist/', 'leaflet.js', 'leaflet.css', 'leaflet.markercluster.js', 'MarkerCluster.css', 'MarkerCluster.Default.css'],
+  ];
+  const js = (src, ms) => new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.crossOrigin = 'anonymous';
+    const t = setTimeout(() => no(), ms); el.onload = () => { clearTimeout(t); ok(); }; el.onerror = () => { clearTimeout(t); no(); }; document.head.appendChild(el); });
+  const css = href => { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; document.head.appendChild(l); };
+  const lock = () => { const L0 = window.L; try { Object.defineProperty(window, 'L', {get: () => L0, set() {}, configurable: true}); } catch {} };   // a late copy from a slower CDN must not replace the working one
+  return (async () => {
+    for (const [a, b, lj, lc, cj, c1, c2] of SRC) {
+      try { if (!window.L) await js(a + lj, 8000); if (!window.L) throw 0; css(a + lc);
+        await js(b + cj, 8000); if (!window.L.markerClusterGroup) throw 0; css(b + c1); css(b + c2); lock(); return; } catch {}
+    }
+    document.addEventListener('DOMContentLoaded', () => { const m = document.getElementById('map'); if (m) m.innerHTML = '<p style="padding:20px;color:#E4EAF0">The map could not be loaded on this network. Try again later or another network.</p>'; });
+    throw new Error('map library unavailable');
+  })();
+})();
+</script>
 <style>
 /* Haunted Y2K / Retro Paranormal OS */
 :root{--mid:#10141A;--gra:#232A33;--gra2:#2c3540;--ste:#8798AA;--fro:#AAB8C5;--sag:#84977A;--blo:#974048;--ink:#E4EAF0;--mut:#8798AA;--red:#e0838b;--acc:#84977A;--card:#232A33;--bg:#10141A;
@@ -880,8 +899,6 @@ html,body{overscroll-behavior:none}
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="posterize" color-interpolation-filters="sRGB"><feComponentTransfer>
  <feFuncR type="discrete" tableValues="0 .143 .286 .429 .571 .714 .857 1"/><feFuncG type="discrete" tableValues="0 .143 .286 .429 .571 .714 .857 1"/><feFuncB type="discrete" tableValues="0 .143 .286 .429 .571 .714 .857 1"/>
 </feComponentTransfer></filter></svg>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script type="module">
 import * as cfg from './config.js';
 const firebaseConfig = cfg.firebaseConfig;
@@ -889,6 +906,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, updateProfile, deleteUser, confirmPasswordReset, verifyPasswordResetCode, applyActionCode } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch, getCountFromServer, runTransaction, updateDoc, query, where, orderBy, limit, limitToLast, serverTimestamp, Timestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
+await window.LEAFLET_READY;   // wait for the map library (loaded with CDN fallbacks)
 const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1158,17 +1176,33 @@ function mapAccessSync() {
   if (open) { map.setMaxBounds(null); map.setMinZoom(2); }
   else { map.setMinZoom(5); map.setMaxBounds(MAP_AREA); if (!MAP_AREA.contains(map.getCenter())) map.setView([37.5, -80.5], 7); }
 }
-const usgs = (n, z) => L.tileLayer(`https://basemap.nationalmap.gov/arcgis/rest/services/${n}/MapServer/tile/{z}/{y}/{x}`, {maxZoom: z, attribution: 'USGS The National Map'});
+// USGS tiles can be unreachable from some countries: if none load, switch every USGS layer to OpenStreetMap
+const OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', USGS_LAYERS = [];
+let usgsLoaded = false, usgsErrors = 0, usgsDown = false;
+const usgsWatch = l => { USGS_LAYERS.push(l);
+  l.on('tileload', () => { usgsLoaded = true; });
+  l.on('tileerror', () => { if (usgsLoaded || usgsDown || ++usgsErrors < 6) return; usgsDown = true;
+    USGS_LAYERS.forEach(x => { x.setUrl(OSM_URL); x.options.attribution = '© OpenStreetMap contributors'; });
+    LABEL_LAYERS.forEach(x => { try { map.removeLayer(x); x.setOpacity(0); } catch {} });
+    console.warn('USGS tiles unreachable — using OpenStreetMap'); });
+  return l; };
+const usgs = (n, z) => usgsWatch(L.tileLayer(`https://basemap.nationalmap.gov/arcgis/rest/services/${n}/MapServer/tile/{z}/{y}/{x}`, {maxZoom: z, attribution: 'USGS The National Map'}));
 const topo = usgs('USGSTopo', 16);
-const pxLayer = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {maxZoom: 17, maxNativeZoom: 16, tileSize: 512, zoomOffset: -1, className: 'tl-px', attribution: 'USGS The National Map'});
-const baseLayers = {'Topo & trails': topo, 'Satellite': usgs('USGSImageryTopo', 16), 'Streets': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '© OpenStreetMap contributors'})};
+// city / road / street names on top of satellite imagery (transparent Esri reference layers, crisp text)
+const ESRI_REF = 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/';
+const LABEL_LAYERS = [];
+const labels = () => { const g = [L.tileLayer(ESRI_REF + 'World_Transportation/MapServer/tile/{z}/{y}/{x}', {maxZoom: 19, opacity: .75, className: 'tl-lbl', attribution: 'Labels © Esri'}),
+  L.tileLayer(ESRI_REF + 'World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {maxZoom: 19, className: 'tl-lbl', attribution: 'Labels © Esri'})]; LABEL_LAYERS.push(...g); return g; };
+const withLabels = base => L.layerGroup([base, ...labels()]);
+const pxLayer = usgsWatch(L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {maxZoom: 17, maxNativeZoom: 16, tileSize: 512, zoomOffset: -1, className: 'tl-px', attribution: 'USGS The National Map'}));
+const baseLayers = {'Topo & trails': topo, 'Satellite': withLabels(usgs('USGSImageryOnly', 16)), 'Streets': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '© OpenStreetMap contributors'})};
 const layersCtl = L.control.layers(baseLayers);
 let detailLayer = topo;
 map.on('baselayerchange', e => { if (Object.values(baseLayers).includes(e.layer)) detailLayer = e.layer; });
 // pixel-color versions of every base map: 2x chunky pixels + reduced color levels, all original colors kept
-const pxc = (url, z, attribution) => L.tileLayer(url, {maxZoom: z + 1, maxNativeZoom: z, tileSize: 512, zoomOffset: -1, className: 'tl-pxc', attribution});
+const pxc = (url, z, attribution) => { const l = L.tileLayer(url, {maxZoom: z + 1, maxNativeZoom: z, tileSize: 512, zoomOffset: -1, className: 'tl-pxc', attribution}); return url.includes('nationalmap.gov') ? usgsWatch(l) : l; };
 const pxcLayers = {
-  'Satellite': pxc('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}', 16, 'USGS The National Map'),
+  'Satellite': withLabels(pxc('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}', 16, 'USGS The National Map')),
   'Topo & trails': pxc('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', 16, 'USGS The National Map'),
   'Streets': pxc('https://tile.openstreetmap.org/{z}/{x}/{y}.png', 18, '© OpenStreetMap contributors'),
 };
@@ -1612,7 +1646,7 @@ function profile() {
     $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
       catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
-const BUILD = '2026-11-16 · build 8';
+const BUILD = '2026-11-16 · build 10';
 // iPhone Safari scrolls the whole page when the keyboard opens and often leaves it shifted afterwards: snap it back
 (() => { const back = () => { const a = document.activeElement; if (!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { if (scrollX || scrollY) scrollTo(0, 0); document.documentElement.scrollTop = document.body.scrollTop = 0; } };
   document.addEventListener('focusout', () => setTimeout(back, 80));
