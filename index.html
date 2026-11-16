@@ -795,6 +795,112 @@ html,body{overscroll-behavior:none}
   .mapwin>.tbar{overflow:visible}
   .mapwin>.mtools{position:absolute;right:10px;bottom:24px;z-index:1001;display:flex;flex-direction:column;margin:0}
 }
+
+/* =====================================================================
+   POLISH LAYER (build 17) — one consistent set of states, motion and
+   scrollbars; decorative glows/gradients removed; phone overlaps fixed.
+   The HAUNT game scene keeps its own art and is not touched here.
+   ===================================================================== */
+:root{--line:#3a4552;--ease:cubic-bezier(.2,.7,.2,1)}
+
+/* ---------- 1. states: one behaviour for every control ---------- */
+button.b,.chip,#rail button,.seg button,.gcard,.trow,.item[data-id],.fcard,.cbtn,.cpbtn,.lnk,.qi,.leaflet-bar a,.shx,.tbar .x,.filechip,.cpopt,#catBtn,a.prof,.discord,.macts u,#snd,.search,input,select,textarea,.frames .fr,.bgt{
+  transition:background-color .12s var(--ease),color .12s var(--ease),border-color .12s var(--ease),filter .12s var(--ease),opacity .12s var(--ease),outline-color .12s var(--ease)}
+@media (hover:hover){
+  button.b:hover{filter:brightness(1.1)}
+  button.b.s:hover,button.b.d:hover{filter:none;background:var(--gra2)}
+  button.b.d:hover{color:#ffb9c0}
+  .chip:hover,#rail button:hover,.seg button:hover,#snd:hover,.fcard:hover,#catBtn:hover{background:var(--gra2);color:var(--ink)}
+  .chip.on:hover,#rail button.on:hover,.seg button.on:hover{background:var(--mid)}
+  #rail #fab:hover{background:#a94a53;color:#fff}
+  .leaflet-bar a:hover{background:var(--gra2)!important}
+  .shx:hover,.tbar .x:hover{background:var(--mid);color:#fff}
+  .cpbtn:hover{background:var(--gra2)}.cpbtn#cpx:hover{background:var(--blo)}
+  .discord:hover{filter:brightness(1.08)}
+  input:hover,select:hover,textarea:hover,.search:hover{border-color:#4d5a6b}
+  .frames label:hover .fr,.bgs label:hover .bgt{outline:1px solid var(--line);outline-offset:3px}
+  .macts u:hover{background:var(--blo)}
+}
+input:focus,select:focus,textarea:focus,.search:focus-within{border-color:var(--ste)}
+button.b:active,.chip:active,#rail button:active,.seg button:active,.gcard:active,.trow:active,.fcard:active,.leaflet-bar a:active,.shx:active,.tbar .x:active,.cbtn:active,.cpbtn:active,.mtools button:active,#snd:active{
+  transform:translateY(1px);box-shadow:inset 1px 1px 0 var(--lo),inset -1px -1px 0 var(--hi)}
+button.b:active{filter:brightness(.94)}
+button:disabled,button.b:disabled{opacity:.5;filter:none;transform:none}
+a:focus-visible,.chip:focus-visible,[role=button]:focus-visible,u[data-act]:focus-visible,.gcard:focus-visible,.trow:focus-visible{outline:2px dashed var(--fro);outline-offset:2px}
+
+/* "on" always means the same thing: pressed in, with a sage marker (red stays for Report, LIVE, danger, admin) */
+.mtools button.on{background:var(--mid);color:var(--ink);box-shadow:inset 1px 1px 0 var(--lo),inset -1px -1px 0 var(--line),inset 0 -3px 0 var(--sag);border-color:var(--line)}
+@media (min-width:761px){
+  .seg button,.mtools button{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px}
+  .mtools button .spr{width:12px;height:12px;margin:0}
+  .mtools button b{font-weight:600;color:var(--sag)}
+  .mtools button.mob-only{display:none}
+}
+
+/* ---------- 2. motion: only as an answer to an action ---------- */
+@keyframes uiFade{from{opacity:0}}
+@keyframes uiRise{from{opacity:0;transform:translateY(14px)}}
+@keyframes uiPop{from{opacity:0;transform:translateY(6px)}}
+#sheet.open{animation:uiFade .14s ease-out}
+#sheet.open #sheetBody{animation:uiRise .2s var(--ease)}
+#chatpop.open,#livewin.open,#srules>.sr-box,.itoast,#qres,#catList{animation:uiPop .16s var(--ease)}
+.view.on{animation:uiFade .12s ease-out}
+/* ambient decoration that moved on its own is gone */
+.ghart i,.ghart>.spr,.cpbody .cempty svg{animation:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+
+/* ---------- 3. scrollbars ---------- */
+html,body,*{scrollbar-color:#46525f #151a21;scrollbar-width:thin}
+::-webkit-scrollbar{width:10px;height:10px;background:#151a21}
+::-webkit-scrollbar-track{background:#151a21}
+::-webkit-scrollbar-thumb{background:var(--line);border:2px solid #151a21;box-shadow:none}
+::-webkit-scrollbar-thumb:hover{background:#56637a}
+::-webkit-scrollbar-thumb:active{background:var(--sag)}
+::-webkit-scrollbar-corner{background:#151a21}
+::-webkit-scrollbar-button{display:none}
+#ml::-webkit-scrollbar,.lchat::-webkit-scrollbar,#qres::-webkit-scrollbar,#catList::-webkit-scrollbar,#sheetBody::-webkit-scrollbar{width:8px}
+.chips::-webkit-scrollbar,.ftags::-webkit-scrollbar{height:0}
+
+/* ---------- 4. less noise: no glows, no decorative gradients, no accent stripes ---------- */
+.pc2 .pban::after{display:none}
+.adminname{color:#cf4a5c!important;text-shadow:2px 2px 0 #10141A}
+.pc2 .stat,.pc2 .stat.st-pin,.pc2 .stat.st-people,.pc2 .stat.st-ghost{border-left:0}
+.panel.adm .tbar{background:#4a1c24;color:#ffd9de}
+.admhead{color:var(--red);letter-spacing:2px;margin-top:18px}.admhead i{height:1px;background:#5a2a31}
+.sech::after{height:1px;background:var(--gra2)}.sech.adm{color:var(--red)}.sech.adm::after{background:#5a2a31}
+.gcard,.gcard.gpub,.gcard.gpriv{padding-left:12px;box-shadow:inset 1px 1px 0 var(--hi),inset -1px -1px 0 var(--lo),inset 2px 2px 0 var(--line),inset -2px -2px 0 #171c23}
+.gcard .gico{box-shadow:inset 0 0 0 1px var(--line)}
+.ghart{background:#151a21}
+#chatpop{outline:0;box-shadow:inset 0 0 0 1px var(--line),6px 8px 0 rgba(0,0,0,.45)}
+.cphead{background:var(--gra2);border-bottom:2px solid var(--blo);box-shadow:none}
+.cpava{box-shadow:inset 0 0 0 1px var(--line)}
+.cpdot,.pres.on i{box-shadow:none}
+.cpbtn{background:var(--gra);border:1px solid var(--lo);box-shadow:inset 1px 1px 0 var(--hi),inset -1px -1px 0 var(--lo)}
+.cptitle b{color:var(--ink)}.cptitle small{color:var(--mut)}
+.cpbody #ml{background:#11161c}
+.cpbody .mrow:not(.me) .bubble{border-left-color:var(--line)}
+.cpbody .daysep::before,.cpbody .daysep::after{height:1px;background:var(--gra2)}
+.mk.priv{box-shadow:0 0 0 2px #10141A}
+.medot i{box-shadow:0 0 0 2px #10141A}
+
+/* ---------- 5. one voice for dialogs and forms ---------- */
+#sheetBody>h2,#sheetBody>h3{font-family:var(--px);font-weight:500;font-size:20px;letter-spacing:.5px;line-height:1.2;margin:2px 0 10px;display:flex;align-items:center;gap:8px}
+#sheetBody>label:not(.ck),#sheetBody>.lbl{display:block;font-size:12px;color:var(--mut);margin-top:10px}
+#sheetBody>p{margin:6px 0 10px;line-height:1.5}
+#sheetBody>.row{margin-top:10px}
+label.ck{line-height:1.35;align-items:flex-start}label.ck input{margin-top:2px;flex:none}
+#banbar{position:static;flex:none;box-shadow:none;border-bottom:1px solid var(--lo)}
+
+/* ---------- 6. phones: floating things never sit on each other ---------- */
+@media (max-width:760px){
+  .leaflet-control-zoom{display:none}                                   /* pinch to zoom; frees the corner for the place-picker bar */
+  #chatpop.min{left:10px;right:auto}                                    /* minimised chat: bottom-left, map buttons: bottom-right */
+  #livewin{inset:calc(58px + env(safe-area-inset-top)) 72px auto 8px}   /* stream window opens under the header and leaves the map-button column free */
+  .itoast{left:10px;right:10px;width:auto;bottom:calc(76px + env(safe-area-inset-bottom))}
+  .mapwin>.mtools{bottom:26px}
+  .mtools button{position:relative}
+  .mtools button b{position:absolute;top:3px;right:3px;min-width:16px;padding:1px 3px;font-size:10px;line-height:1.2;font-weight:600;background:var(--sag);color:var(--mid)}
+}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -1654,7 +1760,7 @@ function profile() {
     $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
       catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
-const BUILD = '2026-11-16 · build 16';
+const BUILD = '2026-11-16 · build 17';
 // iPhone Safari scrolls the whole page when the keyboard opens and often leaves it shifted afterwards: snap it back
 (() => { const back = () => { const a = document.activeElement; if (!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { if (scrollX || scrollY) scrollTo(0, 0); document.documentElement.scrollTop = document.body.scrollTop = 0; } };
   document.addEventListener('focusout', () => setTimeout(back, 80));
@@ -1818,7 +1924,7 @@ const profileCard = (p, fallbackName, opt = {}) => {
   const bio = p?.bio ? `<p class="pbio${p.locked ? ' locked' : ''}">${p.locked ? sprite('lock', 14) + ' ' : ''}${esc(p.bio)}</p>` : `<p class="meta">${opt.self ? 'Add a few words about yourself in Edit profile.' : 'No description yet.'}</p>`;
   return `<div class="pcard win pc2"><div class="tbar">${sprite('ghost', 14)}<span>${opt.title || 'PROFILE'}</span></div><div class="pban">${ban}<i class="pfade"></i></div>
     <div class="phead">${avatarHtml(p)}<div class="pname"><h2${adm ? ' class="adminname"' : ''}>${name}</h2><div class="badges">${badges}</div>${pres}</div>${opt.action ? `<div class="pact">${opt.action}</div>` : ''}</div>
-    <div class="pbody pcols"><div class="pabout"><div class="plabel">ABOUT</div>${bio}${lk ? `<div class="plinks">${lk}</div>` : ''}</div>
+    <div class="pbody pcols"><div class="pabout">${bio}${lk ? `<div class="plinks">${lk}</div>` : ''}</div>
     <div class="pstats" id="${opt.statsId || 'pstats'}">${opt.stats || ''}</div></div><div id="pextra"></div></div>`;
 };
 const statCell = (n, label) => { const ic = /^Report/.test(label) ? 'pin' : /^Group/.test(label) ? 'people' : 'ghost';
@@ -2094,7 +2200,7 @@ let myBan = null;
 const banActive = b => !!b && (b.forever || (b.until?.toDate && b.until.toDate().getTime() > Date.now()));
 const banText = b => b.forever ? 'permanently' : `until ${fmtWhen(b.until.toDate().getTime())}`;
 async function banCheck() {
-  myBan = null; const bar = $('#banbar');
+  myBan = null; const bar = $('#banbar'); if (bar.parentElement !== $('#app')) $('#app').prepend(bar);
   if (user) { try { const d = await getDoc(doc(db, 'bans', user.uid)); if (d.exists() && banActive(d.data())) myBan = d.data(); } catch {} }
   if (bar) { bar.hidden = !myBan; if (myBan) bar.innerHTML = `${sprite('noentry', 14)} You are banned ${esc(banText(myBan))}${myBan.reason ? ` — ${esc(myBan.reason)}` : ''}. You can browse but can't post.`; }
 }
@@ -3636,9 +3742,8 @@ const toDataURL = f => new Promise((res, rej) => { const r = new FileReader(); r
 async function groupList() {
   const el = $('#groups');
   el.innerHTML = `<div class="pwrap"><div class="pcard win ghero2"><div class="tbar">${sprite('ghost', 12)}<span>EXPEDITION BOARD</span></div>
-    <div class="ghbody"><div class="ghart sunken">${sprite('ghost', 48)}<i class="gh2">${sprite('chat', 24)}</i></div>
-    <div class="grow"><h2>Groups &amp; Chats</h2><p class="meta">Find people to visit a place together, plan the trip and chat in real time.</p>
-      <div class="ghstats"><span class="chip">${sprite('people', 12)} My groups: <b id="ghm">·</b></span><span class="chip">${sprite('ghost', 12)} Public: <b id="ghp">·</b></span></div></div>
+    <div class="ghbody"><div class="ghart sunken">${sprite('ghost', 48)}</div>
+    <div class="grow"><h2>Groups &amp; Chats</h2><p class="meta">Find people to visit a place together, plan the trip and chat in real time.</p></div>
     <div class="ghbtns"><button class="b" id="ng">${sprite('plus', 24)} New group</button><button class="b s" id="jc">${sprite('key', 24)} Join by invite</button></div></div></div>
     <div id="mg"></div><h3 class="sech">${sprite('ghost', 24)}<span>Public groups</span></h3><div id="gl" class="tlist gl2"><p class="meta">Loading…</p></div>
     ${isAdmin() ? `<h3 class="sech adm">${sprite('shield', 24)}<span>Admin · all groups (incl. private)</span></h3><div id="ag" class="tlist gl2"><p class="meta">Loading…</p></div>` : ''}
