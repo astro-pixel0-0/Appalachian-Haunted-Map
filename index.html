@@ -560,6 +560,45 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 #gate .glogo svg{filter:drop-shadow(0 0 6px rgba(170,184,197,.5));animation:btfloat 1.6s steps(2) infinite}
 #gate h2{margin:4px 0 0;font-size:18px}#gate .b{width:100%;margin:0}
 body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:none}
+#chatpop{position:fixed;right:20px;bottom:20px;width:390px;height:min(620px,calc(100vh - 90px));z-index:1300;display:none;flex-direction:column;background:#151a21;border:2px solid #0a0d11;box-shadow:inset 0 0 0 1px #3a4552,8px 10px 0 rgba(0,0,0,.45),0 0 40px rgba(0,0,0,.4)}
+#chatpop.open{display:flex}#chatpop.min{height:auto;width:300px}#chatpop.min .cpbody,#chatpop.min #cpm{display:none}#chatpop.min .cphead{cursor:pointer}
+.cphead{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 10px;background:linear-gradient(180deg,#3a2a30,#2a1e24);border-bottom:2px solid #0a0d11;box-shadow:inset 0 1px 0 #5a3a44;cursor:move;user-select:none;touch-action:none}
+.cpava{flex:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#10141A;box-shadow:inset 0 0 0 1px #5a3a44,0 0 10px rgba(151,64,72,.35)}
+.cptitle{flex:1;min-width:0;display:flex;flex-direction:column}.cptitle b{font:15px 'Pixelify Sans',sans-serif;color:#F2EEF0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cptitle small{font-size:11.5px;color:#c9b8bd;display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cpdot{width:7px;height:7px;background:#84d36a;box-shadow:0 0 5px #84d36a;flex:none}
+.cpun{font:11px 'Silkscreen',monospace;font-style:normal;background:#e04a55;color:#fff;padding:1px 6px;margin-left:6px;vertical-align:middle}
+.cpbtn{flex:none;width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:#1e161a;color:#E4EAF0;border:1px solid #0a0d11;box-shadow:inset 1px 1px 0 #5a3a44;font:14px/1 'Silkscreen',monospace}
+.cpbtn:hover{background:#974048}
+.cpbody{flex:1;display:flex;flex-direction:column;min-height:0}
+.cpbody .mlwrap{position:relative;flex:1;min-height:0;display:flex}
+.cpbody #ml{flex:1;max-height:none;margin:0;overflow:auto;padding:12px 10px 10px;display:flex;flex-direction:column;gap:0;background:radial-gradient(circle at 20% 10%,rgba(132,151,122,.06),transparent 40%),repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0 6px,transparent 6px 12px),#12171d}
+.cpbody .mrow{max-width:86%;margin-top:10px}.cpbody .mrow.cont{margin-top:2px}
+.cpbody .mav{width:30px;flex:none}.cpbody .mav .av,.cpbody .mav img,.cpbody .mav svg{max-width:30px;max-height:30px}
+.cpbody .bubble{position:relative;border:0;box-shadow:0 2px 0 rgba(0,0,0,.35);background:#28303a;color:#E4EAF0;padding:7px 10px 4px;min-width:64px}
+.cpbody .mrow:not(.cont) .bubble::before{content:'';position:absolute;left:-7px;bottom:0;width:8px;height:9px;background:inherit;clip-path:polygon(100% 0,100% 100%,0 100%)}
+.cpbody .mrow.me .bubble{background:#3f5a46;box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.cpbody .mrow.me:not(.cont) .bubble::before{left:auto;right:-7px;clip-path:polygon(0 0,100% 100%,0 100%)}
+.cpbody .mname{font-size:12px;font-weight:600;margin-bottom:2px}.cpbody .mname a{color:#d9c27a}
+.cpbody .mtext{font-size:14px;line-height:1.35;white-space:pre-wrap;word-wrap:break-word}
+.cpbody .mfoot{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:2px;font-size:10.5px;color:rgba(228,234,240,.5)}
+.cpbody .daysep{display:flex;justify-content:center;margin:14px 0 4px}.cpbody .daysep span{background:#0a0d11;color:#8798AA;font:11px 'Silkscreen',monospace;letter-spacing:1px;padding:3px 10px;border:1px solid #2c3540}
+.cpbody .att img{max-width:100%;display:block;margin-top:4px;border:1px solid #0a0d11}
+.cpbody .cempty{margin:auto;text-align:center;color:#8798AA}.cpbody .cempty svg{filter:drop-shadow(0 0 8px rgba(170,184,197,.35));animation:btfloat 1.6s steps(2) infinite}
+.cpbody .composer{padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));border-top:2px solid #0a0d11;background:#1b2129}
+.cpbody .cbar{display:flex;align-items:flex-end;gap:4px;background:#0f1318;padding:4px;border:1px solid #2c3540;box-shadow:inset 1px 1px 0 #0a0d11}
+.cpbody .cbar:focus-within{border-color:#84977A}
+.cpbody #mi{flex:1;min-width:0;background:transparent;border:0;outline:0;resize:none;color:#E4EAF0;padding:7px 6px;font:14px/1.3 'IBM Plex Sans',sans-serif;max-height:120px}
+.cpbody .cbar .cbtn{width:34px;height:34px;background:transparent;border:0;color:#8798AA;box-shadow:none}.cpbody .cbar .cbtn:hover{color:#E4EAF0;background:#232A33}
+.cpbody .cbar #ms{background:#84977A;color:#10141A}.cpbody .cbar #ms:hover{background:#9db08f}
+.cpbody .chint{font-size:10.5px;margin:4px 2px 0;opacity:.7}
+.cpbody .jump{bottom:8px}
+@media (max-width:700px){#chatpop{inset:0;width:auto;height:auto;right:0;bottom:0;border:0;box-shadow:none}#chatpop.min{inset:auto 10px 10px auto;width:min(300px,calc(100vw - 20px))}.cphead{cursor:default;padding-top:calc(8px + env(safe-area-inset-top))}}
+/* nicer group list */
+.gcard{position:relative;transition:transform .12s steps(2),box-shadow .12s}.gcard:hover{transform:translateY(-2px);box-shadow:inset 1px 1px 0 var(--hi),inset -1px -1px 0 var(--lo),4px 4px 0 rgba(0,0,0,.35)}
+.gcard .gico{box-shadow:inset 0 0 0 1px #3a4552,0 0 10px rgba(132,151,122,.15)}
+.qchat{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 10px;background:#84977A;color:#10141A;font-size:12px;font-weight:600;border:1px solid #0a0d11;box-shadow:inset 1px 1px 0 #b6c6a8;cursor:var(--cur-hot)}
+.qchat:hover{background:#9db08f}
+.cpbody .mfoot .t{font:11px 'IBM Plex Sans',sans-serif}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -3019,16 +3058,15 @@ const dayKey = ts => { const d = ts?.toDate ? ts.toDate() : new Date(); return d
 const dayLabel = ts => { const d = ts?.toDate ? ts.toDate() : new Date(), t = new Date(); const y = new Date(); y.setDate(t.getDate() - 1);
   return d.toDateString() === t.toDateString() ? 'Today' : d.toDateString() === y.toDateString() ? 'Yesterday' : d.toLocaleDateString(undefined, {weekday: 'short', day: 'numeric', month: 'short'}); };
 const hhmm = ts => ts?.toDate ? ts.toDate().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '…';
-const groupCard = g => `<button class="gcard raised" data-id="${esc(g.id)}"><span class="gico sunken">${sprite(g.private ? 'shadow' : 'ghost', 30)}</span>
+const groupCard = (g, mine) => `<button class="gcard raised" data-id="${esc(g.id)}"><span class="gico sunken">${sprite(g.private ? 'shadow' : 'ghost', 30)}</span>
   <span class="tmain"><b>${esc(g.name)}</b><span class="tmeta">${g.private ? `<span class="badge blood">${pxi('lock', 9)} PRIVATE</span>` : '<span class="badge">PUBLIC</span>'}${g.place ? `<span>${pxi('pin', 10)} ${esc(g.place)}</span>` : ''}${g.when ? `<span>${pxi('cal', 10)} ${esc(g.when)}</span>` : ''}</span>
-  <span class="tmeta">by ${esc(g.authorName || 'User')}</span></span><span class="tcount sunken"><b data-mc="${esc(g.id)}">·</b><small>members</small></span></button>`;
+  <span class="tmeta">by ${esc(g.authorName || 'User')}</span>${mine ? `<span class="qchat" data-chat="${esc(g.id)}" role="button">💬 Open chat</span>` : ''}</span><span class="tcount sunken"><b data-mc="${esc(g.id)}">·</b><small>members</small></span></button>`;
 const fillMemberCounts = list => list.slice(0, 60).forEach(async g => { try { const c = await getCountFromServer(collection(db, `groups/${g.id}/members`));
   document.querySelectorAll(`[data-mc="${CSS.escape(g.id)}"]`).forEach(b => b.textContent = c.data().count); } catch {} });
 const byNew = (a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
 const toDataURL = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
 
 async function groupList() {
-  stopChat();
   const el = $('#groups');
   el.innerHTML = `<div class="pwrap"><div class="pcard win"><div class="tbar">${sprite('ghost', 14)}<span>EXPEDITION BOARD</span></div>
     <div class="pad fhead"><div class="grow"><h2 style="margin:0">Groups &amp; Chats</h2><p class="meta">Find people to visit a place together, plan the trip and chat in real time.</p></div>
@@ -3041,7 +3079,7 @@ async function groupList() {
     sheet(`<h3>Join a private group</h3><input id="jv" placeholder="Paste invite link or code"><button class="b" id="go">Join</button><button class="b s" id="cx">Cancel</button>`);
     $('#cx').onclick = closeSheet; $('#go').onclick = () => { const v = $('#jv').value; closeSheet(); joinByCode(v); };
   };
-  const bind = (sel, list) => { const n = $(sel); if (n) n.onclick = e => { const i = e.target.closest('.gcard'); if (i) openGroup(list.find(g => g.id === i.dataset.id)); }; fillMemberCounts(list); };
+  const bind = (sel, list) => { const n = $(sel); if (n) n.onclick = e => { const q = e.target.closest('.qchat'); if (q) { openChatPop(q.dataset.chat); return; } const i = e.target.closest('.gcard'); if (i) openGroup(list.find(g => g.id === i.dataset.id)); }; fillMemberCounts(list); };
   let mineIds = new Set();
   if (user) {
     try {
@@ -3050,7 +3088,7 @@ async function groupList() {
         try { const gs = await getDoc(doc(db, 'groups', d.id)); if (gs.exists()) return {id: gs.id, ...gs.data()}; } catch {}
         deleteDoc(d.ref).catch(() => {}); return null; }))).filter(Boolean).sort(byNew);
       const box = $('#mg'); if (!box) return;
-      box.innerHTML = mine.length ? '<h3 class="sech">My groups</h3><div class="tlist">' + mine.map(groupCard).join('') + '</div>' : ''; bind('#mg', mine);
+      box.innerHTML = mine.length ? '<h3 class="sech">My groups</h3><div class="tlist">' + mine.map(g => groupCard(g, true)).join('') + '</div>' : ''; bind('#mg', mine);
       mineIds = new Set(mine.map(g => g.id));
     } catch {}
   }
@@ -3058,13 +3096,13 @@ async function groupList() {
     const snap = await getDocs(query(collection(db, 'groups'), where('private', '==', false), limit(100)));
     groups = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(g => okItem(g.authorID, g.id) && !mineIds.has(g.id)).sort(byNew);
     const gl = $('#gl'); if (!gl) return;
-    gl.innerHTML = groups.length ? groups.map(groupCard).join('') : `<div class="empty win">${sprite('ghost', 48)}<p>No public groups yet. Create the first one!</p></div>`; bind('#gl', groups);
+    gl.innerHTML = groups.length ? groups.map(g => groupCard(g)).join('') : `<div class="empty win">${sprite('ghost', 48)}<p>No public groups yet. Create the first one!</p></div>`; bind('#gl', groups);
   } catch { const gl = $('#gl'); if (gl) gl.innerHTML = '<p class="err">Could not load groups.</p>'; }
   if (isAdmin()) {
     try {
       const snap = await getDocs(query(collection(db, 'groups'), orderBy('createdAt', 'desc'), limit(200)));
       const all = snap.docs.map(d => ({id: d.id, ...d.data()})); const ag = $('#ag'); if (!ag) return;
-      ag.innerHTML = all.length ? all.map(groupCard).join('') : '<p class="meta">None.</p>'; bind('#ag', all);
+      ag.innerHTML = all.length ? all.map(g => groupCard(g)).join('') : '<p class="meta">None.</p>'; bind('#ag', all);
     } catch { const ag = $('#ag'); if (ag) ag.innerHTML = '<p class="err">Could not load (publish the latest rules).</p>'; }
   }
 }
@@ -3114,7 +3152,6 @@ async function joinByCode(raw) {
 }
 
 async function openGroup(g) {
-  stopChat();
   const el = $('#groups'), owner = user && user.uid === g.authorID, adm = isAdmin();
   let member = false, members = [];
   try {
@@ -3141,7 +3178,7 @@ async function openGroup(g) {
   $('#bk').onclick = groupList;
   $('#mem').onclick = async e => { const k = e.target.closest('[data-kick]'); if (!k) return;
     try { await deleteDoc(doc(db, `groups/${g.id}/members`, k.dataset.kick)); openGroup(g); } catch { toast('Could not remove.'); } };
-  if ($('#oc')) $('#oc').onclick = () => { const u = `${base()}#chat=${g.id}`; if (!window.open(u, '_blank')) location.href = u; };
+  if ($('#oc')) $('#oc').onclick = () => openChatPop(g.id);
   if ($('#iv')) $('#iv').onclick = () => { const link = `${base()}#join=${g.id}`;
     sheet(`<h3>Invite link</h3><p class="meta">Anyone with this link can join. Share it only with people you trust.</p><input id="il" readonly value="${esc(link)}"><button class="b" id="cp">Copy</button><button class="b s" id="cx">Close</button>`);
     $('#cx').onclick = closeSheet; $('#cp').onclick = async () => { $('#il').select(); try { await navigator.clipboard.writeText(link); $('#cp').textContent = 'Copied!'; } catch {} }; };
@@ -3161,26 +3198,53 @@ async function showMembers(g) {
   } catch { toast('Could not load members.'); }
 }
 
-// chat opens in its own window: https://…/#chat=GROUPID
-async function chatWindow(gid) {
-  chatGid = gid; stopChat();
-  document.body.classList.add('chatmode');
-  const root = $('#chatwin');
-  if (!user) { root.innerHTML = '<div style="padding:20px"><p>Sign in to open this chat.</p><button class="b" id="si">Sign in</button></div>'; $('#si').onclick = () => authSheet(); return; }
-  root.innerHTML = '<p class="meta" style="padding:20px">Loading…</p>';
+// group chat opens in a small floating window (full screen on phones); deep links #chat=ID open it too
+let popGid = null, popUnread = 0, popDrag = null;
+function chatPopEl() {
+  let w = $('#chatpop'); if (w) return w;
+  w = document.createElement('div'); w.id = 'chatpop'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-label', 'Group chat'); document.body.appendChild(w);
+  addEventListener('chatmsg', () => { if (w.classList.contains('min')) { popUnread++; const u = $('#cpun'); if (u) { u.textContent = popUnread; u.hidden = false; } } });
+  return w;
+}
+function chatWindow(gid) { history.replaceState(null, '', location.pathname); openChatPop(gid); }
+async function openChatPop(gid) {
+  const w = chatPopEl(); stopChat(); popGid = gid; popUnread = 0; chatGid = null;
+  w.classList.add('open'); w.classList.remove('min');
+  if (!user) { w.innerHTML = '<div class="cpbody pad"><p>Sign in to open this chat.</p></div>'; return; }
+  w.innerHTML = `<div class="cphead"><span class="cptitle"><b>Loading…</b></span><button class="cpbtn" id="cpx" aria-label="Close chat">${pxi('x', 12)}</button></div>`;
+  $('#cpx').onclick = closeChatPop;
   let g, member = false;
-  try {
-    const gs = await getDoc(doc(db, 'groups', gid)); if (!gs.exists()) throw 0;
-    g = {id: gs.id, ...gs.data()};
-    member = (await getDoc(doc(db, `groups/${gid}/members`, user.uid))).exists();
-  } catch { root.innerHTML = '<p style="padding:20px">Chat not found, or you are not a member of this group.</p>'; return; }
-  if (!member && !isAdmin()) { root.innerHTML = '<p style="padding:20px">You are not a member of this group.</p>'; return; }
+  try { const gs = await getDoc(doc(db, 'groups', gid)); if (!gs.exists()) throw 0; g = {id: gs.id, ...gs.data()}; member = (await getDoc(doc(db, `groups/${gid}/members`, user.uid))).exists(); }
+  catch { w.innerHTML = `<div class="cphead"><span class="cptitle"><b>Chat</b></span><button class="cpbtn" id="cpx" aria-label="Close chat">${pxi('x', 12)}</button></div><p class="pad">Chat not found, or you are not a member of this group.</p>`; $('#cpx').onclick = closeChatPop; return; }
+  if (!member && !isAdmin()) { closeChatPop(); toast('You are not a member of this group.'); return; }
+  if (popGid !== gid) return;
   let mcount = '·'; try { mcount = (await getCountFromServer(collection(db, `groups/${gid}/members`))).data().count; } catch {}
-  root.innerHTML = `<div class="chead"><span class="cico">${sprite(g.private ? 'shadow' : 'ghost', 28)}</span><div class="ctitle"><b>${esc(g.name)}</b><small>${mcount} members${g.place ? ' · ' + esc(g.place) : ''}${!member ? ' · admin view' : ''}</small></div>
-    <span class="chbtns"><button class="cbtn raised" id="cm" aria-label="Members" title="Members">${pxi('users', 16)}</button><button class="cbtn raised" id="cc" aria-label="Close chat" title="Close">${pxi('x', 14)}</button></span></div><div id="cbody"></div>`;
-  $('#cm').onclick = () => showMembers(g);
-  $('#cc').onclick = () => { window.close(); setTimeout(() => { stopChat(); history.replaceState(null, '', location.pathname); location.reload(); }, 200); };
-  mountChat($('#cbody'), g, !member);
+  w.innerHTML = `<div class="cphead" id="cph"><span class="cpava">${sprite(g.private ? 'shadow' : 'ghost', 26)}</span>
+      <span class="cptitle"><b>${esc(g.name)} <em id="cpun" class="cpun" hidden>0</em></b><small><i class="cpdot"></i>${mcount} members${g.place ? ' · ' + esc(g.place) : ''}${!member ? ' · admin view' : ''}</small></span>
+      <button class="cpbtn" id="cpm" aria-label="Members" title="Members">${pxi('users', 14)}</button><button class="cpbtn" id="cpn" aria-label="Minimize" title="Minimize">▁</button><button class="cpbtn" id="cpx" aria-label="Close chat" title="Close">${pxi('x', 12)}</button></div>
+    <div class="cpbody" id="cpb"></div>`;
+  $('#cpm').onclick = e => { e.stopPropagation(); showMembers(g); };
+  $('#cpx').onclick = e => { e.stopPropagation(); closeChatPop(); };
+  $('#cpn').onclick = e => { e.stopPropagation(); chatPopMin(); };
+  $('#cph').onclick = () => { if (w.classList.contains('min')) chatPopMin(false); };
+  chatPopDrag($('#cph'), w);
+  mountChat($('#cpb'), g, !member);
+  setTimeout(() => $('#mi')?.focus(), 50);
+}
+function chatPopMin(on) {
+  const w = $('#chatpop'); if (!w) return; const m = on ?? !w.classList.contains('min');
+  w.classList.toggle('min', m); if (!m) { popUnread = 0; const u = $('#cpun'); if (u) u.hidden = true; const ml = $('#ml'); if (ml) ml.scrollTop = ml.scrollHeight; }
+}
+function closeChatPop() { stopChat(); popGid = null; const w = $('#chatpop'); if (w) { w.classList.remove('open', 'min'); w.innerHTML = ''; w.style.left = w.style.top = ''; } }
+function chatPopDrag(h, w) {
+  h.onpointerdown = e => {
+    if (e.target.closest('button') || innerWidth < 700 || w.classList.contains('min')) return;
+    const r = w.getBoundingClientRect(); popDrag = {dx: e.clientX - r.left, dy: e.clientY - r.top}; h.setPointerCapture(e.pointerId);
+  };
+  h.onpointermove = e => { if (!popDrag) return;
+    const x = Math.max(4, Math.min(innerWidth - w.offsetWidth - 4, e.clientX - popDrag.dx)), y = Math.max(4, Math.min(innerHeight - 60, e.clientY - popDrag.dy));
+    w.style.left = x + 'px'; w.style.top = y + 'px'; w.style.right = 'auto'; w.style.bottom = 'auto'; };
+  h.onpointerup = h.onpointercancel = () => { popDrag = null; };
 }
 
 async function loadAtt(gid, mid) {
@@ -3200,7 +3264,7 @@ async function fillAtt(gid, n) {
 function mountChat(box, g, readonly) {
   box.innerHTML = '<div class="mlwrap"><div id="ml"></div><button class="jump raised" id="jump" hidden>' + pxi('down', 12) + ' New messages</button></div>' + (readonly ? '<p class="meta" style="padding:8px 12px">Admin view (read-only).</p>' :
     `<div class="composer"><div id="rec" class="recbar" style="display:none"></div>
-     <div class="cbar sunken"><button class="cbtn" id="at" aria-label="Attach photo or file" title="Attach">${pxi('clip', 16)}</button><textarea id="mi" rows="1" maxlength="1000" placeholder="Message… (Enter to send, Shift+Enter for a new line)"></textarea><button class="cbtn" id="mic" aria-label="Record voice message" title="Voice message">${pxi('mic', 16)}</button><button class="cbtn send" id="ms" aria-label="Send" title="Send">${pxi('send', 16)}</button></div>
+     <div class="cbar sunken"><button class="cbtn" id="at" aria-label="Attach photo or file" title="Attach">${pxi('clip', 16)}</button><textarea id="mi" rows="1" maxlength="1000" placeholder="Write a message…" title="Enter to send, Shift+Enter for a new line"></textarea><button class="cbtn" id="mic" aria-label="Record voice message" title="Voice message">${pxi('mic', 16)}</button><button class="cbtn send" id="ms" aria-label="Send" title="Send">${pxi('send', 16)}</button></div>
      <input type="file" id="fi" hidden><p class="meta chint">Files up to 650 KB · voice up to 60 s · moderators may review chats</p></div>`);
   const ml = $('#ml'), jump = $('#jump'); let rec = null, tick = null, first = true, lastA = null, lastT = 0, lastDay = '';
   jump.onclick = () => { ml.scrollTop = ml.scrollHeight; jump.hidden = true; };
@@ -3226,7 +3290,7 @@ function mountChat(box, g, readonly) {
     const near = first || ml.scrollHeight - ml.scrollTop - ml.clientHeight < 140;
     snap.docChanges().forEach(ch => {
       const m = {id: ch.doc.id, ...ch.doc.data()};
-      if (ch.type === 'added') { if (okItem(m.authorID, m.id) && !document.getElementById('m_' + m.id)) { add(m); if (!first && (!user || m.authorID !== user.uid)) { sfx('msg', 0.4); if (!near) jump.hidden = false; } } }
+      if (ch.type === 'added') { if (okItem(m.authorID, m.id) && !document.getElementById('m_' + m.id)) { add(m); if (!first && (!user || m.authorID !== user.uid)) { sfx('msg', 0.4); dispatchEvent(new Event('chatmsg')); if (!near) jump.hidden = false; } } }
       else if (ch.type === 'removed') document.getElementById('m_' + m.id)?.remove();
       else { const t = document.querySelector(`#m_${m.id} .t`); if (t) t.textContent = hhmm(m.createdAt); }
     });
