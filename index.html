@@ -605,6 +605,7 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
 .cpgrp{font:12px 'Silkscreen',monospace;letter-spacing:1px;color:#84977A;padding:8px 8px 4px}
 .cpopt{width:100%;display:flex;align-items:center;gap:10px;padding:6px 10px;background:transparent;border:0;color:var(--ink);text-align:left;font:14px 'IBM Plex Sans',sans-serif}
 .cpopt:hover{background:#232A33}.cpopt.on{background:#2f3a2c;box-shadow:inset 3px 0 0 #84977A}.cpopt svg,.cpcur svg{flex:none}
+.safelist{margin:6px 0 12px;padding-left:18px;line-height:1.5}.safelist li{margin:4px 0}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -1144,7 +1145,8 @@ function addSheet(ll) {
    ${catPicker()}<p class="meta" id="warn" style="display:none">⚠️ Abandoned places can be dangerous and are often private property. Never trespass, and don’t post addresses of occupied homes.</p>
    <input id="t" maxlength="80" placeholder="Title (e.g. Mothman sighting)"><textarea id="d" maxlength="1000" placeholder="What happened?"></textarea>
    <input id="f" type="file" accept="image/*"><div id="pv"></div>
-   <p class="meta">${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</p><p class="err" id="e"></p>
+   <p class="meta">${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</p>
+   <label class="ck"><input type="checkbox" id="fuzz"> 🛡️ Hide the exact spot (moves the marker ~300–600 m) — use it if this is near your home</label><p class="err" id="e"></p>
    <button class="b" id="go">Post</button><button class="b s" id="cx">Cancel</button>`);
   let photo = null;
   $('#cat').onchange = () => { $('#warn').style.display = isAb($('#cat').value) ? 'block' : 'none'; };
@@ -1156,7 +1158,9 @@ function addSheet(ll) {
     $('#go').disabled = true;
     try {
       const ref = doc(collection(db, 'sightings'));
-      await setDoc(ref, {title, details: $('#d').value.trim().slice(0, 1000), category: $('#cat').value, lat: ll.lat, lon: ll.lng,
+      let [plat, plon] = [ll.lat, ll.lng];
+      if ($('#fuzz').checked) { for (let k = 0; k < 8; k++) { const [a, b] = jitter(ll.lat, ll.lng, 300, 600); if (canPlaceAt(a, b)) { [plat, plon] = [a, b]; break; } } }
+      await setDoc(ref, {title, details: $('#d').value.trim().slice(0, 1000), category: $('#cat').value, lat: plat, lon: plon,
         authorID: user.uid, authorName: user.displayName || 'User', hasPhoto: !!photo, createdAt: serverTimestamp()});
       if (photo) await setDoc(doc(db, 'photos', ref.id), {data: photo, authorID: user.uid});
       closeSheet(); loadSightings(); sfx('success');
@@ -1167,7 +1171,36 @@ async function report(kind, id) {
   try { await addDoc(collection(db, 'reports'), {kind, targetID: id, reporter: user?.uid || 'anon', createdAt: serverTimestamp()}); } catch {}
   hidden.add(id); ls('hidden', hidden); toast('Thanks — reported and hidden. Reports are reviewed within 24 hours.');
 }
-const block = a => { blocked.add(a); ls('blocked', blocked); };
+// ---------- safety ----------
+// full block: hidden locally + saved to the account, friendship and pending requests removed (the rules then stop requests, invites, status and stream access)
+const block = async a => {
+  blocked.add(a); ls('blocked', blocked);
+  if (!user || !user.emailVerified || !a || a === user.uid) return;
+  try { await setDoc(doc(db, `users/${user.uid}/blocks`, a), {at: serverTimestamp()}); } catch {}
+  for (const r of [doc(db, `users/${user.uid}/friends`, a), doc(db, `users/${a}/friends`, user.uid), doc(db, `requests/${user.uid}/in`, a), doc(db, `requests/${a}/in`, user.uid), doc(db, `hinv/${user.uid}/in`, a)]) deleteDoc(r).catch(() => {});
+};
+const unblock = async a => { blocked.delete(a); ls('blocked', blocked); if (user) { try { await deleteDoc(doc(db, `users/${user.uid}/blocks`, a)); } catch {} } };
+async function syncBlocks() { if (!user || !user.emailVerified) return; try { const sn = await getDocs(collection(db, `users/${user.uid}/blocks`)); sn.forEach(d => blocked.add(d.id)); ls('blocked', blocked); } catch {} }
+let myFriends = new Set(), myVis = 'all';
+async function syncFriends() { if (!user || !user.emailVerified) { myFriends = new Set(); return; } try { myFriends = new Set((await getDocs(collection(db, `users/${user.uid}/friends`))).docs.map(d => d.id)); } catch {} }
+// new accounts wait 24 h before creating groups or live streams (keeps throwaway accounts out)
+const accountAgeH = () => { const c = user?.metadata?.creationTime ? new Date(user.metadata.creationTime).getTime() : Date.now(); return (Date.now() - c) / 3600000; };
+function canCreate(what) { if (!canPost()) return false; if (isAdmin() || accountAgeH() >= 24) return true;
+  toast(`For everyone's safety, new accounts can create ${what} 24 hours after sign-up (in about ${Math.ceil(24 - accountAgeH())} h).`); return false; }
+// move a point by a random distance (metres) in a random direction
+const jitter = (lat, lon, minM, maxM) => { const d = minM + Math.random() * (maxM - minM), a = Math.random() * Math.PI * 2;
+  return [lat + (d * Math.cos(a)) / 111320, lon + (d * Math.sin(a)) / (111320 * Math.cos(lat * Math.PI / 180))]; };
+function safetySheet(onOk) {
+  sheet(`<h3>🧭 Before you meet up</h3><ul class="safelist">
+    <li>Meet in a <b>public place</b> first — a trailhead parking lot, a diner, never at someone's home.</li>
+    <li>Tell a parent or friend <b>where you're going, with whom and when you'll be back.</b></li>
+    <li>Go with people you know. <b>Don't get into a car</b> with someone you only met online.</li>
+    <li>Keep your phone charged, share your live location with someone you trust.</li>
+    <li>Abandoned places are often private and dangerous — never trespass, never go alone.</li>
+    <li>If anyone makes you uncomfortable: leave, <b>block and report</b> them.</li></ul>
+    <button class="b" id="sok">I understand — join</button><button class="b s" id="cx">Cancel</button>`);
+  $('#cx').onclick = closeSheet; $('#sok').onclick = () => { closeSheet(); onOk(); };
+}
 const wide = () => matchMedia('(min-width: 1000px)').matches;
 const panel = html => { if (wide()) { $('#obsBody').innerHTML = html; $('#obs').classList.add('open'); setTimeout(() => map.invalidateSize(), 50); } else sheet(html); };
 const closePanel = () => { const was = $('#obs').classList.contains('open'); $('#obs').classList.remove('open'); closeSheet(); selId = null; render(); if (was) setTimeout(() => map.invalidateSize(), 50); };
@@ -1204,6 +1237,7 @@ function authSheet(msg = '', signup0 = true) {
   const draw = () => { sheet(`<div class="tabs"><button class="b ${signup ? '' : 's'}" id="t1">Create account</button><button class="b ${signup ? 's' : ''}" id="t2">Sign in</button></div>
    ${signup ? '<input id="n" maxlength="30" placeholder="Display name">' : ''}
    <input id="em" type="email" autocomplete="email" placeholder="Email"><input id="pw" type="password" autocomplete="${signup ? 'new' : 'current'}-password" placeholder="Password (min 6)">
+   ${signup ? '<label class="ck"><input type="checkbox" id="age13"> I am 13 or older and I agree to the rules</label>' : ''}
    <p class="err" id="e"></p><p class="ok">${esc(msg)}</p><button class="b" id="go">${signup ? 'Create account' : 'Sign in'}</button>
    ${signup ? '' : '<button class="b s" id="fp">Forgot password?</button>'}<button class="b s" id="cx">Close</button>`);
    $('#t1').onclick = () => { signup = true; draw(); }; $('#t2').onclick = () => { signup = false; draw(); }; $('#cx').onclick = closeSheet;
@@ -1211,6 +1245,7 @@ function authSheet(msg = '', signup0 = true) {
    $('#go').onclick = async () => {
      const em = $('#em').value.trim(), pw = $('#pw').value;
      try {
+       if (signup && !$('#age13').checked) { $('#e').textContent = 'Please confirm you are 13 or older and agree to the rules.'; return; }
        if (signup) { const r = await createUserWithEmailAndPassword(auth, em, pw); await updateProfile(r.user, {displayName: ($('#n').value.trim() || 'User').slice(0, 30)});
          await sendEmailVerification(r.user); user = auth.currentUser; verifySheet(true); }
        else { await signInWithEmailAndPassword(auth, em, pw); closeSheet(); }
@@ -1264,7 +1299,7 @@ function profile() {
     ${pPanel('FRIENDS', '<div id="fpanel"><p class="meta">Loading…</p></div>', ' style="grid-row:span 2"')}
     ${pPanel('ACCOUNT', `<div class="kv"><span>Email</span><b>${esc(user.email)}</b></div><p class="meta">🔒 Private — only you and the admin can see it.</p>
       <div class="kv"><span>Status</span><b>${user.emailVerified ? '<span class="ok">✔ Verified</span>' : '<span class="err">Not verified</span>'}</b></div><div class="kv"><span>Member since</span><b>${esc(since)}</b></div>
-      ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<div class="row"><button class="b s" id="so">Sign out</button><button class="b d" id="da">Delete account</button></div>`)}
+      ${user.emailVerified ? '' : '<button class="b" id="vf">Verify email</button>'}<div class="row"><button class="b s" id="so">Sign out</button><button class="b s" id="bl">🚫 Blocked users</button><button class="b d" id="da">Delete account</button></div>`)}
     ${pPanel('CONTACT', discordBtn() + '<button class="b s" id="fb-open">✉️ Send feedback</button>')}
     ${isAdmin() ? pPanel('ADMIN · REPORTS', '<div id="adm"><p class="meta">Loading…</p></div>', ' style="grid-column:1/-1"') + pPanel('ADMIN · BANNED USERS', '<div id="admb"><p class="meta">Loading…</p></div>') + pPanel('ADMIN · ACCOUNT DELETIONS', '<div id="admd"><p class="meta">Loading…</p></div>') : ''}
   </div>${links()}</div>`;
@@ -1274,6 +1309,11 @@ function profile() {
   else { $('#myp').innerHTML = profileCard(null, user.displayName, {self: true}); $('#fpanel').innerHTML = '<p class="meta">Verify your email to customise your profile and add friends.</p>'; }
   if (isAdmin()) { loadReports(); loadBans(); }
   $('#so').onclick = () => signOut(auth);
+  $('#bl').onclick = async () => {
+    const ids = [...blocked]; const prs = await Promise.all(ids.map(id => getProfile(id).catch(() => null)));
+    sheet(`<h3>🚫 Blocked users</h3>${ids.length ? ids.map((id, i) => `<div class="item"><b>${esc(prs[i]?.name || 'User')}</b> <u data-ub="${esc(id)}" style="cursor:pointer;color:var(--acc);margin-left:8px">unblock</u></div>`).join('') : '<p class="meta">You haven’t blocked anyone.</p>'}<button class="b s" id="cx">Close</button>`);
+    $('#cx').onclick = closeSheet; $('#sheetBody').onclick = async e => { const u = e.target.closest('[data-ub]'); if (u) { await unblock(u.dataset.ub); u.closest('.item').remove(); } };
+  };
   $('#da').onclick = () => { sheet(`<h3>Delete account?</h3><p>Your profile disappears right away and you are signed out. The account, friends list and your map reports are <b>deleted after 48 hours</b>.</p>
       <p class="meta">Changed your mind? Just sign in within 48 hours and choose <b>Restore</b>.</p><button class="b d" id="y">Delete in 48 hours</button><button class="b s" id="n">Cancel</button>`);
     $('#n').onclick = closeSheet;
@@ -1481,12 +1521,18 @@ async function openProfile(uid) {
   if (!uid) return;
   if (user && uid === user.uid) { closeSheet(); showView('profile'); return; }
   sheet('<p class="meta">Loading profile…</p>');
-  const p = await getProfile(uid, true);
-  let fcount = 0; try { fcount = (await getDocs(collection(db, `users/${uid}/friends`))).size; } catch {}
+  const p0 = await getProfile(uid, true), vis = p0?.vis || 'all';
+  const canSee = isAdmin() || vis === 'all' || (vis === 'friends' && (await friendState(uid)) === 'friend');
+  const p = canSee || !p0 ? p0 : {name: p0.name, avatar: p0.avatar, frame: p0.frame, bio: '🔒 This member keeps their profile private.'};
+  let fcount = '—'; if (canSee) { try { fcount = (await getDocs(collection(db, `users/${uid}/friends`))).size; } catch {} }
   const rcount = await countReports(uid);
   sheet(profileCard(p, 'User', {title: 'USER PROFILE', stats: statCell(rcount, 'Reports') + statCell(fcount, fcount === 1 ? 'Friend' : 'Friends')}) + `<div class="presrow" id="pres1"><span class="pres"><i></i>…</span></div><div id="fbtn"></div><div id="adm1"></div><div id="adm2"></div><button class="b s" id="cx">Close</button>`);
   if (isAdmin()) adminBanBox(uid, p?.name || 'User');
-  presenceOf(uid).then(pr => { const e = $('#pres1'); if (e) e.innerHTML = presenceHtml(pr); });
+  presenceOf(uid).then(pr => { const e = $('#pres1'); if (e) e.innerHTML = canSee || pr ? presenceHtml(pr) : ''; });
+  $('#adm1').insertAdjacentHTML('beforebegin', `<div class="row" id="blkrow">${blocked.has(uid) ? '<button class="b s" id="ubk">Unblock</button>' : '<button class="b s" id="bk2">🚫 Block</button>'}<button class="b s" id="rp2">⚑ Report</button></div>`);
+  if ($('#bk2')) $('#bk2').onclick = async () => { await block(uid); toast('Blocked. They can no longer see your status, invite you, send friend requests or watch your streams.'); };
+  if ($('#ubk')) $('#ubk').onclick = async () => { await unblock(uid); openProfile(uid); };
+  $('#rp2').onclick = () => report('user', uid);
   if (p) pageBg($('#sheetBody'), p.pbg);
   $('#cx').onclick = closeSheet;
   const draw = async () => {
@@ -1575,6 +1621,8 @@ function editProfile(p0) {
    <span class="lbl">Background</span><div class="bgs" id="bgs"><label><input type="radio" name="bg" value=""${!bgUrl(p.bg) ? ' checked' : ''}><span class="bgt none">${sprite('ghost', 20)}</span>None</label>${BGS.map(([k, label]) => `<label><input type="radio" name="bg" value="${k}"${k === p.bg ? ' checked' : ''}><span class="bgt"><img alt="" src="${bgUrl(k)}"></span>${esc(label)}</label>`).join('')}</div>
    <span class="lbl">Page background</span><div class="bgs pbgs" id="pbgs">${PBGS.map(([k, label]) => `<label><input type="radio" name="pbg" value="${k}"${k === (p.pbg || 'graphite') ? ' checked' : ''}><span class="bgt pbt" style="background-image:url(${pbgUrl(k)})"></span>${esc(label)}</label>`).join('')}</div>
    <span class="lbl">Own banner image (replaces the background)</span><div id="bnp" class="pban sunken" style="height:90px"></div><input type="file" id="pbn" accept="image/*" aria-label="Choose banner"><button class="b s" id="pbr" style="width:auto">Remove own banner</button>
+   <label class="lbl" for="pvis">🛡️ Who can see my details (about me, links, friends) and when I'm online</label>
+   <select id="pvis" class="sunken"><option value="all"${(p.vis || 'all') === 'all' ? ' selected' : ''}>Everyone signed in</option><option value="friends"${p.vis === 'friends' ? ' selected' : ''}>Only my friends</option><option value="nobody"${p.vis === 'nobody' ? ' selected' : ''}>Nobody</option></select>
    <span class="lbl">Links (full https:// addresses)</span>
    ${NETS.map(([k, label]) => `<label class="lbl" for="l_${k}">${esc(label)}</label><input id="l_${k}" type="url" inputmode="url" maxlength="200" placeholder="https://" value="${esc((p.links && p.links[k]) || '')}">`).join('')}
    <p class="err" id="e"></p><button class="b" id="go">Save profile</button><button class="b s" id="cx">Cancel</button>`);
@@ -1596,6 +1644,7 @@ function editProfile(p0) {
       if (!u) { $('#e').textContent = `${label}: use a full https:// link.`; return; } links[k] = u.slice(0, 200); }
     const data = {name, nameLower: name.toLowerCase(), bio: $('#pb').value.trim().slice(0, 300), frame: document.querySelector('#frs input:checked')?.value || 'none', bg: document.querySelector('#bgs input:checked')?.value || '', pbg: document.querySelector('#pbgs input:checked')?.value || 'graphite', links, updatedAt: serverTimestamp()};
     if (avatar) data.avatar = avatar; if (banner) data.banner = banner;
+    data.vis = ['all', 'friends', 'nobody'].includes($('#pvis').value) ? $('#pvis').value : 'all'; myVis = data.vis; heartbeat();
     $('#go').disabled = true;
     try {
       await setDoc(doc(db, 'users', user.uid), data);
@@ -1861,7 +1910,7 @@ async function openThread(t) {
 const PRES_TTL = 150000;
 async function heartbeat(off = false) {
   if (!user || !user.emailVerified || (document.hidden && !off)) return;
-  try { await setDoc(doc(db, 'presence', user.uid), {t: serverTimestamp(), off}); } catch {}
+  try { await setDoc(doc(db, 'presence', user.uid), {t: serverTimestamp(), off, vis: myVis}); } catch {}
 }
 setInterval(() => heartbeat(), 90000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) heartbeat(); });
@@ -1931,8 +1980,9 @@ function admLocSync() {
     admLayer.addTo(map);
     admUnsub = onSnapshot(collection(db, 'userloc'), snap => {
       admLayer.clearLayers(); admCount = 0;
-      snap.forEach(d => { const v = d.data(); if (typeof v.lat !== 'number') return; admCount++;
+      snap.forEach(d => { const v = d.data(); if (typeof v.lat !== 'number') return;
         const t = v.t?.toDate ? v.t.toDate().getTime() : Date.now(), old = Date.now() - t > 3600000;
+        if (Date.now() - t > 24 * 3600000) { deleteDoc(d.ref).catch(() => {}); return; } admCount++;
         L.marker([v.lat, v.lng], {icon: L.divIcon({className: '', html: `<div class="ulmk${old ? ' old' : ''}" title="${esc(v.name || 'User')}">${esc((v.name || '?').slice(0, 1).toUpperCase())}</div>`, iconSize: [26, 26]}), title: v.name})
           .bindPopup(`<b>${esc(v.name || 'User')}</b><br><span class="meta">updated ${seenAgo(t)} · ±${v.acc || '?'} m</span><br><button class="b" style="margin-top:6px" data-prof="${esc(d.id)}">Open profile</button>`)
           .addTo(admLayer); });
@@ -1952,8 +2002,9 @@ function liveWatch() {
   liveUnsub = onSnapshot(query(collection(db, 'streams'), where('live', '==', true)), snap => {
     liveLayer.clearLayers();
     snap.forEach(d => { const s = d.data(), hb = s.hb?.toDate ? s.hb.toDate().getTime() : Date.now(); if (Date.now() - hb > LIVE_TTL) return;
+      if (blocked.has(s.owner) || (s.aud === 'friends' && s.owner !== user.uid && !myFriends.has(s.owner) && !isAdmin())) return;
       L.marker([s.lat, s.lng], {icon: L.divIcon({className: '', html: `<div class="livemk"><span>LIVE</span></div>`, iconSize: [46, 22]}), zIndexOffset: 900, title: s.title})
-        .bindTooltip(`${esc(s.title)} — ${esc(s.name)}`).on('click', () => liveOpen(d.id)).addTo(liveLayer); });
+        .bindTooltip(`${esc(s.title)} — ${esc(s.name)}<br><small>approximate area${s.aud === 'friends' ? ' · friends only' : ''}</small>`).on('click', () => liveOpen(d.id)).addTo(liveLayer); });
   }, () => {});
 }
 function liveUnwatch() { if (liveUnsub) { liveUnsub(); liveUnsub = null; } liveLayer.clearLayers(); }
@@ -1982,28 +2033,31 @@ const liveShell = (title, sub, role) => `<div class="tbar blood"><span class="lr
   ${role === 'host' ? '<div class="row lctl"><button class="b s" id="lvmic">🎙 Mic on</button><button class="b s" id="lvflip">🔄 Camera</button><button class="b danger" id="lvend">■ End stream</button></div>' : ''}
   <div class="lchatbox"><div class="lchat sunken"></div><form class="lform"><input class="sunken" maxlength="300" placeholder="Write in the stream chat…" aria-label="Chat message"><button class="b">Send</button></form></div></div>`;
 function goLiveSheet() {
-  if (!canPost()) return;
+  if (!canCreate('live streams')) return;
   if (LIVE) { toast('You are already in a stream.'); return; }
   if (!navigator.mediaDevices?.getUserMedia) { toast('Live video is not supported in this browser.'); return; }
   sheet(`<h2>🔴 Go live</h2><p class="meta">Stream video from where you are. Everyone signed in sees a <b>LIVE</b> marker on the map and can watch and chat. Up to ${LIVE_MAX} viewers at once.</p>
     <label>Title<input class="sunken" id="lvt" maxlength="80" placeholder="e.g. Strange lights over the ridge"></label>
     <label>Place on the map<select class="sunken" id="lvp"><option value="me">My current location</option><option value="map">Center of the map view</option></select></label>
     <label>Camera<select class="sunken" id="lvc"><option value="environment">Back camera</option><option value="user">Front camera</option></select></label>
+    <label>Who can watch<select class="sunken" id="lva"><option value="friends">Only my friends</option><option value="all">Everyone signed in</option></select></label>
+    <p class="meta">🛡️ For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot.</p>
     <div class="row"><button class="b" id="lvgo">Start streaming</button><button class="b s" id="cx">Cancel</button></div>`);
   $('#cx').onclick = closeSheet;
   $('#lvgo').onclick = async () => {
-    const title = $('#lvt').value.trim() || 'Live from the field', place = $('#lvp').value, facing = $('#lvc').value;
+    const title = $('#lvt').value.trim() || 'Live from the field', place = $('#lvp').value, facing = $('#lvc').value, aud = $('#lva').value === 'all' ? 'all' : 'friends';
     $('#lvgo').disabled = true;
     let ll = map.getCenter(); ll = [ll.lat, ll.lng];
     if (place === 'me') { try { const p = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: true, timeout: 15000})); ll = [p.coords.latitude, p.coords.longitude]; } catch { toast('Could not get your location — using the center of the map instead.'); } }
     let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: true}); }
     catch { toast('Camera or microphone access was denied.'); return; }
     if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the red dashed border on the map).'); return; }
-    closeSheet(); liveHost(title, ll, stream, facing);
+    for (let k = 0; k < 8; k++) { const j = jitter(ll[0], ll[1], 1000, 2000); if (canPlaceAt(j[0], j[1])) { ll = j; break; } }
+    closeSheet(); liveHost(title, ll, stream, facing, aud);
   };
 }
-async function liveHost(title, ll, stream, facing) {
-  let ref; try { ref = await addDoc(collection(db, 'streams'), {owner: user.uid, name: myName(), title, lat: ll[0], lng: ll[1], live: true, startedAt: serverTimestamp(), hb: serverTimestamp()}); }
+async function liveHost(title, ll, stream, facing, aud = 'friends') {
+  let ref; try { ref = await addDoc(collection(db, 'streams'), {owner: user.uid, name: myName(), title, lat: ll[0], lng: ll[1], aud, live: true, startedAt: serverTimestamp(), hb: serverTimestamp()}); }
   catch { stream.getTracks().forEach(t => t.stop()); toast('Could not start the stream (check the database rules).'); return; }
   const sid = ref.id; LIVE = {sid, role: 'host', stream, pcs: new Map(), unsubs: [], facing};
   const w = liveWin(liveShell(title, 'You are live', 'host'));
@@ -2075,7 +2129,7 @@ async function liveOpen(sid) {
 $('#locBtn').onclick = locToggle; $('#liveBtn').onclick = goLiveSheet;
 $('#admLocBtn').onclick = () => { try { localStorage.setItem('admLoc', admLocOn() ? '0' : '1'); } catch {} admLocSync(); };
 let locRestored = false;
-function liveAuthChanged() { heartbeat(); admLocSync(); if (user && user.emailVerified) liveWatch(); else liveUnwatch(); if (!locRestored) { locRestored = true; locRestore(); } }
+function liveAuthChanged() { (async () => { if (user && user.emailVerified) { try { const p = await getProfile(user.uid, true); myVis = ['all', 'friends', 'nobody'].includes(p?.vis) ? p.vis : 'all'; } catch {} } await Promise.all([syncBlocks(), syncFriends()]); heartbeat(); })(); admLocSync(); if (user && user.emailVerified) liveWatch(); else liveUnwatch(); if (!locRestored) { locRestored = true; locRestore(); } }
 
 // ---------- HAUNT card game: rules engine (pure, JSON state) ----------
 const HC = {r: ['Blood', '#b84a55'], g: ['Moss', '#7f9a6e'], b: ['Steel', '#5f86ad'], y: ['Bone', '#cdb36a']};
@@ -3106,7 +3160,7 @@ async function groupList() {
     <div id="mg"></div><h3 class="sech">Public groups</h3><div id="gl" class="tlist"><p class="meta">Loading…</p></div>
     ${isAdmin() ? '<h3 class="sech">Admin · all groups (incl. private)</h3><div id="ag" class="tlist"><p class="meta">Loading…</p></div>' : ''}
     <div style="margin-top:16px">${discordBtn()}</div></div>`;
-  $('#ng').onclick = () => { if (canPost()) newGroupSheet(); };
+  $('#ng').onclick = () => { if (canCreate('groups')) newGroupSheet(); };
   $('#jc').onclick = () => {
     sheet(`<h3>Join a private group</h3><input id="jv" placeholder="Paste invite link or code"><button class="b" id="go">Join</button><button class="b s" id="cx">Cancel</button>`);
     $('#cx').onclick = closeSheet; $('#go').onclick = () => { const v = $('#jv').value; closeSheet(); joinByCode(v); };
@@ -3176,6 +3230,9 @@ async function joinByCode(raw) {
   if (!user) { pendingJoin = id; authSheet('Sign in or create an account to join the group.'); return; }
   if (!user.emailVerified) { pendingJoin = id; verifySheet(); return; }
   try {
+    await new Promise((res, rej) => { safetySheet(res); const c = $('#cx'); if (c) c.onclick = () => { closeSheet(); rej(0); }; });
+  } catch { return; }
+  try {
     await joinGroup(id);
     const gs = await getDoc(doc(db, 'groups', id));
     history.replaceState(null, '', location.pathname);
@@ -3215,7 +3272,7 @@ async function openGroup(g) {
     sheet(`<h3>Invite link</h3><p class="meta">Anyone with this link can join. Share it only with people you trust.</p><input id="il" readonly value="${esc(link)}"><button class="b" id="cp">Copy</button><button class="b s" id="cx">Close</button>`);
     $('#cx').onclick = closeSheet; $('#cp').onclick = async () => { $('#il').select(); try { await navigator.clipboard.writeText(link); $('#cp').textContent = 'Copied!'; } catch {} }; };
   if ($('#sm')) $('#sm').onclick = () => { showView('mapv'); setTimeout(() => map.setView([g.lat, g.lon], 13), 60); };
-  if ($('#jn')) $('#jn').onclick = async () => { if (!canPost()) return; try { await joinGroup(g.id); openGroup(g); sfx('success'); } catch { toast('Could not join.'); } };
+  if ($('#jn')) $('#jn').onclick = () => { if (!canPost()) return; safetySheet(async () => { try { await joinGroup(g.id); openGroup(g); sfx('success'); } catch { toast('Could not join.'); } }); };
   if ($('#lv')) $('#lv').onclick = async () => { const b = writeBatch(db); b.delete(doc(db, `groups/${g.id}/members`, user.uid)); b.delete(doc(db, `users/${user.uid}/memberships`, g.id)); await b.commit(); groupList(); };
   if ($('#dg')) $('#dg').onclick = async () => { await deleteDoc(doc(db, 'groups', g.id)); groupList(); };
   if ($('#rg')) $('#rg').onclick = async () => { await report('group', g.id); groupList(); };
