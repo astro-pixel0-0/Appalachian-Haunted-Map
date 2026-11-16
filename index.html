@@ -758,6 +758,18 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
 
 /* live window needs its own background (it floats over the map) */
 #livewin{background:var(--gra)}#livewin .lbody{background:var(--gra)}#livewin .lchat{background:var(--mid)}
+
+/* ================= iPhone: keep the app shell fixed in place ================= */
+html,body{overscroll-behavior:none}
+.view,#sheetBody,#ml,.lchat,.chips,#catList{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:760px){
+  html,body{position:fixed;inset:0;width:100%;height:100%;overflow:hidden}
+  #app{position:fixed;inset:0;height:auto}
+  /* no double-tap or pinch zoom of the interface (the map keeps its own pinch-zoom) */
+  html,body{touch-action:pan-x pan-y}
+  button,a,.chip,.b,label,#rail button{touch-action:manipulation}
+  .leaflet-container{touch-action:none}
+}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -1600,7 +1612,13 @@ function profile() {
     $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
       catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
-const BUILD = '2026-11-16 · build 7';
+const BUILD = '2026-11-16 · build 8';
+// iPhone Safari scrolls the whole page when the keyboard opens and often leaves it shifted afterwards: snap it back
+(() => { const back = () => { const a = document.activeElement; if (!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { if (scrollX || scrollY) scrollTo(0, 0); document.documentElement.scrollTop = document.body.scrollTop = 0; } };
+  document.addEventListener('focusout', () => setTimeout(back, 80));
+  addEventListener('orientationchange', () => setTimeout(back, 300));
+  if (window.visualViewport) visualViewport.addEventListener('resize', () => setTimeout(back, 80));
+  addEventListener('scroll', () => { if (!document.activeElement || !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) back(); }, {passive: true}); })();
 console.log('Appalachia Anomalies', BUILD);
 const links = () => legalLinks() + `<p class="meta" style="margin-top:24px">Version ${BUILD}. Map: USGS The National Map, © OpenStreetMap contributors. Interface sounds by Atelier Magicae. Card sounds by JDSherbert (jdsherbert.itch.io). Typing sound: original. Community reports are unverified. <a href="#" id="tm" onclick="return false">Rules</a></p>`;
 document.addEventListener('click', e => { if (e.target.id === 'tm') terms(false); });
