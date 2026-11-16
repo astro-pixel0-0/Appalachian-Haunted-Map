@@ -606,6 +606,12 @@ body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:
 .cpopt{width:100%;display:flex;align-items:center;gap:10px;padding:6px 10px;background:transparent;border:0;color:var(--ink);text-align:left;font:14px 'IBM Plex Sans',sans-serif}
 .cpopt:hover{background:#232A33}.cpopt.on{background:#2f3a2c;box-shadow:inset 3px 0 0 #84977A}.cpopt svg,.cpcur svg{flex:none}
 .safelist{margin:6px 0 12px;padding-left:18px;line-height:1.5}.safelist li{margin:4px 0}
+#srules{position:fixed;inset:0;z-index:2200;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+#srules .sr-box{max-width:520px;width:100%;max-height:86vh;display:flex;flex-direction:column;padding:12px;gap:10px}
+#srules .sr-head{display:flex;align-items:center;justify-content:space-between;font-weight:bold;letter-spacing:1px}
+#srules .sr-head .b{width:auto;margin:0;padding:2px 10px}
+#srules .sr-body{overflow:auto;line-height:1.5}#srules ol{padding-left:20px;margin:4px 0}#srules li{margin:6px 0}
+.rlink{color:#8fd3ff;text-decoration:underline;cursor:pointer;font-weight:bold}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -1235,17 +1241,40 @@ async function showSighting(s) {
 $('#obsBody').innerHTML = `<div class="empty">${sprite('ghost', 48)}<p>Select a marker on the map<br>to see the observation.</p><p class="meta">Right-click the map or press Report to add your own.</p></div>`;
 if (wide()) { $('#obs').classList.add('open'); setTimeout(() => map.invalidateSize(), 50); }
 
+// ---------- community rules (opens above any sheet, so a half-filled form is kept) ----------
+function siteRules() {
+  document.getElementById('srules')?.remove();
+  const w = document.createElement('div'); w.id = 'srules';
+  w.innerHTML = `<div class="sr-box raised"><div class="sr-head">📜 COMMUNITY RULES<button class="b s" id="srx" aria-label="Close">✕</button></div><div class="sr-body">
+   <ol>
+    <li><b>Be decent.</b> No harassment, threats, hate, bullying or stalking. Argue about cryptids, not about people.</li>
+    <li><b>Protect privacy.</b> Never post anyone's home address, phone, school, full name or photos of private people without consent. Use “Hide the exact spot” when a report is near a home.</li>
+    <li><b>No adult or violent content.</b> No sexual content, gore or shock pictures anywhere — reports, chats, profiles or streams.</li>
+    <li><b>Keep meet-ups safe.</b> Meet in public places, tell someone where you go, never get into a stranger's car. Adults must not ask minors for private chats, photos or one-on-one meetings.</li>
+    <li><b>No trespassing.</b> Don't encourage breaking into private, closed or dangerous places. Respect “No trespassing” signs and the law.</li>
+    <li><b>Honest reports.</b> Post what you actually saw. Fakes for fun are fine only in clearly marked threads. No spam, ads or scams.</li>
+    <li><b>Live streams.</b> Don't film people who didn't agree to it, and don't stream anything that breaks these rules.</li>
+    <li><b>See something wrong? Report it.</b> If someone breaks these rules — or you just feel that something is off, even if you're not sure — send a report with the <b>⚑ Report</b> button on the post, profile or message, and block them if you need to. You won't get in trouble for a report made in good faith. The moderator reviews every report and can hide posts or ban accounts for a while or forever.</li>
+   </ol>
+   <p class="meta">Exact locations of live streams and hidden-spot reports are visible only to the moderator, for emergencies. You must be 13 or older to use the site.</p>
+   </div><button class="b" id="srok">Got it</button></div>`;
+  document.body.appendChild(w);
+  const close = () => w.remove();
+  w.onclick = e => { if (e.target === w) close(); }; w.querySelector('#srx').onclick = close; w.querySelector('#srok').onclick = close;
+}
+
 // ---------- auth ----------
 function authSheet(msg = '', signup0 = true) {
   let signup = signup0;
   const draw = () => { sheet(`<div class="tabs"><button class="b ${signup ? '' : 's'}" id="t1">Create account</button><button class="b ${signup ? 's' : ''}" id="t2">Sign in</button></div>
    ${signup ? '<input id="n" maxlength="30" placeholder="Display name">' : ''}
    <input id="em" type="email" autocomplete="email" placeholder="Email"><input id="pw" type="password" autocomplete="${signup ? 'new' : 'current'}-password" placeholder="Password (min 6)">
-   ${signup ? '<label class="ck"><input type="checkbox" id="age13"> I am 13 or older and I agree to the rules</label>' : ''}
+   ${signup ? '<label class="ck"><input type="checkbox" id="age13"><span>I am 13 or older and I agree to the <a href="#" class="rlink" id="rlk">rules</a></span></label>' : ''}
    <p class="err" id="e"></p><p class="ok">${esc(msg)}</p><button class="b" id="go">${signup ? 'Create account' : 'Sign in'}</button>
    ${signup ? '' : '<button class="b s" id="fp">Forgot password?</button>'}<button class="b s" id="cx">Close</button>`);
    $('#t1').onclick = () => { signup = true; draw(); }; $('#t2').onclick = () => { signup = false; draw(); }; $('#cx').onclick = closeSheet;
    if (!signup) $('#fp').onclick = () => resetSheet($('#em').value.trim());
+   if ($('#rlk')) $('#rlk').onclick = e => { e.preventDefault(); e.stopPropagation(); siteRules(); };
    $('#go').onclick = async () => {
      const em = $('#em').value.trim(), pw = $('#pw').value;
      try {
