@@ -1612,7 +1612,7 @@ function profile() {
     $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
       catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
-const BUILD = '2026-11-16 · build 12';
+const BUILD = '2026-11-16 · build 13 (test streams)';
 // iPhone Safari scrolls the whole page when the keyboard opens and often leaves it shifted afterwards: snap it back
 (() => { const back = () => { const a = document.activeElement; if (!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { if (scrollX || scrollY) scrollTo(0, 0); document.documentElement.scrollTop = document.body.scrollTop = 0; } };
   document.addEventListener('focusout', () => setTimeout(back, 80));
@@ -2336,6 +2336,9 @@ const ICE = {iceServers: [{urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.
 const newPC = () => { const pc = new RTCPeerConnection(ICE); pc._srflx = 0;
   pc.addEventListener('icecandidate', e => { if (e.candidate && / typ (srflx|relay)/.test(e.candidate.candidate) && !pc._srflx) pc._srflx = Date.now(); }); return pc; };
 const LIVE_MAX = 8, LIVE_TTL = 120000;
+// TEMPORARY TEST MODE: live streams can be started anywhere in the world. Set to false before launch (and restore the bounds in firestore.rules).
+const LIVE_TEST = true;
+const liveOkAt = (a, b) => LIVE_TEST || canPlaceAt(a, b);
 const liveLayer = L.layerGroup().addTo(map);
 let liveUnsub = null;
 function liveWatch() {
@@ -2420,7 +2423,7 @@ function goLiveSheet() {
   if (!canCreate('live streams')) return;
   if (LIVE) { toast('You are already in a stream.'); return; }
   if (!navigator.mediaDevices?.getUserMedia) { toast('Live video is not supported in this browser.'); return; }
-  sheet(`<h2>${sprite('rec', 20)} Go live</h2><p class="meta">Stream video from where you are. Everyone signed in sees a <b>LIVE</b> marker on the map and can watch and chat. Up to ${LIVE_MAX} viewers at once.</p>
+  sheet(`<h2>${sprite('rec', 20)} Go live</h2>${LIVE_TEST ? '<p class="meta" style="color:#d9c27a">TEST MODE: streams can be started from anywhere for now.</p>' : ''}<p class="meta">Stream video from where you are. Everyone signed in sees a <b>LIVE</b> marker on the map and can watch and chat. Up to ${LIVE_MAX} viewers at once.</p>
     <label>Title<input class="sunken" id="lvt" maxlength="80" placeholder="e.g. Strange lights over the ridge"></label>
     <label>Camera<select class="sunken" id="lvc"><option value="environment">Back camera</option><option value="user">Front camera</option></select></label>
     <label>Who can watch<select class="sunken" id="lva"><option value="friends">Only my friends</option><option value="all">Everyone signed in</option></select></label>
@@ -2441,10 +2444,10 @@ function goLiveSheet() {
     }
     let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: {noiseSuppression: true, echoCancellation: true, autoGainControl: true}}); }
     catch { toast('Camera or microphone access was denied.'); return; }
-    if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the red dashed border on the map).'); return; }
+    if (!liveOkAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the red dashed border on the map).'); return; }
     // one fixed random shift (1–2 km) for the whole stream: the marker moves with the streamer but never shows the real spot
     const exact = ll; let off = [0, 0];
-    for (let k = 0; k < 12; k++) { const j = jitter(ll[0], ll[1], 1000, 2000); if (canPlaceAt(j[0], j[1])) { off = [j[0] - ll[0], j[1] - ll[1]]; ll = j; break; } }
+    for (let k = 0; k < 12; k++) { const j = jitter(ll[0], ll[1], 1000, 2000); if (liveOkAt(j[0], j[1])) { off = [j[0] - ll[0], j[1] - ll[1]]; ll = j; break; } }
     closeSheet(); liveHost(title, ll, stream, facing, aud, exact, track, off);
   };
 }
@@ -2460,7 +2463,7 @@ async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null
       const pt = {lat: +pos.coords.latitude.toFixed(6), lng: +pos.coords.longitude.toFixed(6), t: Date.now()}, prev = LIVE.path[LIVE.path.length - 1];
       // public LIVE marker: real position + the same fixed 1–2 km shift, updated when the streamer has moved
       const ap = [pt.lat + off[0], pt.lng + off[1]];
-      if (Date.now() - pub.t > 30000 && map.distance(ap, pub.ll) > 150 && canPlaceAt(ap[0], ap[1])) { pub = {ll: ap, t: Date.now()}; updateDoc(doc(db, 'streams', sid), {lat: +ap[0].toFixed(5), lng: +ap[1].toFixed(5)}).catch(() => {}); }
+      if (Date.now() - pub.t > 30000 && map.distance(ap, pub.ll) > 150 && liveOkAt(ap[0], ap[1])) { pub = {ll: ap, t: Date.now()}; updateDoc(doc(db, 'streams', sid), {lat: +ap[0].toFixed(5), lng: +ap[1].toFixed(5)}).catch(() => {}); }
       if (prev && map.distance([prev.lat, prev.lng], [pt.lat, pt.lng]) < 25 && pt.t - prev.t < 120000) return;
       LIVE.path.push(pt); if (LIVE.path.length > 500) LIVE.path.splice(1, 1);
       if (Date.now() - lastW < 20000) return; lastW = Date.now();
