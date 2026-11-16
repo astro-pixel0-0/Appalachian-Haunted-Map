@@ -1612,7 +1612,7 @@ function profile() {
     $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
       catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
-const BUILD = '2026-11-16 · build 13 (test streams)';
+const BUILD = '2026-11-16 · build 14';
 // iPhone Safari scrolls the whole page when the keyboard opens and often leaves it shifted afterwards: snap it back
 (() => { const back = () => { const a = document.activeElement; if (!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { if (scrollX || scrollY) scrollTo(0, 0); document.documentElement.scrollTop = document.body.scrollTop = 0; } };
   document.addEventListener('focusout', () => setTimeout(back, 80));
@@ -2337,7 +2337,7 @@ const newPC = () => { const pc = new RTCPeerConnection(ICE); pc._srflx = 0;
   pc.addEventListener('icecandidate', e => { if (e.candidate && / typ (srflx|relay)/.test(e.candidate.candidate) && !pc._srflx) pc._srflx = Date.now(); }); return pc; };
 const LIVE_MAX = 8, LIVE_TTL = 120000;
 // TEMPORARY TEST MODE: live streams can be started anywhere in the world. Set to false before launch (and restore the bounds in firestore.rules).
-const LIVE_TEST = true;
+const LIVE_TEST = false;
 const liveOkAt = (a, b) => LIVE_TEST || canPlaceAt(a, b);
 const liveLayer = L.layerGroup().addTo(map);
 let liveUnsub = null;
