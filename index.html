@@ -572,10 +572,13 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
   let soundOn = true; try { soundOn = localStorage.getItem('sfx') !== 'off'; } catch {}
   const fast = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const narrow = innerWidth < 560, pad = t => t + ' ' + '.'.repeat(Math.max(2, (narrow ? 24 : 34) - t.length));
-  const LINES = [
-    [narrow ? 'AA BIOS v2.6' : 'APPALACHIA ANOMALIES BIOS v2.6', ''],
-    [pad('MEMORY TEST'), '640K OK'], [pad('LOADING TOPO TILES'), 'OK'], [pad('EMF SENSOR'), 'OK'], [pad('SPIRIT RADIO 13.13'), 'OK'],
-    [pad('SCANNING THE RIDGES'), narrow ? '3 FOUND' : '3 ANOMALIES'], [pad('WAKING FLATWOODS'), 'OK'], [pad('MOUNTING /MAP'), 'READY'],
+  const LINES = narrow ? [
+    ['> boot appalachia.sys', ''], ['import { map } from "/ridge"', ''], [pad('emf.scan(13.13)'), 'OK'], [pad('load("topo.tiles")'), 'OK'],
+    [pad('summon("flatwoods")'), 'OK'], [pad('ridges.detect()'), '3 FOUND'], [pad('mount("/map")'), 'READY'],
+  ] : [
+    ['> boot appalachia.sys --haunted', ''], ['import { map, ghosts } from "/hollow/ridge";', ''], [pad('const emf = scan(13.13)'), 'OK'],
+    [pad('load("topo.tiles", "trails")'), 'OK'], [pad('radio.tune(SPIRIT_BAND)'), 'OK'], [pad('summon("flatwoods")'), 'OK'],
+    [pad('ridges.forEach(r => detect(r))'), '3 ANOMALIES'], [pad('mount("/map", "/forums", "/groups")'), 'READY'],
   ];
   const log = document.getElementById('btlog'), bar = document.getElementById('btbar'), press = document.getElementById('btpress');
   let ac = null;
@@ -583,12 +586,16 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
   const tone = (a, t, f, d, type = 'square', v = 0.05) => { const o = a.createOscillator(), g = a.createGain(), lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
     o.type = type; o.frequency.setValueAtTime(f, t); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
     o.connect(lp).connect(g).connect(a.destination); o.start(t); o.stop(t + d + 0.05); };
-  const tick = () => { const a = audio(); if (!a) return; tone(a, a.currentTime, 1800 + Math.random() * 400, 0.025, 'square', 0.02); };
+  // "code" sounds: each typed character is a short data bleep at a random pitch, like an old terminal crunching data
+  const NOTES = [440, 523, 587, 659, 784, 880, 1047, 1175, 1319, 1568];
+  const tick = () => { const a = audio(); if (!a) return; const t = a.currentTime; tone(a, t, NOTES[Math.random() * NOTES.length | 0] * (Math.random() < 0.3 ? 2 : 1), 0.035, 'square', 0.03);
+    if (Math.random() < 0.35) tone(a, t + 0.018, 2200 + Math.random() * 1600, 0.012, 'square', 0.015); };
+  const crunch = () => { const a = audio(); if (!a) return; const t = a.currentTime; for (let k = 0; k < 7; k++) tone(a, t + k * 0.022, 300 + Math.random() * 2400, 0.018, 'square', 0.022); };
   let chimed = false;
   const chime = () => { if (chimed) return; const a = audio(); if (!a) return; chimed = true; const t = a.currentTime + 0.02;
-    // soft retro boot jingle: arpeggio up, gentle echo, warm pad underneath
-    [[523.25, 0], [659.25, 0.09], [783.99, 0.18], [1046.5, 0.27], [987.77, 0.42], [1318.5, 0.52]].forEach(([f, d]) => { tone(a, t + d, f, 0.34, 'square', 0.06); tone(a, t + d + 0.16, f, 0.3, 'square', 0.02); });
-    [261.63, 329.63, 392].forEach(f => tone(a, t + 0.5, f, 1.3, 'triangle', 0.06)); };
+    // "compile finished": quick data burst, then two clean confirmation beeps
+    for (let k = 0; k < 10; k++) tone(a, t + k * 0.03, NOTES[(k * 7) % NOTES.length], 0.03, 'square', 0.03);
+    tone(a, t + 0.36, 1047, 0.09, 'square', 0.05); tone(a, t + 0.5, 1568, 0.16, 'square', 0.05); };
   // power-on sound: low hum swell + a short "disk seek" crackle
   const powerOn = () => { const a = audio(); if (!a) return; const t = a.currentTime + 0.01;
     tone(a, t, 55, 0.9, 'sawtooth', 0.05); tone(a, t, 110, 0.7, 'triangle', 0.05); tone(a, t + 0.05, 880, 0.08, 'square', 0.04); tone(a, t + 0.14, 1320, 0.1, 'square', 0.035);
@@ -599,10 +606,10 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
     if (closed) return;
     if (li >= LINES.length) { done = true; bar.style.width = '100%'; chime(); setTimeout(close, soundOn ? 1500 : 900); return; }
     const [txt, res] = LINES[li];
-    if (ci < txt.length) { const n = fast ? txt.length : Math.min(txt.length - ci, 3); log.insertAdjacentText('beforeend', txt.slice(ci, ci + n)); ci += n; typed += n; if (ci % 6 < 3) tick(); }
-    else { if (res) { const em = document.createElement('em'); em.textContent = ' ' + res; log.appendChild(em); const a = audio(); if (a) tone(a, a.currentTime, res === 'READY' ? 1568 : 1046.5, 0.07, 'square', 0.03); } log.insertAdjacentText('beforeend', '\n'); li++; ci = 0; typed++; }
+    if (ci < txt.length) { const n = fast ? txt.length : Math.min(txt.length - ci, 2); log.insertAdjacentText('beforeend', txt.slice(ci, ci + n)); ci += n; typed += n; tick(); }
+    else { if (res) { const em = document.createElement('em'); em.textContent = ' ' + res; log.appendChild(em); crunch(); } log.insertAdjacentText('beforeend', '\n'); li++; ci = 0; typed++; }
     bar.style.width = Math.round(typed / total * 100) + '%';
-    setTimeout(step, ci === 0 ? 90 : 16);
+    setTimeout(step, ci === 0 ? 110 : 22);
   };
   function close() { if (closed) return; closed = true; B.classList.add('out'); setTimeout(() => B.remove(), 650); }
   const start = () => { if (started) { if (done) close(); return; } started = true; press.classList.remove('on'); press.textContent = 'BOOTING…'; press.style.opacity = '.6'; powerOn(); setTimeout(step, 250); };
