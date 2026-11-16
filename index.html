@@ -554,6 +554,12 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
 #boot .bt-press{margin-top:12px;text-align:center;font:13px 'Silkscreen',monospace;letter-spacing:3px;color:#E4EAF0;opacity:0}#boot .bt-press.on{opacity:1;animation:blink 1s steps(2) infinite}
 @media (max-width:520px){#boot .bt-log{font-size:15px}#boot .bt-logo b{font-size:18px}}
 #banbar{position:fixed;left:0;right:0;top:0;z-index:2000;background:#974048;color:#fff;text-align:center;padding:6px 10px;font-size:14px;box-shadow:0 2px 0 #10141A}
+#gate{position:fixed;inset:0;z-index:1900;display:flex;align-items:center;justify-content:center;padding:16px;background:radial-gradient(ellipse at 50% 40%,rgba(35,42,51,.92),rgba(10,13,17,.98)),repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px)}
+#gate.off{display:none}#gate .gbox{width:min(440px,100%)}#gate .pad{display:flex;flex-direction:column;gap:10px;padding:18px 20px 20px}#gate .glogo svg{flex:none;width:56px;height:56px}
+#gate .glogo{display:flex;align-items:center;gap:14px;margin-bottom:4px}#gate .glogo b{display:block;font:22px 'Silkscreen',monospace;letter-spacing:4px;color:#E4EAF0}#gate .glogo span{font:11px 'Silkscreen',monospace;letter-spacing:8px;color:#84977A}
+#gate .glogo svg{filter:drop-shadow(0 0 6px rgba(170,184,197,.5));animation:btfloat 1.6s steps(2) infinite}
+#gate h2{margin:4px 0 0;font-size:18px}#gate .b{width:100%;margin:0}
+body.gated #app{filter:blur(6px) brightness(.5);pointer-events:none;user-select:none}
 </style></head>
 <body><div id="boot" aria-hidden="true"><div class="bt-scan"></div><div class="bt-box">
   <div class="bt-logo"><svg viewBox="0 0 12 12" width="48" height="48" shape-rendering="crispEdges" fill="#AAB8C5"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg>
@@ -621,7 +627,9 @@ a.prof{color:var(--fro);text-decoration:none;border-bottom:1px dotted var(--ste)
   } else { started = true; setTimeout(step, 120); B.onclick = () => { if (done) close(); }; }
 })();
 </script>
-<div id="banbar" hidden></div><div id="app">
+<div id="banbar" hidden></div><div id="gate"><div class="gbox win"><div class="tbar"><span>ACCESS.EXE</span></div><div class="pad" id="gateBody">
+  <div class="glogo"><svg viewBox="0 0 12 12" width="56" height="56" shape-rendering="crispEdges" fill="#AAB8C5" aria-hidden="true"><path d="M4 1h4v1h-4zM3 2h6v1h-6zM2 3h8v1h-8zM2 4h2v1h-2zM5 4h2v1h-2zM8 4h2v1h-2zM2 5h2v1h-2zM5 5h2v1h-2zM8 5h2v1h-2zM2 6h8v1h-8zM2 7h8v1h-8zM2 8h8v1h-8zM2 9h8v1h-8zM2 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM9 10h1v1h-1z"/></svg><div><b>APPALACHIA</b><span>ANOMALIES</span></div></div>
+  <p class="meta">Checking your account…</p></div></div></div><div id="app">
 <header id="top" class="raised">
  <div class="brand"><img src="favicon-64.png?v=3" alt=""><div><b>APPALACHIA</b><span>ANOMALIES</span></div></div>
  <div class="search sunken"><svg viewBox="0 0 8 8" width="16" height="16" fill="currentColor" aria-hidden="true" shape-rendering="crispEdges" style="color:#8798AA"><path d="M1 0h4v1h-4zM0 1h1v1h-1zM5 1h1v1h-1zM0 2h1v1h-1zM5 2h1v1h-1zM0 3h1v1h-1zM5 3h1v1h-1zM1 4h4v1h-4zM5 5h1v1h-1zM6 6h1v1h-1zM7 7h1v1h-1z"/></svg><input id="q" type="text" enterkeyhint="search" placeholder="Search place, report or coordinates…" autocomplete="off" aria-label="Search places, reports or coordinates"><button id="qx" aria-label="Clear">✕</button><div id="qres" class="win"></div></div>
@@ -961,7 +969,6 @@ let wxTimer;
 const wxSoon = () => { clearTimeout(wxTimer); wxTimer = setTimeout(async () => { const c = map.getCenter(), w = await getWx(c.lat, c.lng);
   if (w) { $('#wxt').textContent = w.t + '°F'; $('#wxd').textContent = w.d; } }, 1200); };
 wxSoon();
-loadSightings();
 
 const hint = t => { $('#hint').textContent = t; $('#hint').style.display = t ? 'block' : 'none'; };
 function canPost() {
@@ -1149,9 +1156,31 @@ function verifySheet(sent) {
     if (user.emailVerified) { closeSheet(); profile(); } else $('#m').textContent = 'Not verified yet.'; };
 }
 handleActionLink();
-onAuthStateChanged(auth, u => { user = u; if (u) deletionGate(u).then(g => { if (!g) banCheck(); }); else banCheck(); mapAccessSync(); profile(); watchInvites(); liveAuthChanged(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
+onAuthStateChanged(auth, u => { user = u; if (u) deletionGate(u).then(g => { if (!g) banCheck(); }); else banCheck(); mapAccessSync(); profile(); watchInvites(); liveAuthChanged(); if (!authReady) { authReady = true; route(); } else if (chatGid) chatWindow(chatGid); gateSync(); if (pendingJoin && user && user.emailVerified) { const c = pendingJoin; pendingJoin = null; joinByCode(c); } });
 const pPanel = (title, body, extra = '') => `<section class="panel win"${extra}><div class="tbar"><span>${title}</span></div><div class="pad">${body}</div></section>`;
+// ---------- access gate: the site is only for signed-in users with a verified email ----------
+let gateOpened = false;
+function gateSync() {
+  const g = $('#gate'), body = $('#gateBody'); if (!g) return;
+  const head = body.querySelector('.glogo').outerHTML;
+  const ok = !!user && user.emailVerified;
+  g.classList.toggle('off', ok); document.body.classList.toggle('gated', !ok);
+  if (ok) { if (!gateOpened) { gateOpened = true; loadSightings(); setTimeout(() => map.invalidateSize(), 60); } return; }
+  gateOpened = false;
+  if (!authReady && !user) { body.innerHTML = head + '<p class="meta">Checking your account…</p>'; return; }
+  if (!user) {
+    body.innerHTML = head + `<h2>Members only</h2><p>The map of anomalies, forums, groups and chats are open to registered members. Sign in or create a free account to enter.</p>
+      <button class="b" id="gSignIn">Sign in</button><button class="b s" id="gJoin">Create account</button><p class="meta">A verified email is required.</p>`;
+    $('#gSignIn').onclick = () => authSheet('', false); $('#gJoin').onclick = () => authSheet('', true); return;
+  }
+  body.innerHTML = head + `<h2>Verify your email</h2><p>We sent a link to <b>${esc(user.email)}</b>. Open it, then press the button below.</p><p class="ok" id="gMsg"></p>
+    <button class="b" id="gDone">I’ve verified</button><button class="b s" id="gResend">Send the link again</button><button class="b s" id="gOut">Sign out</button>`;
+  $('#gDone').onclick = async () => { await user.reload(); await user.getIdToken(true); user = auth.currentUser; if (user.emailVerified) { profile(); } else $('#gMsg').textContent = 'Not verified yet — check your inbox and spam folder.'; };
+  $('#gResend').onclick = async () => { try { await sendEmailVerification(user); $('#gMsg').textContent = 'Sent again.'; } catch { $('#gMsg').textContent = 'Please wait a minute before sending again.'; } };
+  $('#gOut').onclick = () => signOut(auth);
+}
 function profile() {
+  gateSync();
   const el = $('#profile'); pageBg(el, null);
   if (!user) {
     el.innerHTML = `<div class="pwrap">${profileCard(null, 'Guest', {title: 'PROFILE'})}<div class="pgrid">
