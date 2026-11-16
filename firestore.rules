@@ -163,7 +163,9 @@ service cloud.firestore {
       allow create: if verified() && request.resource.data.owner == request.auth.uid && request.resource.data.title is string && request.resource.data.title.size() <= 80
         && request.resource.data.lat is number && request.resource.data.lng is number && request.resource.data.live == true
         && (!('aud' in request.resource.data) || request.resource.data.aud in ['all', 'friends'])
-        && (isAdmin() || (request.resource.data.lat >= 30.0 && request.resource.data.lat <= 45.1 && request.resource.data.lng >= -91.7 && request.resource.data.lng <= -71.7));
+        // TEMPORARY TEST MODE: streams allowed anywhere. Before launch replace the next line with:
+        // && (isAdmin() || (request.resource.data.lat >= 30.0 && request.resource.data.lat <= 45.1 && request.resource.data.lng >= -91.7 && request.resource.data.lng <= -71.7));
+        && true;
       // the owner updates their stream until the admin ends it; the admin can end any stream for good (killed)
       allow update: if verified() && (
         (resource.data.owner == request.auth.uid && request.resource.data.owner == resource.data.owner
