@@ -1601,7 +1601,7 @@ function profile() {
     $('#y').onclick = async () => { try { await scheduleDeletion(); sheet(`<h3>Account scheduled for deletion</h3><p>It will be deleted in 48 hours. Sign in before then to restore it.</p><button class="b" id="cx">OK</button>`); $('#cx').onclick = closeSheet; }
       catch (e) { toast('Could not delete the account. Try again.'); } }; };
 }
-const BUILD = '2026-11-16 · build 5';
+const BUILD = '2026-11-16 · build 6';
 console.log('Appalachia Anomalies', BUILD);
 const links = () => legalLinks() + `<p class="meta" style="margin-top:24px">Version ${BUILD}. Map: USGS The National Map, © OpenStreetMap contributors. Interface sounds by Atelier Magicae. Card sounds by JDSherbert (jdsherbert.itch.io). Typing sound: original. Community reports are unverified. <a href="#" id="tm" onclick="return false">Rules</a></p>`;
 document.addEventListener('click', e => { if (e.target.id === 'tm') terms(false); });
@@ -2314,7 +2314,10 @@ function admLocSync() {
 map.on('popupopen', e => { const b = e.popup.getElement()?.querySelector('[data-prof]'); if (b) b.onclick = () => openProfile(b.dataset.prof); });
 
 // ---------- live streams from a point on the map (WebRTC, signalling through Firestore) + chat ----------
-const ICE = {iceServers: [{urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302']}]};
+const ICE = {iceServers: [{urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302']}], iceCandidatePoolSize: 2};
+// remember when the public (STUN) address is found, so we don't wait for the slow full gathering
+const newPC = () => { const pc = new RTCPeerConnection(ICE); pc._srflx = 0;
+  pc.addEventListener('icecandidate', e => { if (e.candidate && / typ (srflx|relay)/.test(e.candidate.candidate) && !pc._srflx) pc._srflx = Date.now(); }); return pc; };
 const LIVE_MAX = 8, LIVE_TTL = 120000;
 const liveLayer = L.layerGroup().addTo(map);
 let liveUnsub = null;
@@ -2336,7 +2339,8 @@ function liveRender() {
 }
 setInterval(() => { if (liveSnap && !document.hidden) liveRender(); }, 30000);
 function liveUnwatch() { if (liveUnsub) { liveUnsub(); liveUnsub = null; } liveSnap = null; liveLayer.clearLayers(); }
-const waitIce = pc => new Promise(res => { if (pc.iceGatheringState === 'complete') return res(); const t = setTimeout(res, 3500); pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete') { clearTimeout(t); res(); } }); });
+const waitIce = pc => new Promise(res => { const t0 = Date.now();
+  const tick = () => { if (pc.iceGatheringState === 'complete' || (pc._srflx && Date.now() - pc._srflx > 250) || Date.now() - t0 > 2000) return res(); setTimeout(tick, 80); }; tick(); });
 let LIVE = null; // {sid, role, stream, pcs, unsubs, hbT, pc}
 function liveWin(html) {
   let w = $('#livewin'); if (!w) { w = document.createElement('div'); w.id = 'livewin'; w.className = 'win'; document.body.appendChild(w); }
@@ -2378,34 +2382,39 @@ function goLiveSheet() {
   if (!navigator.mediaDevices?.getUserMedia) { toast('Live video is not supported in this browser.'); return; }
   sheet(`<h2>${sprite('rec', 20)} Go live</h2><p class="meta">Stream video from where you are. Everyone signed in sees a <b>LIVE</b> marker on the map and can watch and chat. Up to ${LIVE_MAX} viewers at once.</p>
     <label>Title<input class="sunken" id="lvt" maxlength="80" placeholder="e.g. Strange lights over the ridge"></label>
-    <label>Place on the map<select class="sunken" id="lvp"><option value="me">My current location</option><option value="map">Center of the map view</option></select></label>
     <label>Camera<select class="sunken" id="lvc"><option value="environment">Back camera</option><option value="user">Front camera</option></select></label>
     <label>Who can watch<select class="sunken" id="lva"><option value="friends">Only my friends</option><option value="all">Everyone signed in</option></select></label>
-    <p class="meta">${sprite('shield', 14)} For your safety the LIVE marker shows only an <b>approximate area</b> (1–2 km away from you), never your exact spot. Only the site administrator can see the exact spot and the route you move along during the stream (for emergencies); they are deleted 24 hours after the stream ends.</p>
+    <p class="meta">${sprite('shield', 14)} The LIVE marker follows <b>where you really are</b> while you stream, but for your safety it is always shown <b>1–2 km away</b> from you, never your exact spot. Location access is required. Only the site administrator can see the exact spot and the route you move along during the stream (for emergencies); they are deleted 24 hours after the stream ends.</p>
     <div class="row"><button class="b" id="lvgo">Start streaming</button><button class="b s" id="cx">Cancel</button></div>`);
   $('#cx').onclick = closeSheet;
   $('#lvgo').onclick = async () => {
-    const title = $('#lvt').value.trim() || 'Live from the field', place = $('#lvp').value, facing = $('#lvc').value, aud = $('#lva').value === 'all' ? 'all' : 'friends';
-    $('#lvgo').disabled = true;
-    let ll = map.getCenter(); ll = [ll.lat, ll.lng];
-    if (place === 'me') { try { const p = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: true, timeout: 15000})); ll = [p.coords.latitude, p.coords.longitude]; } catch { toast('Could not get your location — using the center of the map instead.'); } }
+    const title = $('#lvt').value.trim() || 'Live from the field', facing = $('#lvc').value, aud = $('#lva').value === 'all' ? 'all' : 'friends';
+    $('#lvgo').disabled = true; $('#lvgo').textContent = 'Getting your location…';
+    let ll;
+    try { const p = await new Promise((res, rej) => navigator.geolocation ? navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy: true, timeout: 15000, maximumAge: 20000}) : rej()); ll = [p.coords.latitude, p.coords.longitude]; }
+    catch { $('#lvgo').disabled = false; $('#lvgo').textContent = 'Start streaming'; toast('Your location is needed to go live — allow location access in the browser and try again.'); return; }
     let stream; try { stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: facing, width: {ideal: 1280}, height: {ideal: 720}}, audio: {noiseSuppression: true, echoCancellation: true, autoGainControl: true}}); }
     catch { toast('Camera or microphone access was denied.'); return; }
     if (!canPlaceAt(ll[0], ll[1])) { stream.getTracks().forEach(t => t.stop()); toast('Live streams can only be started in the Appalachian states (inside the red dashed border on the map).'); return; }
-    const exact = ll; for (let k = 0; k < 8; k++) { const j = jitter(ll[0], ll[1], 1000, 2000); if (canPlaceAt(j[0], j[1])) { ll = j; break; } }
-    closeSheet(); liveHost(title, ll, stream, facing, aud, exact, place === 'me');
+    // one fixed random shift (1–2 km) for the whole stream: the marker moves with the streamer but never shows the real spot
+    const exact = ll; let off = [0, 0];
+    for (let k = 0; k < 12; k++) { const j = jitter(ll[0], ll[1], 1000, 2000); if (canPlaceAt(j[0], j[1])) { off = [j[0] - ll[0], j[1] - ll[1]]; ll = j; break; } }
+    closeSheet(); liveHost(title, ll, stream, facing, aud, exact, true, off);
   };
 }
-async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null, track = false) {
+async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null, track = false, off = [0, 0]) {
   let ref; try { ref = await addDoc(collection(db, 'streams'), {owner: user.uid, name: myName(), title, lat: ll[0], lng: ll[1], aud, live: true, startedAt: serverTimestamp(), hb: serverTimestamp()}); }
   catch { stream.getTracks().forEach(t => t.stop()); toast('Could not start the stream (check the database rules).'); return; }
   const sid = ref.id; LIVE = {sid, role: 'host', stream, pcs: new Map(), unsubs: [], facing, ns: true, path: exact ? [{lat: exact[0], lng: exact[1], t: Date.now()}] : []};
   if (exact) setDoc(doc(db, 'exact', sid), {kind: 'stream', owner: user.uid, lat: exact[0], lng: exact[1], path: LIVE.path}).catch(() => {});
   // route for the admin: where the streamer moves while live (exact, admin-only)
   if (exact && track && navigator.geolocation) {
-    let lastW = Date.now();
+    let lastW = Date.now(), pub = {ll, t: Date.now()};
     LIVE.geo = navigator.geolocation.watchPosition(pos => { if (!LIVE || LIVE.sid !== sid) return;
       const pt = {lat: +pos.coords.latitude.toFixed(6), lng: +pos.coords.longitude.toFixed(6), t: Date.now()}, prev = LIVE.path[LIVE.path.length - 1];
+      // public LIVE marker: real position + the same fixed 1–2 km shift, updated when the streamer has moved
+      const ap = [pt.lat + off[0], pt.lng + off[1]];
+      if (Date.now() - pub.t > 30000 && map.distance(ap, pub.ll) > 150 && canPlaceAt(ap[0], ap[1])) { pub = {ll: ap, t: Date.now()}; updateDoc(doc(db, 'streams', sid), {lat: +ap[0].toFixed(5), lng: +ap[1].toFixed(5)}).catch(() => {}); }
       if (prev && map.distance([prev.lat, prev.lng], [pt.lat, pt.lng]) < 25 && pt.t - prev.t < 120000) return;
       LIVE.path.push(pt); if (LIVE.path.length > 500) LIVE.path.splice(1, 1);
       if (Date.now() - lastW < 20000) return; lastW = Date.now();
@@ -2428,7 +2437,7 @@ async function liveHost(title, ll, stream, facing, aud = 'friends', exact = null
       if (ch.type === 'removed') { LIVE?.pcs.get(vid)?.close(); LIVE?.pcs.delete(vid); return; }
       if (!d.offer || d.answer || d.full || LIVE.pcs.has(vid)) return;
       if (LIVE.pcs.size >= LIVE_MAX) { updateDoc(ch.doc.ref, {full: true}).catch(() => {}); return; }
-      const pc = new RTCPeerConnection(ICE); LIVE.pcs.set(vid, pc);
+      const pc = newPC(); LIVE.pcs.set(vid, pc);
       LIVE.stream.getTracks().forEach(t => pc.addTrack(t, LIVE.stream));
       pc.onconnectionstatechange = () => { if (['failed', 'closed'].includes(pc.connectionState)) { pc.close(); LIVE?.pcs.delete(vid); } };
       try { await pc.setRemoteDescription({type: 'offer', sdp: d.offer}); const ans = await pc.createAnswer(); await pc.setLocalDescription(ans); await waitIce(pc);
@@ -2488,17 +2497,20 @@ async function liveOpen(sid) {
     if (v && typeof v.viewers === 'number') { const n = $('#lvn'); if (n) n.innerHTML = `${sprite('eye', 14)} ${v.viewers}`; }
     if (!d.exists() || !v.live) { const st = $('#lvs'); if (st) { st.textContent = v?.killed ? 'The stream was ended by the site administrator.' : 'The stream has ended.'; st.classList.add('show'); } } }, () => {}));
   if ($('#lvkill')) $('#lvkill').onclick = () => adminKillStream(sid, s.name);
-  const pc = new RTCPeerConnection(ICE); LIVE.pc = pc;
+  const pc = newPC(); LIVE.pc = pc;
   pc.addTransceiver('video', {direction: 'recvonly'}); pc.addTransceiver('audio', {direction: 'recvonly'});
-  const ms = new MediaStream(); pc.ontrack = e => { ms.addTrack(e.track); const v = $('#lvv'); if (v && v.srcObject !== ms) v.srcObject = ms; const st = $('#lvs'); if (st) st.textContent = ''; };
+  const ms = new MediaStream(); pc.ontrack = e => { ms.addTrack(e.track); const v = $('#lvv'); if (v && v.srcObject !== ms) v.srcObject = ms; const st = $('#lvs'); if (st) { st.textContent = ''; st.dataset.done = '1'; } };
   pc.onconnectionstatechange = () => { const st = $('#lvs'); if (!st) return; if (pc.connectionState === 'failed') st.textContent = 'Could not connect — the network between you and the streamer blocks direct video. Try another network.'; };
   try {
+    const say = t => { const st = $('#lvs'); if (st && !st.dataset.done) st.textContent = t; };
+    say(`Connecting to ${s.name}… (1/3 finding a route)`);
     const off = await pc.createOffer(); await pc.setLocalDescription(off); await waitIce(pc);
+    say(`Connecting to ${s.name}… (2/3 waiting for the streamer)`);
     const pref = doc(db, `streams/${sid}/peers`, user.uid);
     await setDoc(pref, {offer: pc.localDescription.sdp, name: myName(), at: serverTimestamp()});
     LIVE.unsubs.push(onSnapshot(pref, async d => { const v = d.data(); if (!v) return;
       if (v.full) { const st = $('#lvs'); if (st) st.textContent = `The stream is full (${LIVE_MAX} viewers max). Try again later.`; return; }
-      if (v.answer && !pc.currentRemoteDescription) { try { await pc.setRemoteDescription({type: 'answer', sdp: v.answer}); } catch {} } }, () => {}));
+      if (v.answer && !pc.currentRemoteDescription) { say(`Connecting to ${s.name}… (3/3 starting video)`); try { await pc.setRemoteDescription({type: 'answer', sdp: v.answer}); } catch {} } }, () => {}));
   } catch { const st = $('#lvs'); if (st) st.textContent = 'Could not connect to the stream.'; }
 }
 
