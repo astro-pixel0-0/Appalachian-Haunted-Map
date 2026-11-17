@@ -66,9 +66,9 @@ service cloud.firestore {
         && (!('bio' in d) || (d.bio is string && d.bio.size() <= 300))
         && (!('avatar' in d) || (d.avatar is string && d.avatar.size() < 200000 && d.avatar.matches('data:image/jpeg;base64,[A-Za-z0-9+/=]+')))
         && (!('banner' in d) || (d.banner is string && d.banner.size() < 450000 && d.banner.matches('data:image/jpeg;base64,[A-Za-z0-9+/=]+')))
-        && (!('frame' in d) || d.frame in ['none', 'frost', 'sage', 'blood', 'steel', 'spectral', 'bone', 'rust', 'moss', 'violet', 'ember', 'gold', 'ice', 'toxic', 'ghost', 'checker', 'hazard', 'barbed', 'circuit', 'static', 'bloodpulse', 'aurora', 'double', 'royal', 'moth'])
-        && (!('pbg' in d) || d.pbg in ['graphite', 'night', 'fog', 'forest', 'ghosts', 'moths', 'eyes', 'crosses', 'bricks', 'planks', 'circuit', 'crt', 'noise', 'checker', 'topo', 'bloodrain', 'moss', 'fireflies', 'snow', 'leaves', 'sigils', 'ufos', 'paws', 'quilt', 'damask', 'rain'])
-        && (!('bg' in d) || d.bg in ['', 'ridge', 'bloodmoon', 'hollow', 'stars', 'pines', 'graveyard', 'farm', 'bridge', 'mine', 'swamp', 'aurora', 'storm', 'corn', 'tower', 'tunnel', 'church', 'cabin', 'ufo', 'lake', 'snow', 'autumn', 'dawn', 'static', 'terminal', 'ecto'])
+        && (!('frame' in d) || d.frame in ['none', 'frost', 'sage', 'blood', 'steel', 'spectral', 'bone', 'rust', 'moss', 'violet', 'ember', 'gold', 'ice', 'toxic', 'ghost', 'checker', 'hazard', 'barbed', 'circuit', 'static', 'bloodpulse', 'aurora', 'double', 'royal', 'moth', 'embers', 'neon', 'prism', 'signal', 'siren', 'candle', 'mist', 'storm', 'gilded', 'ecto', 'tape', 'marquee', 'void', 'comet', 'frostbite'])
+        && (!('pbg' in d) || d.pbg in ['graphite', 'night', 'fog', 'forest', 'ghosts', 'moths', 'eyes', 'crosses', 'bricks', 'planks', 'circuit', 'crt', 'noise', 'checker', 'topo', 'bloodrain', 'moss', 'fireflies', 'snow', 'leaves', 'sigils', 'ufos', 'paws', 'quilt', 'damask', 'rain', 'a_snow', 'a_rain', 'a_embers', 'a_stars', 'a_fog', 'a_ghosts', 'a_code', 'a_blood', 'a_leaves', 'a_fireflies', 'a_ufos', 'a_moths', 'a_waves', 'a_scan'])
+        && (!('bg' in d) || d.bg in ['', 'ridge', 'bloodmoon', 'hollow', 'stars', 'pines', 'graveyard', 'farm', 'bridge', 'mine', 'swamp', 'aurora', 'storm', 'corn', 'tower', 'tunnel', 'church', 'cabin', 'ufo', 'lake', 'snow', 'autumn', 'dawn', 'static', 'terminal', 'ecto', 'a_snowfall', 'a_rain', 'a_aurora', 'a_fireflies', 'a_ufo', 'a_campfire', 'a_meteor', 'a_fog', 'a_mothman', 'a_beacon', 'a_lake', 'a_static', 'a_terminal', 'a_bats'])
         && (!('links' in d) || (d.links is map && d.links.size() <= 8))
         && (!('vis' in d) || d.vis in ['all', 'friends', 'nobody'])
         && (!('admin' in d) || (d.admin == true && isAdmin()));
@@ -163,9 +163,7 @@ service cloud.firestore {
       allow create: if verified() && request.resource.data.owner == request.auth.uid && request.resource.data.title is string && request.resource.data.title.size() <= 80
         && request.resource.data.lat is number && request.resource.data.lng is number && request.resource.data.live == true
         && (!('aud' in request.resource.data) || request.resource.data.aud in ['all', 'friends'])
-        // TEMPORARY TEST MODE: streams allowed anywhere. Before launch replace the next line with:
-        // && (isAdmin() || (request.resource.data.lat >= 30.0 && request.resource.data.lat <= 45.1 && request.resource.data.lng >= -91.7 && request.resource.data.lng <= -71.7));
-        && true;
+        && (isAdmin() || (request.resource.data.lat >= 30.0 && request.resource.data.lat <= 45.1 && request.resource.data.lng >= -91.7 && request.resource.data.lng <= -71.7));
       // the owner updates their stream until the admin ends it; the admin can end any stream for good (killed)
       allow update: if verified() && (
         (resource.data.owner == request.auth.uid && request.resource.data.owner == resource.data.owner
